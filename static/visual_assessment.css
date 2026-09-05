@@ -1,0 +1,406 @@
+/* Visual Assessment Styling */
+
+/* Image Question Styling */
+.image-question {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.image-display-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.question-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Visual Options Grid */
+.visual-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.visual-option-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.visual-option-label:hover {
+  border-color: #4facfe;
+  background: rgba(79, 172, 254, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.2);
+}
+
+.visual-option input[type="radio"]:checked + .visual-option-label {
+  border-color: #4facfe;
+  background: rgba(79, 172, 254, 0.15);
+  box-shadow: 0 6px 16px rgba(79, 172, 254, 0.3);
+}
+
+.option-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.option-label {
+  font-size: 0.9rem;
+  text-align: center;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Puzzle Question Styling */
+.puzzle-question {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.puzzle-display-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 350px;
+  background: linear-gradient(135deg, #e0e7ff 0%, #cffafe 100%);
+  border-radius: 12px;
+  padding: 30px;
+  margin: 20px 0;
+  border: 3px dashed rgba(79, 172, 254, 0.3);
+}
+
+.puzzle-canvas {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.puzzle-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Pattern Puzzle */
+.pattern-puzzle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.puzzle-instruction {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  background: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+}
+
+/* Sequence Puzzle */
+.sequence-puzzle {
+  width: 100%;
+}
+
+.sequence-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+}
+
+.sequence-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.sequence-item img {
+  max-width: 90px;
+  max-height: 90px;
+  object-fit: contain;
+}
+
+.sequence-item:nth-child(4)::after {
+  content: '?';
+  position: absolute;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #999;
+}
+
+/* Shape Sorting Puzzle */
+.shape-sorting-puzzle {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.shapes-container {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+}
+
+.shape-item {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  cursor: grab;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.shape-item:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.shape-item.dragging {
+  opacity: 0.7;
+  cursor: grabbing;
+}
+
+/* Color Shapes */
+.shape-red { background: #ef4444; }
+.shape-blue { background: #3b82f6; }
+.shape-yellow { background: #eab308; }
+.shape-green { background: #22c55e; }
+.shape-purple { background: #a855f7; }
+.shape-pink { background: #ec4899; }
+
+/* Shape Types */
+.circle { border-radius: 50%; }
+.square { border-radius: 4px; }
+.triangle { clip-path: polygon(50% 0%, 100% 100%, 0% 100%); }
+
+.sorting-categories {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.category-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: white;
+  border: 2px dashed rgba(79, 172, 254, 0.3);
+  border-radius: 8px;
+  min-height: 120px;
+}
+
+.category-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.category-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 100px;
+}
+
+.category-items.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-style: italic;
+}
+
+/* Puzzle Options */
+.puzzle-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.puzzle-option {
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.puzzle-option:hover {
+  border-color: #4facfe;
+  background: rgba(79, 172, 254, 0.05);
+}
+
+.puzzle-option.selected {
+  border-color: #4facfe;
+  background: rgba(79, 172, 254, 0.2);
+}
+
+.puzzle-option img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .visual-options {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+
+  .image-display-area {
+    min-height: 250px;
+  }
+
+  .question-image {
+    max-height: 300px;
+  }
+
+  .puzzle-display-area {
+    min-height: 280px;
+    padding: 20px;
+  }
+
+  .sequence-display {
+    gap: 12px;
+  }
+
+  .sequence-item {
+    width: 80px;
+    height: 80px;
+  }
+
+  .shape-sorting-puzzle {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .shapes-container,
+  .category-container {
+    min-width: 100%;
+  }
+
+  .puzzle-options {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .visual-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .option-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .option-label {
+    font-size: 0.8rem;
+  }
+
+  .sequence-item {
+    width: 70px;
+    height: 70px;
+  }
+
+  .shape-item {
+    width: 70px;
+    height: 70px;
+  }
+
+  .puzzle-option img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+/* Animations */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.visual-option,
+.puzzle-option,
+.sequence-item {
+  animation: fadeInScale 0.3s ease-out;
+}
+
+/* Accessibility */
+.visual-option-label:focus-within,
+.puzzle-option:focus-within {
+  outline: 2px solid #4facfe;
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  .visual-options,
+  .puzzle-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

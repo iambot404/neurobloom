@@ -1,0 +1,489 @@
+<!-- Enhanced Student Dashboard -->
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard | DocHub{% endblock %}
+
+{% block content %}
+<!-- Floating Pill Navbar -->
+<header class="ag-nav-wrapper">
+  <nav class="ag-nav">
+    <a href="/" class="ag-logo">
+      <div class="ag-logo-mark">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="ag-logo-text">DocHub</span>
+      <span class="ag-logo-badge">Student</span>
+    </a>
+
+    <ul class="ag-nav-links">
+      <li><a href="/student-dashboard" class="ag-nav-link active">Dashboard</a></li>
+      <li><a href="/assessments" class="ag-nav-link">Assessments</a></li>
+      <li><a href="/student-profile" class="ag-nav-link">Profile</a></li>
+    </ul>
+
+    <div class="ag-nav-actions">
+      <a href="/assessments" class="ag-btn ag-btn-sm ag-btn-primary">Take Test →</a>
+      <a href="/logout" class="ag-btn ag-btn-sm ag-btn-ghost">Logout</a>
+    </div>
+  </nav>
+</header>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='student-dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='progress-charts-enhanced.css') }}">
+
+<div class="dashboard-container" style="padding-top: 120px; position: relative; z-index: 2;">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-greeting">
+                    <div class="greeting-icon">👋</div>
+                    <div class="greeting-content">
+                        <h1>Welcome back, {{ session.get('name', 'Student') }}!</h1>
+                        <div class="header-meta">
+                            <p class="class-info">📚 {{ session.get('class', 'Class/Semester') }}</p>
+                            <p class="last-update">🔄 Last updated: <span id="lastUpdateTime">now</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary" id="takeAssessmentBtn">
+                    <span class="btn-icon">➕</span>
+                    <span>Take Assessment</span>
+                </button>
+                <a href="/student-profile" class="btn btn-secondary" title="View your profile">👤 Profile</a>
+                <button class="btn btn-refresh" id="refreshBtn" title="Refresh dashboard">🔄</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <!-- Quick Stats -->
+        <section class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="totalAssessments">0</div>
+                    <div class="stat-label">Total Assessments</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="avgScore">0%</div>
+                    <div class="stat-label">Average Score</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="overallRisk">-</div>
+                    <div class="stat-label">Overall Risk Level</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="latestTest">-</div>
+                    <div class="stat-label">Latest Assessment</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="history">Assessment History</button>
+                <button class="tab-btn" data-tab="progress">Progress by Disorder</button>
+                <button class="tab-btn" data-tab="recommendations">Recommendations</button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="overview-tab">
+                <div class="overview-filters">
+                    <div class="filter-label">Filter by Disorder:</div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn filter-btn-active" data-filter="all">
+                            <span class="filter-icon">🔄</span>
+                            <span>All Disorders</span>
+                        </button>
+                        <button class="filter-btn" data-filter="dyslexia">
+                            <span class="filter-icon">📖</span>
+                            <span>Dyslexia</span>
+                        </button>
+                        <button class="filter-btn" data-filter="dyscalculia">
+                            <span class="filter-icon">🔢</span>
+                            <span>Dyscalculia</span>
+                        </button>
+                        <button class="filter-btn" data-filter="dysgraphia">
+                            <span class="filter-icon">✏️</span>
+                            <span>Dysgraphia</span>
+                        </button>
+                    </div>
+                    <select id="overviewFilter" class="filter-select" style="display:none;">
+                        <option value="">All Disorders</option>
+                        <option value="dyslexia">Dyslexia</option>
+                        <option value="dyscalculia">Dyscalculia</option>
+                        <option value="dysgraphia">Dysgraphia</option>
+                    </select>
+                </div>
+                <div class="overview-grid">
+                    <div class="overview-card">
+                        <h3>Recent Assessments</h3>
+                        <div id="recentAssessments" class="recent-list">
+                            <p class="empty-state">No assessments yet. Start by taking an assessment!</p>
+                        </div>
+                    </div>
+                    <div class="overview-card">
+                        <h3>Performance Trend</h3>
+                        <canvas id="performanceChart" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div class="tab-content" id="history-tab">
+                <div class="history-container">
+                    <div class="history-filters">
+                        <div class="filter-label">Filter by Disorder:</div>
+                        <div class="filter-buttons">
+                            <button class="filter-btn filter-btn-active" data-filter="all">
+                                <span class="filter-icon">🔄</span>
+                                <span>All Disorders</span>
+                            </button>
+                            <button class="filter-btn" data-filter="dyslexia">
+                                <span class="filter-icon">📖</span>
+                                <span>Dyslexia</span>
+                            </button>
+                            <button class="filter-btn" data-filter="dyscalculia">
+                                <span class="filter-icon">🔢</span>
+                                <span>Dyscalculia</span>
+                            </button>
+                            <button class="filter-btn" data-filter="dysgraphia">
+                                <span class="filter-icon">✏️</span>
+                                <span>Dysgraphia</span>
+                            </button>
+                        </div>
+                        <select id="disorderFilter" class="filter-select" style="display:none;">
+                            <option value="">All Disorders</option>
+                            <option value="dyslexia">Dyslexia</option>
+                            <option value="dyscalculia">Dyscalculia</option>
+                            <option value="dysgraphia">Dysgraphia</option>
+                        </select>
+                    </div>
+                    <div id="assessmentHistory" class="history-list">
+                        <p class="empty-state">No assessments found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Tab -->
+            <div class="tab-content" id="progress-tab">
+                <div class="progress-grid">
+                    <div class="progress-section" id="dyslexiaProgress">
+                        <h3>Dyslexia Progress</h3>
+                        <div class="progress-details">
+                            <div class="progress-metric">
+                                <span>Attempts:</span>
+                                <strong id="dyslexiaAttempts">0</strong>
+                            </div>
+                            <div class="progress-metric">
+                                <span>Average Score:</span>
+                                <strong id="dyslexiaAvg">-</strong>
+                            </div>
+                            <div class="progress-metric">
+                                <span>Risk Level:</span>
+                                <strong id="dyslexiaRisk">-</strong>
+                            </div>
+                            <canvas id="dyslexiaChart" class="mini-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="progress-section" id="dyscalculiaProgress">
+                        <h3>Dyscalculia Progress</h3>
+                        <div class="progress-details">
+                            <div class="progress-metric">
+                                <span>Attempts:</span>
+                                <strong id="dyscalculiaAttempts">0</strong>
+                            </div>
+                            <div class="progress-metric">
+                                <span>Average Score:</span>
+                                <strong id="dyscalculiaAvg">-</strong>
+                            </div>
+                            <div class="progress-metric">
+                                <span>Risk Level:</span>
+                                <strong id="dyscalculiaRisk">-</strong>
+                            </div>
+                            <canvas id="dyscalculiaChart" class="mini-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="progress-section" id="dysgraphiaProgress">
+                        <h3>Dysgraphia Progress</h3>
+                        <div class="progress-details">
+                            <div class="progress-metric">
+                                <span>Attempts:</span>
+                                <strong id="dysgraphiaAttempts">0</strong>
+                            </div>
+                            <div class="progress-metric">
+                                <span>Average Score:</span>
+                                <strong id="dysgraphiaAvg">-</strong>
+                            </div>
+                            <div class="progress-metric">
+                                <span>Risk Level:</span>
+                                <strong id="dysgraphiaRisk">-</strong>
+                            </div>
+                            <canvas id="dysgraphiaChart" class="mini-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations Tab -->
+            <div class="tab-content" id="recommendations-tab">
+                <div class="recommendations-container">
+                    <div class="filter-select-container">
+                        <div class="filter-label">Filter by Disorder:</div>
+                        <div class="filter-buttons">
+                            <button class="filter-btn filter-btn-active" data-filter="all">
+                                <span class="filter-icon">🔄</span>
+                                <span>All Disorders</span>
+                            </button>
+                            <button class="filter-btn" data-filter="dyslexia">
+                                <span class="filter-icon">📖</span>
+                                <span>Dyslexia</span>
+                            </button>
+                            <button class="filter-btn" data-filter="dyscalculia">
+                                <span class="filter-icon">🔢</span>
+                                <span>Dyscalculia</span>
+                            </button>
+                            <button class="filter-btn" data-filter="dysgraphia">
+                                <span class="filter-icon">✏️</span>
+                                <span>Dysgraphia</span>
+                            </button>
+                        </div>
+                        <select id="recommendationDisorderFilter" class="filter-select" style="display:none;">
+                            <option value="">All Disorders</option>
+                            <option value="dyslexia">Dyslexia</option>
+                            <option value="dyscalculia">Dyscalculia</option>
+                            <option value="dysgraphia">Dysgraphia</option>
+                        </select>
+                    </div>
+                    <div id="recommendationsDisplay" class="recommendations-grid">
+                        <p class="empty-state">No recommendations available. Complete an assessment to get personalized recommendations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Assessment Details Modal -->
+<div id="assessmentModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close">&times;</button>
+        <div id="assessmentModalContent">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="{{ url_for('static', filename='enhanced-charts.js') }}"></script>
+<script src="{{ url_for('static', filename='student-dashboard.js') }}"></script>
+
+<style>
+    .dashboard-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f1823 0%, #0a0e27 50%, #1a2847 100%);
+        color: #f1f5f9;
+    }
+
+    .dashboard-header {
+        background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.05) 100%);
+        border-bottom: 1px solid rgba(79, 172, 254, 0.15);
+        padding: 40px 30px;
+        margin-bottom: 40px;
+    }
+
+    .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-left h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #f1f5f9;
+    }
+
+    .class-info {
+        margin: 5px 0 0;
+        color: #cbd5e1;
+        font-size: 14px;
+    }
+
+    .last-update {
+        font-size: 13px;
+        color: #94a3b8;
+        margin-top: 8px;
+        margin-bottom: 0;
+        letter-spacing: 0.5px;
+    }
+
+    .quick-stats {
+        max-width: 1200px;
+        margin: 0 auto 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 0 30px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .stat-icon {
+        font-size: 32px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #4facfe;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #cbd5e1;
+        margin-top: 5px;
+    }
+
+    .tabs-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 30px;
+    }
+
+    .tabs-header {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+        border-bottom: 1px solid rgba(79, 172, 254, 0.15);
+    }
+
+    .tab-btn {
+        background: none;
+        border: none;
+        color: #cbd5e1;
+        padding: 15px 20px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .tab-btn:hover {
+        color: #4facfe;
+    }
+
+    .tab-btn.active {
+        color: #4facfe;
+        border-bottom-color: #4facfe;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .empty-state {
+        text-align: center;
+        color: #94a3b8;
+        padding: 40px 20px;
+    }
+
+    .recommendation-card {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+
+    .recommendation-card.risk-high {
+        border-color: rgba(244, 67, 54, 0.4);
+        background: linear-gradient(135deg, rgba(244, 67, 54, 0.15) 0%, rgba(239, 83, 80, 0.08) 100%);
+    }
+
+    .btn-refresh {
+        background: none;
+        border: none;
+        color: #4facfe;
+        font-size: 22px;
+        margin-left: 12px;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .btn-refresh:hover {
+        color: #38bdf8;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: #1a2847;
+        border-radius: 16px;
+        padding: 30px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: #f1f5f9;
+        font-size: 28px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}

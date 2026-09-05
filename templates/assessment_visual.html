@@ -1,0 +1,485 @@
+{% extends "base.html" %}
+
+{% block title %}Take Assessment - Neurobloom{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assessment.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='visual_assessment.css') }}">
+
+<div class="assessment-container">
+    <!-- Timer and Progress -->
+    <div class="assessment-header">
+        <div class="assessment-info">
+            <h2 id="assessmentTitle">Assessment</h2>
+            <p id="assessmentDescription" class="assessment-desc"></p>
+        </div>
+        
+        <div class="assessment-status">
+            <div class="timer-box">
+                <div class="timer-icon">⏱️</div>
+                <div class="timer-display">
+                    <span id="timerMinutes">25</span>:<span id="timerSeconds">00</span>
+                </div>
+                <p>Time Left</p>
+            </div>
+            
+            <div class="progress-box">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <p><span id="currentQuestion">0</span> / <span id="totalQuestions">20</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessment Content -->
+    <div class="assessment-content">
+        <div class="question-card" id="questionCard">
+            <div class="question-number">
+                Question <span id="qNumber">1</span> of <span id="qTotal">20</span>
+            </div>
+            
+            <!-- Text Question -->
+            <div class="question-section text-question" id="textQuestionSection">
+                <div class="question-text" id="questionText">
+                    <!-- Question text will be loaded here -->
+                </div>
+
+                <!-- Answer Options -->
+                <div class="answer-options" id="answerOptions">
+                    <!-- Options will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Image-Based Question -->
+            <div class="question-section image-question" id="imageQuestionSection" style="display:none;">
+                <div class="question-text" id="imageQuestionText">
+                    <!-- Question instruction -->
+                </div>
+                
+                <div class="image-display-area">
+                    <img id="questionImage" class="question-image" src="" alt="Question image">
+                </div>
+
+                <!-- Visual Answer Options (Images) -->
+                <div class="visual-options" id="visualOptions">
+                    <!-- Image options will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Puzzle Question -->
+            <div class="question-section puzzle-question" id="puzzleQuestionSection" style="display:none;">
+                <div class="question-text" id="puzzleQuestionText">
+                    <!-- Puzzle instruction -->
+                </div>
+                
+                <div class="puzzle-display-area">
+                    <!-- Puzzle content will be generated here -->
+                    <div class="puzzle-canvas" id="puzzleCanvas"></div>
+                </div>
+
+                <!-- Puzzle Options -->
+                <div class="puzzle-options" id="puzzleOptions">
+                    <!-- Draggable puzzle pieces or interactive elements -->
+                </div>
+            </div>
+
+            <!-- Short Answer Input -->
+            <div class="answer-input-container" id="answerInputContainer" style="display:none;">
+                <input type="text" id="shortAnswerInput" class="short-answer-input" 
+                       placeholder="Type your answer here...">
+                <p class="input-hint">Type your answer and press Enter or click Continue</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="question-actions">
+                <button id="prevBtn" class="btn btn-secondary" onclick="previousQuestion()">← Previous</button>
+                <button id="submitAnswerBtn" class="btn btn-primary" onclick="submitAnswer()">Continue →</button>
+            </div>
+        </div>
+
+        <!-- Side Panel - Questions Navigator -->
+        <aside class="questions-navigator">
+            <div class="navigator-header">
+                <h3>Questions</h3>
+                <p class="navigator-legend">
+                    <span class="legend-item"><span class="dot answered"></span> Answered</span>
+                    <span class="legend-item"><span class="dot skipped"></span> Skipped</span>
+                    <span class="legend-item"><span class="dot current"></span> Current</span>
+                </p>
+            </div>
+            
+            <div class="questions-grid" id="questionsGrid">
+                <!-- Question buttons will be generated here -->
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- Submit Assessment Modal -->
+<div id="submitModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Review Your Assessment</h3>
+        <p>You have answered <span id="answeredCount">0</span> out of <span id="totalCount">20</span> questions.</p>
+        <p class="warning-text">Once submitted, your assessment cannot be changed.</p>
+        
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeSubmitModal()">Continue Assessment</button>
+            <button class="btn btn-danger" onclick="confirmSubmit()">Submit Assessment</button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div id="loadingSpinner" class="spinner" style="display:none;">
+    <div class="spinner-inner"></div>
+    <p>Processing your answers...</p>
+</div>
+
+<script>
+// Global variables - MUST INITIALIZE FIRST
+let currentAssessmentId = parseInt('{{ assessment_id }}');
+console.log('Template assessment_id value:', '{{ assessment_id }}');
+console.log('Parsed currentAssessmentId:', currentAssessmentId);
+
+if (isNaN(currentAssessmentId)) {
+    console.error('ERROR: assessment_id is not a valid number!');
+    alert('Error: Invalid assessment ID. Please try again.');
+}
+
+let currentQuestionIndex = 0;
+let questions = [];
+let studentAssessmentId = null;
+let answers = {}; // Store: { questionId: answer }
+let questionTimers = {}; // Track time spent on each question
+let startTimePerQuestion = null;
+let assessmentStartTime = null;
+let timeLimit = 25 * 60; // 25 minutes in seconds
+let timerInterval = null;
+
+// Initialize assessment on page load
+window.addEventListener('load', () => {
+    loadAssessment();
+});
+
+async function loadAssessment() {
+    try {
+        console.log('Loading assessment with ID:', currentAssessmentId);
+        
+        const response = await fetch(`/api/assessment/${currentAssessmentId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+        
+        console.log('Assessment API response status:', response.status);
+        
+        if (!response.ok) {
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch (e) {
+                errorData = { error: 'Unable to parse error response' };
+            }
+            console.error('API error:', errorData);
+            throw new Error(`Failed to load assessment: ${response.status} - ${errorData.error || 'Unknown error'}`);
+        }
+        
+        const data = await response.json();
+        console.log('Assessment data loaded:', data);
+        questions = data.questions;
+        
+        // Check if questions array is empty
+        if (!questions || questions.length === 0) {
+            throw new Error('No questions found for this assessment. Please contact support.');
+        }
+        
+        // Update header
+        document.getElementById('assessmentTitle').textContent = data.assessment.name;
+        document.getElementById('assessmentDescription').textContent = data.assessment.description;
+        document.getElementById('totalQuestions').textContent = questions.length;
+        document.getElementById('qTotal').textContent = questions.length;
+        
+        // Create student assessment session
+        console.log('Starting assessment session...');
+        const sessionRes = await fetch('/api/student-assessment/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ assessment_id: currentAssessmentId })
+        });
+        
+        console.log('Session API response status:', sessionRes.status);
+        
+        if (!sessionRes.ok) {
+            let sessionError;
+            try {
+                sessionError = await sessionRes.json();
+            } catch (e) {
+                sessionError = { error: 'Unable to parse error response' };
+            }
+            console.error('Session error:', sessionError);
+            throw new Error(`Failed to start assessment session: ${sessionRes.status} - ${sessionError.error || 'Unknown error'}`);
+        }
+        
+        const sessionData = await sessionRes.json();
+        console.log('Session created:', sessionData);
+        studentAssessmentId = sessionData.student_assessment_id;
+        
+        // Initialize
+        assessmentStartTime = Date.now();
+        displayQuestion(0);
+        generateQuestionNavigator();
+        startTimer();
+        
+    } catch (error) {
+        console.error('FULL ERROR OBJECT:', error);
+        console.error('Error message:', error.message);
+        alert(`Failed to load assessment:\n\n${error.message}\n\nOpen console (F12) for details.`);
+    }
+}
+
+function generateQuestionNavigator() {
+    const grid = document.getElementById('questionsGrid');
+    grid.innerHTML = '';
+    
+    questions.forEach((q, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'question-nav-btn';
+        btn.textContent = index + 1;
+        btn.onclick = () => goToQuestion(index);
+        if (index === 0) btn.classList.add('current');
+        grid.appendChild(btn);
+    });
+}
+
+function goToQuestion(index) {
+    if (index < 0 || index >= questions.length) return;
+    currentQuestionIndex = index;
+    displayQuestion(index);
+    updateNavigator();
+}
+
+function updateNavigator() {
+    document.querySelectorAll('.question-nav-btn').forEach((btn, index) => {
+        btn.classList.remove('current', 'answered', 'skipped');
+        if (index === currentQuestionIndex) {
+            btn.classList.add('current');
+        } else if (answers[questions[index].id]) {
+            btn.classList.add('answered');
+        } else {
+            btn.classList.add('skipped');
+        }
+    });
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - assessmentStartTime) / 1000);
+        const remaining = Math.max(0, timeLimit - elapsed);
+        
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        
+        document.getElementById('timerMinutes').textContent = minutes;
+        document.getElementById('timerSeconds').textContent = String(seconds).padStart(2, '0');
+        
+        if (remaining <= 0) {
+            clearInterval(timerInterval);
+            submitAssessment();
+        }
+    }, 1000);
+}
+
+// Question types
+const QUESTION_TYPES = {
+    TEXT: 'text',
+    IMAGE: 'image',
+    PUZZLE: 'puzzle',
+    MATCHING: 'matching',
+    SORTING: 'sorting'
+};
+
+// Puzzle types
+const PUZZLE_TYPES = {
+    PATTERN: 'pattern',
+    SEQUENCE: 'sequence',
+    VISUAL_MATCHING: 'visual_matching',
+    COLOR_MATCHING: 'color_matching',
+    SHAPE_SORTING: 'shape_sorting',
+    MEMORY: 'memory'
+};
+
+// Display different question types
+function displayQuestion(question) {
+    // Hide all question sections
+    document.getElementById('textQuestionSection').style.display = 'none';
+    document.getElementById('imageQuestionSection').style.display = 'none';
+    document.getElementById('puzzleQuestionSection').style.display = 'none';
+    document.getElementById('answerInputContainer').style.display = 'none';
+
+    switch(question.question_type) {
+        case QUESTION_TYPES.IMAGE:
+            displayImageQuestion(question);
+            break;
+        case QUESTION_TYPES.PUZZLE:
+            displayPuzzleQuestion(question);
+            break;
+        case QUESTION_TYPES.MATCHING:
+        case QUESTION_TYPES.SORTING:
+            displayInteractiveQuestion(question);
+            break;
+        default:
+            displayTextQuestion(question);
+    }
+}
+
+function displayTextQuestion(question) {
+    document.getElementById('textQuestionSection').style.display = 'block';
+    document.getElementById('questionText').innerHTML = question.question_text;
+    
+    const optionsContainer = document.getElementById('answerOptions');
+    optionsContainer.innerHTML = '';
+    
+    question.options.forEach((option, index) => {
+        const optionEl = document.createElement('div');
+        optionEl.className = 'option';
+        optionEl.innerHTML = `
+            <input type="radio" name="answer" value="${option.id}" id="option${index}">
+            <label for="option${index}">${option.option_text}</label>
+        `;
+        optionsContainer.appendChild(optionEl);
+    });
+}
+
+function displayImageQuestion(question) {
+    document.getElementById('imageQuestionSection').style.display = 'block';
+    document.getElementById('imageQuestionText').innerHTML = question.question_text;
+    document.getElementById('questionImage').src = question.image_path;
+    document.getElementById('questionImage').alt = question.image_alt_text || 'Question image';
+    
+    const visualOptions = document.getElementById('visualOptions');
+    visualOptions.innerHTML = '';
+    
+    question.visual_options.forEach((option, index) => {
+        const optionEl = document.createElement('div');
+        optionEl.className = 'visual-option';
+        optionEl.innerHTML = `
+            <input type="radio" name="answer" value="${option.id}" id="visual-option${index}" style="display:none;">
+            <label for="visual-option${index}" class="visual-option-label">
+                <img src="${option.option_image_path}" alt="${option.option_label}" class="option-image">
+                <span class="option-label">${option.option_label}</span>
+            </label>
+        `;
+        visualOptions.appendChild(optionEl);
+    });
+}
+
+function displayPuzzleQuestion(question) {
+    document.getElementById('puzzleQuestionSection').style.display = 'block';
+    document.getElementById('puzzleQuestionText').innerHTML = question.question_text;
+    
+    switch(question.puzzle_data.puzzle_type) {
+        case PUZZLE_TYPES.PATTERN:
+            displayPatternPuzzle(question);
+            break;
+        case PUZZLE_TYPES.SEQUENCE:
+            displaySequencePuzzle(question);
+            break;
+        case PUZZLE_TYPES.SHAPE_SORTING:
+            displayShapeSortingPuzzle(question);
+            break;
+        default:
+            displayGeneralPuzzle(question);
+    }
+}
+
+function displayPatternPuzzle(question) {
+    // Display a pattern completion puzzle
+    const canvas = document.getElementById('puzzleCanvas');
+    canvas.innerHTML = `
+        <div class="pattern-puzzle">
+            <img src="${question.puzzle_data.puzzle_image_path}" alt="Pattern puzzle" class="puzzle-image">
+            <div class="puzzle-instruction">
+                <p>Complete the pattern</p>
+            </div>
+        </div>
+    `;
+}
+
+function displaySequencePuzzle(question) {
+    // Display a number/shape sequence puzzle
+    const canvas = document.getElementById('puzzleCanvas');
+    canvas.innerHTML = `
+        <div class="sequence-puzzle">
+            <div class="sequence-display" id="sequenceDisplay">
+                <!-- Sequence will be generated here -->
+            </div>
+        </div>
+    `;
+    
+    // Generate sequence elements
+    if (question.puzzle_elements) {
+        const sequenceDisplay = document.getElementById('sequenceDisplay');
+        sequenceDisplay.innerHTML = '';
+        
+        question.puzzle_elements.forEach((element, index) => {
+            if (element.element_image_path) {
+                sequenceDisplay.innerHTML += `
+                    <div class="sequence-item">
+                        <img src="${element.element_image_path}" alt="${element.element_value}">
+                    </div>
+                `;
+            }
+        });
+    }
+}
+
+function displayShapeSortingPuzzle(question) {
+    // Display a shape/color sorting puzzle
+    const canvas = document.getElementById('puzzleCanvas');
+    canvas.innerHTML = `
+        <div class="shape-sorting-puzzle">
+            <div class="shapes-container" id="shapesContainer">
+                <!-- Shapes to sort -->
+            </div>
+            <div class="sorting-categories" id="sortingCategories">
+                <!-- Category containers for sorting -->
+            </div>
+        </div>
+    `;
+}
+
+function displayGeneralPuzzle(question) {
+    const canvas = document.getElementById('puzzleCanvas');
+    canvas.innerHTML = `
+        <div class="general-puzzle">
+            <img src="${question.puzzle_data.puzzle_image_path}" alt="Puzzle" class="puzzle-image">
+        </div>
+    `;
+}
+
+function displayInteractiveQuestion(question) {
+    // Display matching or sorting questions
+    displayImageQuestion(question);
+}
+
+// Store current question data
+let currentQuestionData = null;
+
+// Override loadQuestion to handle visual questions
+const originalLoadQuestion = window.loadQuestion;
+window.loadQuestion = function(index) {
+    // Call original load logic
+    if (typeof originalLoadQuestion === 'function') {
+        originalLoadQuestion.call(this, index);
+    }
+    
+    // Display the appropriate question type
+    if (currentQuestionData) {
+        displayQuestion(currentQuestionData);
+    }
+};
+</script>
+
+{% endblock %}

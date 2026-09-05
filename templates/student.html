@@ -1,0 +1,885 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard | DocHub{% endblock %}
+
+{% block content %}
+<!-- Floating Pill Navbar -->
+<header class="ag-nav-wrapper">
+  <nav class="ag-nav">
+    <a href="/" class="ag-logo">
+      <div class="ag-logo-mark">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="ag-logo-text">DocHub</span>
+      <span class="ag-logo-badge">Student</span>
+    </a>
+
+    <ul class="ag-nav-links">
+      <li><a href="/student" class="ag-nav-link active">Dashboard</a></li>
+      <li><a href="/assessments" class="ag-nav-link">Assessments</a></li>
+      <li><a href="/student-profile" class="ag-nav-link">Profile</a></li>
+    </ul>
+
+    <div class="ag-nav-actions">
+      <a href="/assessments" class="ag-btn ag-btn-sm ag-btn-primary">Take Test →</a>
+      <a href="/logout" class="ag-btn ag-btn-sm ag-btn-ghost">Logout</a>
+    </div>
+  </nav>
+</header>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='student.css') }}">
+
+<div class="student-container">
+    <!-- Left Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">☰</button>
+        <div class="nav-items">
+                    <div class="profile-item">
+                        <div class="photo-wrap">
+                            <img src="{{ session.get('profile_photo') or url_for('static', filename='imgs/default-avatar.png') }}" alt="Profile photo" id="profilePhoto" class="profile-photo">
+                            <button id="editPhotoBtn" class="edit-photo" title="Edit profile photo">✎</button>
+                            <input type="file" id="photoInput" accept="image/*" style="display:none">
+                        </div>
+                        <div class="profile-meta">
+                            <div class="name">{{ session.name if session.get('name') else 'Student Name' }}</div>
+                            <a href="#" id="openProfile">View profile</a>
+                        </div>
+                    </div>
+
+             
+            <a class="nav-link" href="/student">Dashboard</a>
+            <a class="nav-link" href="/assessments">Assessment</a>
+            <a class="nav-link" href="#" id="classLink">Class</a>
+        </div>
+    </aside>
+
+        <!-- Class/Faculty Setup Modal (shown if not configured) -->
+        <div id="setupModal" class="setup-modal" style="display:none;">
+            <div class="setup-modal-content">
+                <div class="setup-header">
+                    <h2>Complete Your Profile</h2>
+                    <p>Please configure your class and faculty to proceed</p>
+                </div>
+                <form id="setupForm" class="setup-form">
+                    <div class="form-group">
+                        <label for="setupClass">Class/Semester <span class="required">*</span></label>
+                        <input type="text" id="setupClass" name="class" placeholder="e.g., B.Tech - 3rd Semester" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="setupFaculty">Faculty <span class="required">*</span></label>
+                        <select id="setupFaculty" name="faculty_id" required>
+                            <option value="">Select Faculty</option>
+                        </select>
+                    </div>
+                    <div class="setup-actions">
+                        <button type="submit" class="btn-setup-complete">Complete Setup</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    <!-- Main content area -->
+    <main class="content">
+        
+
+        <section class="content-body" id="dashboardSection">
+            <!-- Welcome Section with Date & Time -->
+            <div class="welcome-section">
+                <h2 id="greeting">Good Day, {{ session.name if session.get('name') else 'Student' }}! 👋</h2>
+                <p id="datetime"></p>
+            </div>
+
+            <!-- Statistics Cards -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalAssessments">0</div>
+                            <div class="stat-label">Assessments Completed</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="averageScore">0%</div>
+                            <div class="stat-label">Average Score</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Action Buttons -->
+            <section class="quick-actions-section">
+                <h3>Quick Actions</h3>
+                <div class="action-buttons-grid">
+                    <a href="/assessments" class="action-btn action-btn-primary">
+                        <span class="action-icon">➕</span>
+                        <span class="action-text">Start Assessment</span>
+                    </a>
+                    <a href="#" class="action-btn action-btn-secondary" id="viewResultsBtn">
+                        <span class="action-icon">📈</span>
+                        <span class="action-text">View Results</span>
+                    </a>
+                    <a href="#" class="action-btn action-btn-secondary" id="downloadReportBtn">
+                        <span class="action-icon">📥</span>
+                        <span class="action-text">Download Report</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Performance Analytics -->
+            <section class="analytics-section">
+                <div class="analytics-container">
+                    <div class="analytics-card">
+                        <h3>Performance Over Time</h3>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Score Distribution</h3>
+                        <div class="chart-container">
+                            <canvas id="scoreChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity Feed -->
+            <section class="activity-section">
+                <h3>Recent Activity</h3>
+                <div class="activity-feed" id="activityFeed">
+                    <div class="activity-item">
+                        <div class="activity-icon">⏳</div>
+                        <div class="activity-content">
+                            <div class="activity-title">No recent activity</div>
+                            <div class="activity-time">Start your first assessment</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- Class Section (Hidden by default) -->
+        <section class="content-body" id="classSection" style="display:none;">
+            <div class="class-header">
+                <h2>My Class Information</h2>
+                <button id="editToggleBtn" class="btn-edit-class">Edit Information</button>
+            </div>
+
+            <!-- View Mode -->
+            <div id="viewMode" class="class-content">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <label>Full Name</label>
+                        <p id="displayName">-</p>
+                    </div>
+                    <div class="info-card">
+                        <label>Email Address</label>
+                        <p id="displayEmail">-</p>
+                    </div>
+                    <div class="info-card">
+                        <label>Contact Number</label>
+                        <p id="displayContact">-</p>
+                    </div>
+                    <div class="info-card">
+                        <label>Role</label>
+                        <p id="displayRole">Student</p>
+                    </div>
+                    <div class="info-card">
+                        <label>Class</label>
+                        <p id="displayClass">-</p>
+                    </div>
+                    <div class="info-card">
+                        <label>Faculty</label>
+                        <p id="displayFaculty">-</p>
+                    </div>
+                </div>
+                <button id="changePasswordViewBtn" class="btn-change-password">Change Password</button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div id="editMode" class="class-content" style="display:none;">
+                <form id="editStudentForm" class="edit-form">
+                    <div class="form-group">
+                        <label for="editName">Full Name</label>
+                        <input type="text" id="editName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email Address</label>
+                        <input type="email" id="editEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editContact">Contact Number</label>
+                        <input type="tel" id="editContact" name="contact">
+                    </div>
+                    <div class="form-group">
+                        <label for="editClass">Class</label>
+                        <input type="text" id="editClass" name="class" placeholder="e.g., B.Tech - 3rd Semester">
+                    </div>
+                    <div class="form-group">
+                        <label for="editFaculty">Faculty</label>
+                        <select id="editFaculty" name="faculty_id">
+                            <option value="">Select Faculty</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">Save Changes</button>
+                        <button type="button" id="cancelEditBtn" class="btn-cancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Change Password Section -->
+            <div id="changePasswordMode" class="class-content" style="display:none;">
+                <form id="changePasswordForm" class="edit-form">
+                    <h3>Change Your Password</h3>
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" name="current_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" name="new_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" name="confirm_password" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">Update Password</button>
+                        <button type="button" id="cancelPasswordBtn" class="btn-cancel">Back</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.getElementById('hamburger');
+    const profilePhoto = document.getElementById('profilePhoto');
+    const editPhotoBtn = document.getElementById('editPhotoBtn');
+    const photoInput = document.getElementById('photoInput');
+    const openProfile = document.getElementById('openProfile');
+    const profileDrawer = document.getElementById('profileDrawer');
+    const closeDrawer = document.getElementById('closeDrawer');
+    const drawerEditBtn = document.getElementById('drawerEditBtn');
+    const drawerToggle = document.getElementById('drawerToggle');
+    const drawerResizer = document.getElementById('drawerResizer');
+    const container = document.querySelector('.student-container');
+
+    // Toggle sidebar popup on mobile
+    hamburger.addEventListener('click', () => {
+        container.classList.toggle('sidebar-open');
+        sidebar.classList.toggle('open');
+    });
+
+    // Close sidebar when clicking the backdrop
+    container.addEventListener('click', (e) => {
+        if (e.target === container && container.classList.contains('sidebar-open')) {
+            container.classList.remove('sidebar-open');
+            sidebar.classList.remove('open');
+        }
+    });
+
+    // Close sidebar when a nav link is clicked
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            container.classList.remove('sidebar-open');
+            sidebar.classList.remove('open');
+        });
+    });
+
+    // Photo upload functionality
+    editPhotoBtn.addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        photoInput.click(); 
+    });
+
+    photoInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        const form = new FormData();
+        form.append('photo', file);
+
+        fetch('/upload-profile-photo', {
+            method: 'POST',
+            body: form,
+        }).then(r => r.json()).then(js => {
+            if (js.status === 'ok' && js.url) {
+                const url = js.url;
+                profilePhoto.src = url;
+            } else {
+                alert('Upload failed: ' + (js.error || 'unknown'));
+            }
+        }).catch(err => {
+            console.error(err);
+            alert('Upload error');
+        });
+    });
+    
+    // Update greeting based on time of day
+    function updateGreeting() {
+        const hour = new Date().getHours();
+        const greetingEl = document.getElementById('greeting');
+        const studentName = "{{ session.name if session.get('name') else 'Student' }}";
+        let greeting = '';
+        
+        if (hour < 12) greeting = '🌅 Good Morning';
+        else if (hour < 18) greeting = '☀️ Good Afternoon';
+        else greeting = '🌙 Good Evening';
+        
+        greetingEl.textContent = `${greeting}, ${studentName}! 👋`;
+    }
+
+    // Update date and time
+    function updateDateTime() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        document.getElementById('datetime').textContent = now.toLocaleDateString('en-US', options);
+    }
+
+    // Fetch student statistics
+    async function loadStatistics() {
+        try {
+            const response = await fetch('/api/student-stats?t=' + new Date().getTime(), {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Student stats loaded:', data);
+                
+                document.getElementById('totalAssessments').textContent = data.total_assessments || 0;
+                const avgScore = parseFloat(data.average_score) || 0;
+                document.getElementById('averageScore').textContent = avgScore.toFixed(1) + '%';
+                document.getElementById('currentStreak').textContent = data.streak || 0;
+                document.getElementById('upcomingCount').textContent = data.upcoming || 0;
+                
+                // Load charts with data
+                loadPerformanceChart(data.performance_data || []);
+                loadScoreChart(data.score_distribution || []);
+                loadActivityFeed(data.recent_activity || []);
+            } else {
+                console.error('Failed to load statistics:', response.status);
+            }
+        } catch (error) {
+            console.error('Failed to load statistics:', error);
+        }
+    }
+
+    // Store chart instances for redraw on resize
+    let performanceChartInstance = null;
+    let scoreChartInstance = null;
+
+    // Load performance over time chart
+    function loadPerformanceChart(data) {
+        const ctx = document.getElementById('performanceChart');
+        if (!ctx) return;
+        
+        // Check if Chart.js is available
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js not loaded yet');
+            return;
+        }
+
+        // Destroy existing chart if it exists
+        if (performanceChartInstance) {
+            performanceChartInstance.destroy();
+        }
+
+        const canvasCtx = ctx.getContext('2d');
+        const gradientFill = canvasCtx.createLinearGradient(0, 0, 0, 300);
+        gradientFill.addColorStop(0, 'rgba(0, 255, 255, 0.4)');
+        gradientFill.addColorStop(0.5, 'rgba(255, 0, 255, 0.3)');
+        gradientFill.addColorStop(1, 'rgba(0, 255, 255, 0.1)');
+
+        performanceChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.length > 0 ? data.map(d => d.date) : ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                datasets: [{
+                    label: 'Assessment Score',
+                    data: data.length > 0 ? data.map(d => d.score) : [65, 72, 78, 85, 88],
+                    borderColor: '#00ffff',
+                    backgroundColor: gradientFill,
+                    borderWidth: 4,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#ff00ff',
+                    pointBorderColor: '#00ffff',
+                    pointBorderWidth: 3,
+                    pointRadius: 8,
+                    pointHoverRadius: 10,
+                    pointHoverBackgroundColor: '#00ff00',
+                    pointHoverBorderColor: '#ffff00'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        display: true, 
+                        position: 'top',
+                        labels: {
+                            color: '#ffffff',
+                            font: { size: 14, weight: 'bold' },
+                            padding: 15,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                        titleColor: '#00ffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#00ffff',
+                        borderWidth: 2,
+                        padding: 12
+                    }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        max: 100,
+                        ticks: { color: '#00ffff', font: { size: 12, weight: 'bold' } },
+                        grid: { color: 'rgba(0, 255, 255, 0.2)' }
+                    },
+                    x: {
+                        ticks: { color: '#ffffff', font: { size: 12, weight: 'bold' } },
+                        grid: { color: 'rgba(0, 255, 255, 0.1)' }
+                    }
+                }
+            }
+        });
+    }
+
+    // Load score distribution chart
+    function loadScoreChart(data) {
+        const ctx = document.getElementById('scoreChart');
+        if (!ctx) return;
+
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js not loaded yet');
+            return;
+        }
+
+        // Destroy existing chart if it exists
+        if (scoreChartInstance) {
+            scoreChartInstance.destroy();
+        }
+
+        scoreChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data.length > 0 ? data.map(d => d.label) : ['Excellent (90+)', 'Good (80-89)', 'Average (70-79)', 'Fair (60-69)', 'Poor (<60)'],
+                datasets: [{
+                    data: data.length > 0 ? data.map(d => d.count) : [5, 8, 6, 3, 1],
+                    backgroundColor: ['#00ffff', '#00ff00', '#ff00ff', '#ffff00', '#ff0088'],
+                    borderColor: '#ffffff',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        display: true, 
+                        position: 'bottom',
+                        labels: {
+                            color: '#ffffff',
+                            padding: 20,
+                            font: { size: 12, weight: 'bold' },
+                            boxWidth: 16,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                        titleColor: '#00ffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#00ffff',
+                        borderWidth: 2,
+                        padding: 12
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 10,
+                        bottom: 30,
+                        left: 10,
+                        right: 10
+                    }
+                }
+            }
+        });
+    }
+
+    // Load recent activity feed
+    function loadActivityFeed(activities) {
+        const feedEl = document.getElementById('activityFeed');
+        
+        if (!activities || activities.length === 0) {
+            feedEl.innerHTML = '<div class="activity-item"><div class="activity-icon">⏳</div><div class="activity-content"><div class="activity-title">No recent activity</div><div class="activity-time">Start your first assessment</div></div></div>';
+            return;
+        }
+
+        feedEl.innerHTML = activities.map(activity => `
+            <div class="activity-item">
+                <div class="activity-icon">${activity.icon || '📝'}</div>
+                <div class="activity-content">
+                    <div class="activity-title">${activity.title || 'Assessment'}</div>
+                    <div class="activity-details">Score: ${activity.score || 'N/A'}% | ${activity.subject || 'General'}</div>
+                    <div class="activity-time">${activity.date || 'Recently'}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Button event listeners
+    document.getElementById('viewResultsBtn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('View Results feature coming soon!');
+    });
+
+    document.getElementById('downloadReportBtn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('Download Report feature coming soon!');
+    });
+
+    // Initialize on load
+    window.addEventListener('load', () => {
+        updateGreeting();
+        updateDateTime();
+        loadStatistics();
+        checkProfileCompletion();
+        
+        // Update time every minute
+        setInterval(updateDateTime, 60000);
+    });
+
+    // Update statistics every 5 minutes
+    setInterval(loadStatistics, 5 * 60 * 1000);
+
+    // Handle window resize - redraw charts
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (performanceChartInstance) {
+                performanceChartInstance.resize();
+            }
+            if (scoreChartInstance) {
+                scoreChartInstance.resize();
+            }
+        }, 250);  // Wait 250ms after resize stops before redrawing
+    });
+
+    // ========== CLASS SECTION FUNCTIONALITY ==========
+
+    const classLink = document.getElementById('classLink');
+    const dashboardSection = document.getElementById('dashboardSection');
+    const classSection = document.getElementById('classSection');
+    const editToggleBtn = document.getElementById('editToggleBtn');
+    const viewMode = document.getElementById('viewMode');
+    const editMode = document.getElementById('editMode');
+    const changePasswordMode = document.getElementById('changePasswordMode');
+    const editStudentForm = document.getElementById('editStudentForm');
+    const changePasswordForm = document.getElementById('changePasswordForm');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+    const changePasswordViewBtn = document.getElementById('changePasswordViewBtn');
+
+    // Load student information
+    async function loadStudentInfo() {
+        try {
+            const response = await fetch('/api/student-info', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                // Display info
+                document.getElementById('displayName').textContent = data.name || '-';
+                document.getElementById('displayEmail').textContent = data.email || '-';
+                document.getElementById('displayContact').textContent = data.contact || '-';
+                document.getElementById('displayRole').textContent = data.role || 'Student';
+                document.getElementById('displayClass').textContent = data.class || '-';
+                document.getElementById('displayFaculty').textContent = data.faculty_name || '-';
+                
+                // Fill form fields
+                document.getElementById('editName').value = data.name || '';
+                document.getElementById('editEmail').value = data.email || '';
+                document.getElementById('editContact').value = data.contact || '';
+                document.getElementById('editClass').value = data.class || '';
+                document.getElementById('editFaculty').value = data.faculty_id || '';
+            }
+        } catch (error) {
+            console.error('Failed to load student info:', error);
+        }
+    }
+
+    // Load faculties for dropdown
+    async function loadFaculties() {
+        try {
+            const response = await fetch('/api/faculties', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const facultySelect = document.getElementById('editFaculty');
+                facultySelect.innerHTML = '<option value="">Select Faculty</option>';
+                
+                if (data.faculties && Array.isArray(data.faculties)) {
+                    data.faculties.forEach(faculty => {
+                        const option = document.createElement('option');
+                        option.value = faculty.id;
+                        option.textContent = faculty.name;
+                        facultySelect.appendChild(option);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load faculties:', error);
+        }
+    }
+
+    // Toggle between dashboard and class section
+    classLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        dashboardSection.style.display = 'none';
+        classSection.style.display = 'block';
+        loadStudentInfo();
+        
+        // Hide modals and show view mode
+        viewMode.style.display = 'block';
+        editMode.style.display = 'none';
+        changePasswordMode.style.display = 'none';
+    });
+
+    // Check if student profile is complete on page load
+    async function checkProfileCompletion() {
+        try {
+            const response = await fetch('/api/student-info', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                
+                // If class or faculty is missing, show setup modal
+                if (!data.class || !data.faculty_id) {
+                    document.getElementById('setupModal').style.display = 'flex';
+                    loadFacultiesForSetup();
+                    
+                    // Disable assessment link until setup is complete
+                    document.querySelector('a[href="/assessments"]').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        alert('Please complete your profile setup first!');
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Failed to check profile completion:', error);
+        }
+    }
+
+    // Load faculties for setup modal
+    async function loadFacultiesForSetup() {
+        try {
+            const response = await fetch('/api/faculties', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const facultySelect = document.getElementById('setupFaculty');
+                facultySelect.innerHTML = '<option value="">Select Faculty</option>';
+                
+                if (data.faculties && Array.isArray(data.faculties)) {
+                    data.faculties.forEach(faculty => {
+                        const option = document.createElement('option');
+                        option.value = faculty.id;
+                        option.textContent = faculty.name;
+                        facultySelect.appendChild(option);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load faculties for setup:', error);
+        }
+    }
+
+    // Handle setup form submission
+    const setupForm = document.getElementById('setupForm');
+    setupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            class: document.getElementById('setupClass').value,
+            faculty_id: document.getElementById('setupFaculty').value
+        };
+
+        try {
+            const response = await fetch('/api/setup-profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                alert('Profile setup completed! You can now access assessments.');
+                document.getElementById('setupModal').style.display = 'none';
+                loadStudentInfo();
+            } else {
+                const error = await response.json();
+                alert('Error: ' + (error.error || 'Failed to complete setup'));
+            }
+        } catch (error) {
+            console.error('Error completing setup:', error);
+            alert('Failed to complete setup');
+        }
+    });
+
+    // Edit button functionality
+    editToggleBtn.addEventListener('click', () => {
+        viewMode.style.display = 'none';
+        editMode.style.display = 'block';
+        changePasswordMode.style.display = 'none';
+        loadFaculties();
+    });
+
+    // Cancel edit
+    cancelEditBtn.addEventListener('click', () => {
+        loadStudentInfo();
+        viewMode.style.display = 'block';
+        editMode.style.display = 'none';
+    });
+
+    // Save student info
+    editStudentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            name: document.getElementById('editName').value,
+            email: document.getElementById('editEmail').value,
+            contact: document.getElementById('editContact').value,
+            class: document.getElementById('editClass').value,
+            faculty_id: document.getElementById('editFaculty').value
+        };
+
+        try {
+            const response = await fetch('/api/update-student-info', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert('Information updated successfully!');
+                loadStudentInfo();
+                viewMode.style.display = 'block';
+                editMode.style.display = 'none';
+            } else {
+                const error = await response.json();
+                alert('Error: ' + (error.error || 'Failed to update information'));
+            }
+        } catch (error) {
+            console.error('Error updating info:', error);
+            alert('Failed to update information');
+        }
+    });
+
+    // Change password view
+    changePasswordViewBtn.addEventListener('click', () => {
+        viewMode.style.display = 'none';
+        editMode.style.display = 'none';
+        changePasswordMode.style.display = 'block';
+        document.getElementById('changePasswordForm').reset();
+    });
+
+    // Cancel password change
+    cancelPasswordBtn.addEventListener('click', () => {
+        changePasswordMode.style.display = 'none';
+        viewMode.style.display = 'block';
+        document.getElementById('changePasswordForm').reset();
+    });
+
+    // Update password
+    changePasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (newPassword !== confirmPassword) {
+            alert('New passwords do not match!');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            alert('New password must be at least 6 characters long!');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/update-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    current_password: currentPassword,
+                    new_password: newPassword
+                })
+            });
+
+            if (response.ok) {
+                alert('Password updated successfully!');
+                changePasswordMode.style.display = 'none';
+                viewMode.style.display = 'block';
+                document.getElementById('changePasswordForm').reset();
+            } else {
+                const error = await response.json();
+                alert('Error: ' + (error.error || 'Failed to update password'));
+            }
+        } catch (error) {
+            console.error('Error updating password:', error);
+            alert('Failed to update password');
+        }
+    });
+
+    // Make Assessment link go back to dashboard
+    document.querySelector('a[href="/assessments"]').addEventListener('click', (e) => {
+        e.preventDefault();
+        classSection.style.display = 'none';
+        dashboardSection.style.display = 'block';
+        viewMode.style.display = 'block';
+        editMode.style.display = 'none';
+        changePasswordMode.style.display = 'none';
+        window.location.href = '/assessments';
+    });
+</script>
+
+{% endblock %}

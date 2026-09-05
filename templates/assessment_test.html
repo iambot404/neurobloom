@@ -1,0 +1,569 @@
+{% extends "base.html" %}
+
+{% block title %}Take Assessment - Neurobloom{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assessment.css') }}">
+
+<style>
+    .assessment-header-actions {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .btn-view-results {
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        white-space: nowrap;
+    }
+
+    .btn-view-results:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-view-results:active {
+        transform: translateY(0);
+    }
+
+    .btn-back-dashboard {
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        white-space: nowrap;
+    }
+
+    .btn-back-dashboard:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-back-dashboard:active {
+        transform: translateY(0);
+    }
+</style>
+
+<div class="assessment-container">
+    <!-- Back to Dashboard Button -->
+    <div style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center;">
+        <button class="btn-back-dashboard" onclick="goToDashboard()">
+            ← Back to Dashboard
+        </button>
+        <span style="color: #999; font-size: 12px;">
+            {% if session.get('role') == 'student' %}
+            Student Dashboard
+            {% elif session.get('role') == 'faculty' %}
+            Faculty Dashboard
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- Timer and Progress -->
+    <div class="assessment-header">
+        <div class="assessment-info">
+            <h2 id="assessmentTitle">Assessment</h2>
+            <p id="assessmentDescription" class="assessment-desc"></p>
+        </div>
+        
+        <!-- View Results Button -->
+        <div class="assessment-header-actions">
+            <button id="viewResultsBtn" class="btn-view-results" onclick="goToResults()" style="display:none;">
+                📊 View Previous Results
+            </button>
+        </div>
+        
+        <div class="assessment-status">
+            <div class="timer-box">
+                <div class="timer-icon">⏱️</div>
+                <div class="timer-display">
+                    <span id="timerMinutes">25</span>:<span id="timerSeconds">00</span>
+                </div>
+                <p>Time Left</p>
+            </div>
+            
+            <div class="progress-box">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <p><span id="currentQuestion">0</span> / <span id="totalQuestions">20</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessment Content -->
+    <div class="assessment-content">
+        <div class="question-card" id="questionCard">
+            <div class="question-number">
+                Question <span id="qNumber">1</span> of <span id="qTotal">20</span>
+            </div>
+            
+            <div class="question-text" id="questionText">
+                <!-- Question will be loaded here -->
+            </div>
+
+            <!-- Answer Options -->
+            <div class="answer-options" id="answerOptions">
+                <!-- Options will be loaded here -->
+            </div>
+
+            <!-- Short Answer Input -->
+            <div class="answer-input-container" id="answerInputContainer" style="display:none;">
+                <input type="text" id="shortAnswerInput" class="short-answer-input" 
+                       placeholder="Type your answer here...">
+                <p class="input-hint">Type your answer and press Enter or click Continue</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="question-actions">
+                <button id="prevBtn" class="btn btn-secondary" onclick="previousQuestion()">← Previous</button>
+                <button id="submitAnswerBtn" class="btn btn-primary" onclick="submitAnswer()">Continue →</button>
+            </div>
+        </div>
+
+        <!-- Side Panel - Questions Navigator -->
+        <aside class="questions-navigator">
+            <div class="navigator-header">
+                <h3>Questions</h3>
+                <p class="navigator-legend">
+                    <span class="legend-item"><span class="dot answered"></span> Answered</span>
+                    <span class="legend-item"><span class="dot skipped"></span> Skipped</span>
+                    <span class="legend-item"><span class="dot current"></span> Current</span>
+                </p>
+            </div>
+            
+            <div class="questions-grid" id="questionsGrid">
+                <!-- Question buttons will be generated here -->
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- Submit Assessment Modal -->
+<div id="submitModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Review Your Assessment</h3>
+        <p>You have answered <span id="answeredCount">0</span> out of <span id="totalCount">20</span> questions.</p>
+        <p class="warning-text">Once submitted, your assessment cannot be changed.</p>
+        
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeSubmitModal()">Continue Assessment</button>
+            <button class="btn btn-danger" onclick="confirmSubmit()">Submit Assessment</button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div id="loadingSpinner" class="spinner" style="display:none;">
+    <div class="spinner-inner"></div>
+    <p>Processing your answers...</p>
+</div>
+
+<script>
+    // Global variables
+    let currentAssessmentId = parseInt('{{ assessment_id }}');
+    console.log('Template assessment_id value:', '{{ assessment_id }}');
+    console.log('Parsed currentAssessmentId:', currentAssessmentId);
+    
+    if (isNaN(currentAssessmentId)) {
+        console.error('ERROR: assessment_id is not a valid number!');
+        alert('Error: Invalid assessment ID. Please try again.');
+    }
+    
+    let currentQuestionIndex = 0;
+    let questions = [];
+    let studentAssessmentId = null;
+    let answers = {}; // Store: { questionId: answer }
+    let questionTimers = {}; // Track time spent on each question
+    let startTimePerQuestion = null;
+    let assessmentStartTime = null;
+    let timeLimit = 25 * 60; // 25 minutes in seconds
+    let timeRemaining = timeLimit;
+    let assessmentSubmitted = false;
+
+    // Initialize assessment
+    window.addEventListener('load', () => {
+        loadAssessment();
+    });
+
+    async function loadAssessment() {
+        try {
+            console.log('Loading assessment with ID:', currentAssessmentId);
+            
+            const response = await fetch(`/api/assessment/${currentAssessmentId}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            
+            console.log('Assessment API response status:', response.status);
+            
+            if (!response.ok) {
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch (e) {
+                    errorData = { error: 'Unable to parse error response' };
+                }
+                console.error('API error:', errorData);
+                throw new Error(`Failed to load assessment: ${response.status} - ${errorData.error || 'Unknown error'}`);
+            }
+            
+            const data = await response.json();
+            console.log('Assessment data loaded:', data);
+            questions = data.questions;
+            
+            // Check if questions array is empty
+            if (!questions || questions.length === 0) {
+                throw new Error('No questions found for this assessment. Please contact support.');
+            }
+            
+            // Update header
+            document.getElementById('assessmentTitle').textContent = data.assessment.name;
+            document.getElementById('assessmentDescription').textContent = data.assessment.description;
+            document.getElementById('totalQuestions').textContent = questions.length;
+            document.getElementById('qTotal').textContent = questions.length;
+            
+            // Check for previous attempts and show View Results button if available
+            checkPreviousAttempts();
+            
+            // Create student assessment session
+            console.log('Starting assessment session...');
+            const sessionRes = await fetch('/api/student-assessment/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ assessment_id: currentAssessmentId })
+            });
+            
+            console.log('Session API response status:', sessionRes.status);
+            
+            if (!sessionRes.ok) {
+                const sessionError = await sessionRes.json();
+                console.error('Session error:', sessionError);
+                throw new Error(`Failed to start assessment session: ${sessionRes.status} - ${sessionError.error || 'Unknown error'}`);
+            }
+            
+            const sessionData = await sessionRes.json();
+            console.log('Session created:', sessionData);
+            studentAssessmentId = sessionData.student_assessment_id;
+            
+            // Initialize
+            assessmentStartTime = Date.now();
+            displayQuestion(0);
+            generateQuestionNavigator();
+            startTimer();
+            
+        } catch (error) {
+            console.error('FULL ERROR OBJECT:', error);
+            console.error('Error message:', error.message);
+            alert(`Failed to load assessment:\n\n${error.message}\n\nOpen console (F12) for details.`);
+        }
+    }
+
+    function displayQuestion(index) {
+        if (index < 0 || index >= questions.length) return;
+        
+        currentQuestionIndex = index;
+        const question = questions[index];
+        
+        // Update counter
+        document.getElementById('qNumber').textContent = index + 1;
+        document.getElementById('currentQuestion').textContent = index + 1;
+        
+        // Update progress
+        const progress = ((index + 1) / questions.length) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+        
+        // Display question
+        document.getElementById('questionText').textContent = question.question_text;
+        
+        // Clear previous answer options
+        const optionsContainer = document.getElementById('answerOptions');
+        const inputContainer = document.getElementById('answerInputContainer');
+        optionsContainer.innerHTML = '';
+        
+        startTimePerQuestion = Date.now();
+        
+        // Display based on question type
+        if (question.question_type === 'multiple_choice') {
+            inputContainer.style.display = 'none';
+            displayMultipleChoice(question, optionsContainer);
+        } else if (question.question_type === 'true_false') {
+            inputContainer.style.display = 'none';
+            displayTrueFalse(question, optionsContainer);
+        } else if (question.question_type === 'short_answer' || question.question_type === 'reading' || 
+                   question.question_type === 'math' || question.question_type === 'writing') {
+            inputContainer.style.display = 'block';
+            optionsContainer.style.display = 'none';
+            document.getElementById('shortAnswerInput').value = answers[question.id] || '';
+            document.getElementById('shortAnswerInput').focus();
+        }
+        
+        // Update button states
+        document.getElementById('prevBtn').disabled = index === 0;
+        document.getElementById('submitAnswerBtn').textContent = 
+            index === questions.length - 1 ? 'Review & Submit' : 'Continue →';
+        
+        // Highlight current question in navigator
+        updateNavigator(index);
+    }
+
+    function displayMultipleChoice(question, container) {
+        question.options.forEach((option, idx) => {
+            const div = document.createElement('div');
+            div.className = 'option-item';
+            
+            const selected = answers[question.id] === option.id;
+            if (selected) div.classList.add('selected');
+            
+            div.innerHTML = `
+                <input type="radio" name="answer" value="${option.id}" id="option_${option.id}"
+                       ${selected ? 'checked' : ''} onchange="selectAnswer(${question.id}, ${option.id})">
+                <label for="option_${option.id}">${option.option_text}</label>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function displayTrueFalse(question, container) {
+        question.options.forEach((option, idx) => {
+            const div = document.createElement('div');
+            div.className = 'option-item';
+            
+            const selected = answers[question.id] === option.id;
+            if (selected) div.classList.add('selected');
+            
+            div.innerHTML = `
+                <input type="radio" name="answer" value="${option.id}" id="option_${option.id}"
+                       ${selected ? 'checked' : ''} onchange="selectAnswer(${question.id}, ${option.id})">
+                <label for="option_${option.id}">${option.option_text}</label>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function selectAnswer(questionId, optionId) {
+        answers[questionId] = optionId;
+        updateNavigator(currentQuestionIndex);
+    }
+
+    async function submitAnswer() {
+        const question = questions[currentQuestionIndex];
+        
+        // Save short answer if applicable
+        if (question.question_type.includes('answer') || question.question_type === 'reading' || 
+            question.question_type === 'math' || question.question_type === 'writing') {
+            const answerText = document.getElementById('shortAnswerInput').value;
+            if (answerText.trim()) {
+                answers[question.id] = answerText.trim();
+            }
+        }
+        
+        // Record time spent
+        const timeSpent = Math.floor((Date.now() - startTimePerQuestion) / 1000);
+        questionTimers[question.id] = timeSpent;
+        
+        if (currentQuestionIndex < questions.length - 1) {
+            displayQuestion(currentQuestionIndex + 1);
+        } else {
+            // Last question - show submit modal
+            showSubmitModal();
+        }
+    }
+
+    function previousQuestion() {
+        if (currentQuestionIndex > 0) {
+            const question = questions[currentQuestionIndex];
+            const timeSpent = Math.floor((Date.now() - startTimePerQuestion) / 1000);
+            questionTimers[question.id] = timeSpent;
+            
+            displayQuestion(currentQuestionIndex - 1);
+        }
+    }
+
+    function generateQuestionNavigator() {
+        const grid = document.getElementById('questionsGrid');
+        grid.innerHTML = '';
+        
+        questions.forEach((q, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-btn';
+            btn.textContent = idx + 1;
+            btn.onclick = () => {
+                const current = questions[currentQuestionIndex];
+                const timeSpent = Math.floor((Date.now() - startTimePerQuestion) / 1000);
+                questionTimers[current.id] = timeSpent;
+                
+                displayQuestion(idx);
+            };
+            grid.appendChild(btn);
+        });
+    }
+
+    function updateNavigator(currentIdx) {
+        const btns = document.querySelectorAll('.nav-btn');
+        btns.forEach((btn, idx) => {
+            btn.classList.remove('current');
+            if (idx === currentIdx) {
+                btn.classList.add('current');
+            }
+            
+            // Mark as answered
+            if (answers[questions[idx].id] !== undefined) {
+                btn.classList.add('answered');
+            } else {
+                btn.classList.remove('answered');
+            }
+        });
+    }
+
+    function startTimer() {
+        setInterval(() => {
+            timeRemaining--;
+            
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            
+            document.getElementById('timerMinutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('timerSeconds').textContent = String(seconds).padStart(2, '0');
+            
+            // Warn when time is running out
+            if (timeRemaining <= 300 && timeRemaining > 0) {
+                document.querySelector('.timer-box').classList.add('warning');
+            }
+            
+            // Auto-submit when time runs out
+            if (timeRemaining <= 0) {
+                confirmSubmit();
+            }
+        }, 1000);
+    }
+
+    function showSubmitModal() {
+        const answeredCount = Object.keys(answers).length;
+        document.getElementById('answeredCount').textContent = answeredCount;
+        document.getElementById('totalCount').textContent = questions.length;
+        document.getElementById('submitModal').style.display = 'flex';
+    }
+
+    function closeSubmitModal() {
+        document.getElementById('submitModal').style.display = 'none';
+    }
+
+    async function confirmSubmit() {
+        if (assessmentSubmitted) return;
+        assessmentSubmitted = true;
+        
+        document.getElementById('submitModal').style.display = 'none';
+        document.getElementById('loadingSpinner').style.display = 'flex';
+        
+        try {
+            // Prepare answers for submission
+            const submissionData = {
+                student_assessment_id: studentAssessmentId,
+                assessment_id: currentAssessmentId,
+                answers: Object.entries(answers).map(([qId, answer]) => ({
+                    question_id: parseInt(qId),
+                    student_answer: answer,
+                    time_spent_seconds: questionTimers[qId] || 30
+                }))
+            };
+            
+            console.log('Submitting assessment data:', submissionData);
+            
+            const response = await fetch('/api/student-assessment/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(submissionData)
+            });
+            
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.error || `HTTP ${response.status}: Failed to submit assessment`);
+            }
+            
+            console.log('Assessment submitted successfully:', result);
+            
+            // Redirect to results page
+            setTimeout(() => {
+                window.location.href = `/assessment/${currentAssessmentId}/results`;
+            }, 1500);
+            
+        } catch (error) {
+            console.error('Error submitting assessment:', error);
+            alert('Error: ' + error.message);
+            assessmentSubmitted = false;
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+    }
+
+    // Allow Enter key to submit answer for short answer questions
+    document.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && document.getElementById('answerInputContainer').style.display === 'block') {
+            submitAnswer();
+        }
+    });
+
+    // Check if student has previous attempts for this assessment
+    async function checkPreviousAttempts() {
+        try {
+            const response = await fetch(`/api/student-assessment-history/${currentAssessmentId}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.attempts && data.attempts.length > 0) {
+                    // Show the View Results button if there are previous attempts
+                    document.getElementById('viewResultsBtn').style.display = 'inline-block';
+                }
+            }
+        } catch (error) {
+            console.log('No previous attempts or error checking:', error);
+        }
+    }
+
+    // Navigate to view results
+    function goToResults() {
+        // For Dyslexia Assessment (ID=1), use dedicated results page
+        if (currentAssessmentId === 1) {
+            window.location.href = `/dyslexia-results/${currentAssessmentId}`;
+        } else {
+            window.location.href = `/assessment/${currentAssessmentId}/results`;
+        }
+    }
+
+    // Navigate back to dashboard based on user role
+    function goToDashboard() {
+        const userRole = '{{ session.get("role") }}';
+        if (userRole === 'student') {
+            window.location.href = '/student-dashboard';
+        } else if (userRole === 'faculty') {
+            window.location.href = '/faculty-dashboard';
+        } else {
+            window.location.href = '/';
+        }
+    }
+</script>
+
+{% endblock %}

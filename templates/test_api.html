@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assessment API Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #f0f0f0; }
+        .container { background: white; padding: 20px; border-radius: 5px; max-width: 800px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .output { margin-top: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 3px; max-height: 400px; overflow-y: auto; }
+        .error { color: red; }
+        .success { color: green; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Assessment API Tester</h1>
+        <p>This tests if the /api/assessment/1 endpoint works</p>
+        
+        <button onclick="testAPI()">Test API Call</button>
+        <button onclick="clearOutput()">Clear Output</button>
+        
+        <div class="output" id="output">
+            <p>Click "Test API Call" to test the endpoint...</p>
+        </div>
+    </div>
+
+    <script>
+        function testAPI() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<p>Testing API call...</p>';
+            
+            console.log('Starting test...');
+            
+            fetch('/api/assessment/1', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            })
+            .then(response => {
+                output.innerHTML += `<p>Response Status: <strong>${response.status}</strong></p>`;
+                console.log('Response status:', response.status);
+                
+                // Try to read response as text first
+                return response.text().then(text => ({
+                    status: response.status,
+                    ok: response.ok,
+                    text: text
+                }));
+            })
+            .then(data => {
+                output.innerHTML += `<p><strong>Response Text:</strong></p>`;
+                output.innerHTML += `<pre>${JSON.stringify(data.text, null, 2)}</pre>`;
+                
+                if (data.ok) {
+                    try {
+                        const json = JSON.parse(data.text);
+                        output.innerHTML += `<p class="success"><strong>✓ SUCCESS: Valid JSON</strong></p>`;
+                        output.innerHTML += `<p><strong>Assessment Name:</strong> ${json.assessment.name}</p>`;
+                        output.innerHTML += `<p><strong>Number of Questions:</strong> ${json.questions.length}</p>`;
+                        
+                        if (json.questions.length > 0) {
+                            output.innerHTML += `<p><strong>First Question:</strong> ${json.questions[0].question_text}</p>`;
+                        }
+                    } catch (e) {
+                        output.innerHTML += `<p class="error"><strong>✗ ERROR: Invalid JSON</strong></p>`;
+                        output.innerHTML += `<p>${e.message}</p>`;
+                    }
+                } else {
+                    output.innerHTML += `<p class="error"><strong>✗ ERROR: ${data.status}</strong></p>`;
+                    output.innerHTML += `<p>Response: ${data.text}</p>`;
+                }
+            })
+            .catch(error => {
+                output.innerHTML += `<p class="error"><strong>✗ NETWORK ERROR</strong></p>`;
+                output.innerHTML += `<p>${error.message}</p>`;
+                console.error('Fetch error:', error);
+            });
+        }
+        
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '<p>Output cleared</p>';
+        }
+    </script>
+</body>
+</html>

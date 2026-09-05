@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Filter Debug Test</title>
+</head>
+<body>
+    <h1>Filter Debug Test</h1>
+    <p>Open browser console (F12) and check the console output when filters are clicked</p>
+    <p>This page tests the filter button click functionality</p>
+    
+    <div style="margin: 20px; padding: 20px; border: 1px solid #ccc;">
+        <h2>Test Filters</h2>
+        <button class="filter-btn filter-btn-active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="dyslexia">Dyslexia</button>
+        <button class="filter-btn" data-filter="dyscalculia">Dyscalculia</button>
+        <button class="filter-btn" data-filter="dysgraphia">Dysgraphia</button>
+    </div>
+    
+    <script>
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                console.log('Filter clicked:', this.dataset.filter);
+                // Remove active from all
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-btn-active'));
+                // Add active to clicked
+                this.classList.add('filter-btn-active');
+            });
+        });
+    </script>
+</body>
+</html>

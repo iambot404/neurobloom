@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block title %}Student Profile | DocHub{% endblock %}
+
+{% block content %}
+<!-- Floating Pill Navbar -->
+<header class="ag-nav-wrapper">
+  <nav class="ag-nav">
+    <a href="/" class="ag-logo">
+      <div class="ag-logo-mark">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="ag-logo-text">DocHub</span>
+      <span class="ag-logo-badge">Student</span>
+    </a>
+
+    <ul class="ag-nav-links">
+      <li><a href="/student" class="ag-nav-link">Dashboard</a></li>
+      <li><a href="/assessments" class="ag-nav-link">Assessments</a></li>
+      <li><a href="/student-profile" class="ag-nav-link active">Profile</a></li>
+    </ul>
+
+    <div class="ag-nav-actions">
+      <a href="/assessments" class="ag-btn ag-btn-sm ag-btn-primary">Take Test →</a>
+      <a href="/logout" class="ag-btn ag-btn-sm ag-btn-ghost">Logout</a>
+    </div>
+  </nav>
+</header>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='student-profile.css') }}">
+
+<div class="profile-container">
+    <!-- Header -->
+    <div class="profile-header">
+        <div class="profile-header-content">
+            <h1>Student Profile</h1>
+            <p>View cognitive screening history, achievements, and account details</p>
+        </div>
+        <button class="btn-back" onclick="window.history.back()">← Back</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="profile-main">
+        <!-- Sidebar with Profile Photo -->
+        <aside class="profile-sidebar">
+            <!-- Interactive Photo Section -->
+            <div class="profile-photo-container">
+                <div class="photo-wrapper">
+                    <img id="profilePhotoImg" src="{{ url_for('static', filename='imgs/default-profile.png') }}" alt="Profile Photo" class="profile-photo">
+                    <div class="photo-overlay">
+                        <button class="btn-change-photo" id="uploadPhotoBtn" title="Change Profile Photo">
+                            <span>📷</span>
+                            <span class="tooltip">Change Photo</span>
+                        </button>
+                    </div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                <div class="photo-upload-progress" id="photoProgress" style="display: none;">
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                    <p>Uploading...</p>
+                </div>
+            </div>
+
+            <!-- Profile Stats -->
+            <div class="profile-stats">
+                <div class="stat">
+                    <div class="stat-value" id="totalAssessmentsStat">0</div>
+                    <div class="stat-label">Assessments</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="averageScoreStat">0%</div>
+                    <div class="stat-label">Avg Score</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="disordersStat">0</div>
+                    <div class="stat-label">Disorders</div>
+                </div>
+            </div>
+
+            <!-- Performance Indicator -->
+            <div class="performance-indicator">
+                <h4>Overall Performance</h4>
+                <div class="performance-bar">
+                    <div class="performance-fill" id="performanceFill" style="width: 0%"></div>
+                </div>
+                <p class="performance-text" id="performanceText">Get started with your first assessment!</p>
+            </div>
+
+            <!-- Achievement Badges -->
+            <div class="achievement-badges">
+                <h4>Achievements</h4>
+                <div class="badges-container" id="badgesContainer">
+                    <div class="badge locked" title="Complete your first assessment">
+                        <span class="badge-icon">🎯</span>
+                        <span class="badge-name">Starter</span>
+                    </div>
+                    <div class="badge locked" title="Score 80% or higher">
+                        <span class="badge-icon">⭐</span>
+                        <span class="badge-name">Excellent</span>
+                    </div>
+                    <div class="badge locked" title="Complete all 3 assessments">
+                        <span class="badge-icon">🏆</span>
+                        <span class="badge-name">Master</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disorder Breakdown -->
+            <div class="disorder-breakdown">
+                <h3>Disorder Breakdown</h3>
+                <div id="disorderList" class="disorder-list">
+                    <p class="loading">Loading...</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="profile-content">
+            <!-- View Mode Section -->
+            <div id="viewMode" class="view-mode active">
+                <!-- Personal Information Section -->
+                <div class="info-section">
+                    <div class="section-header">
+                        <h2>📋 Personal Information</h2>
+                        <button class="btn-edit" id="editPersonalBtn" data-section="personal">✏️ Edit</button>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Full Name</label>
+                            <p id="displayName">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Email Address</label>
+                            <p id="displayEmail">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Contact Number</label>
+                            <p id="displayContact">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Account Status</label>
+                            <p><span class="badge-status active">Active</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Information Section -->
+                <div class="info-section">
+                    <div class="section-header">
+                        <h2>🎓 Academic Information</h2>
+                        <button class="btn-edit" id="editAcademicBtn" data-section="academic">✏️ Edit</button>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Class/Semester</label>
+                            <p id="displayClass">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Faculty/Mentor</label>
+                            <p id="displayFaculty">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Summary Section -->
+                <div class="info-section">
+                    <div class="section-header">
+                        <h2>📊 Performance Summary</h2>
+                    </div>
+                    <div class="performance-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">Total Assessments:</span>
+                            <span class="summary-value" id="summaryAssessments">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Average Score:</span>
+                            <span class="summary-value" id="summaryAvgScore">0%</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Disorders Attempted:</span>
+                            <span class="summary-value" id="summaryDisorders">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Section -->
+                <div class="info-section">
+                    <div class="section-header">
+                        <h2>🔒 Security & Settings</h2>
+                        <button class="btn-edit" id="editSecurityBtn" data-section="security">✏️ Change Password</button>
+                    </div>
+                    <div class="security-info">
+                        <p>Keep your account secure by using a strong password</p>
+                        <p class="text-muted">Last password change: <span id="lastPasswordChange">Not set</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Mode Section -->
+            <div id="editMode" class="edit-mode">
+                <!-- Personal Info Edit Form -->
+                <div id="editPersonalForm" class="edit-form active" style="display: none;">
+                    <div class="form-section">
+                        <h2>Edit Personal Information</h2>
+                        <form id="personalForm" class="profile-form">
+                            <div class="form-group">
+                                <label for="fullName">Full Name *</label>
+                                <input type="text" id="fullName" name="name" placeholder="Your full name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contact">Contact Number</label>
+                                <input type="tel" id="contact" name="contact" placeholder="9876543210">
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Academic Info Edit Form -->
+                <div id="editAcademicForm" class="edit-form" style="display: none;">
+                    <div class="form-section">
+                        <h2>Edit Academic Information</h2>
+                        <form id="academicForm" class="profile-form">
+                            <div class="form-group">
+                                <label for="class">Class/Semester</label>
+                                <input type="text" id="class" name="class" placeholder="e.g., B.Tech 3rd Year, B.A 2nd Sem">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="faculty">Faculty/Mentor</label>
+                                <select id="faculty" name="faculty_id">
+                                    <option value="">Select a faculty</option>
+                                </select>
+                            </div>
+
+                            <div class="info-box">
+                                <p>ℹ️ Your faculty is the mentor assigned to guide your learning progress.</p>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security Edit Form -->
+                <div id="editSecurityForm" class="edit-form" style="display: none;">
+                    <div class="form-section">
+                        <h2>Change Password</h2>
+                        <form id="securityForm" class="profile-form">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password *</label>
+                                <input type="password" id="currentPassword" name="current_password" placeholder="Enter current password" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newPassword">New Password *</label>
+                                <input type="password" id="newPassword" name="new_password" placeholder="Enter new password" required>
+                                <small>Password must be at least 8 characters long</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password *</label>
+                                <input type="password" id="confirmPassword" name="confirm_password" placeholder="Confirm new password" required>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Change Password</button>
+                                <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Messages -->
+<div id="successMessage" class="message success-message" style="display: none;"></div>
+<div id="errorMessage" class="message error-message" style="display: none;"></div>
+
+<script src="{{ url_for('static', filename='student-profile.js') }}"></script>
+{% endblock %}

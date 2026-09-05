@@ -1,0 +1,455 @@
+{% extends "base.html" %}
+
+{% block title %}DocHub | Next-Gen AI Learning Assessment Platform{% endblock %}
+
+{% block content %}
+<!-- Floating Pill Navbar -->
+<header class="ag-nav-wrapper">
+  <nav class="ag-nav">
+    <a href="/" class="ag-logo">
+      <div class="ag-logo-mark">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="ag-logo-text">DocHub</span>
+      <span class="ag-logo-badge">AI Platform</span>
+    </a>
+
+    <ul class="ag-nav-links">
+      <li><a href="/assessments" class="ag-nav-link">Assessments</a></li>
+      <li><a href="#how-it-works" class="ag-nav-link">How It Works</a></li>
+      <li><a href="#ai-pipeline" class="ag-nav-link">AI Pipeline</a></li>
+      <li><a href="#about" class="ag-nav-link">About</a></li>
+    </ul>
+
+    <div class="ag-nav-actions">
+      {% if session.get('user_id') %}
+        <a href="/assessments" class="ag-btn ag-btn-sm ag-btn-primary">Take Test →</a>
+        {% if session.get('role') == 'faculty' %}
+          <a href="/faculty" class="ag-user-pill">
+            <span class="ag-status-dot"></span>
+            <span>Faculty Portal</span>
+          </a>
+        {% else %}
+          <a href="/student-profile" class="ag-user-pill">
+            <span class="ag-status-dot"></span>
+            <span>{{ session.get('user_name', 'Student') }}</span>
+          </a>
+        {% endif %}
+        <a href="/logout" class="ag-btn ag-btn-sm ag-btn-ghost">Logout</a>
+      {% else %}
+        <a href="/assessments" class="ag-btn ag-btn-sm ag-btn-primary">Take Test →</a>
+        <a href="/login" class="ag-btn ag-btn-sm ag-btn-ghost">Login</a>
+        <a href="/signup" class="ag-btn ag-btn-sm ag-btn-outline">Sign Up</a>
+      {% endif %}
+    </div>
+  </nav>
+</header>
+
+<!-- Hero Section -->
+<main>
+  <section class="ag-hero">
+    <div class="ag-hero-badge">
+      <span class="ag-hero-badge-sparkle">✦</span>
+      <span>AI-Assisted Educational Screening Platform</span>
+    </div>
+
+    <h1 class="ag-hero-title">
+      Understand how students learn.<span class="ag-cursor-cursor"></span>
+    </h1>
+
+    <p class="ag-hero-subtitle">
+      Deep learning assessments that help educators, parents, and students identify learning patterns earlier, understand cognitive differences, and support potential effectively.
+    </p>
+
+    <div class="ag-hero-cta-group">
+      <a href="/assessments" class="ag-btn ag-btn-lg ag-btn-primary">
+        Explore Assessments →
+      </a>
+      <a href="#how-it-works" class="ag-btn ag-btn-lg ag-btn-outline">
+        How It Works
+      </a>
+      <button id="toggleVideoBtn" class="ag-btn ag-btn-lg ag-btn-ghost" style="border: 1px solid rgba(255,255,255,0.1);">
+        ▶ Watch Preview
+      </button>
+    </div>
+
+    <!-- Floating Capability Tokens Ribbon (Google Antigravity Screenshot 353 style) -->
+    <div class="ag-tokens-ribbon">
+      <div class="ag-token-circle active" title="Phonemic Awareness">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </div>
+      <div class="ag-token-circle" title="Fine Motor & Stroke Kinematics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+          <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+          <path d="M2 2l7.586 7.586"/>
+        </svg>
+      </div>
+      <div class="ag-token-circle" title="Subitizing & Quantitative Processing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <line x1="9" y1="9" x2="9" y2="9"/>
+          <line x1="15" y1="9" x2="15" y2="9"/>
+          <line x1="9" y1="15" x2="9" y2="15"/>
+          <line x1="15" y1="15" x2="15" y2="15"/>
+          <line x1="12" y1="12" x2="12" y2="12"/>
+        </svg>
+      </div>
+      <div class="ag-token-circle" title="Millisecond Reaction Time Latency">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="ag-token-circle" title="Neural Network Pattern Inference">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="18" cy="5" r="3"/>
+          <circle cx="6" cy="12" r="3"/>
+          <circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </div>
+      <div class="ag-token-circle" title="Clinical & Educational Guidance">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Cinematic Showcase Preview -->
+    <div class="ag-hero-showcase">
+      <div id="videoContainer" style="display: none; position: relative;">
+        <video id="heroVideo" controls playsinline muted loop style="width: 100%; border-radius: var(--radius-xl);">
+          <source src="{{ url_for('static', filename='videos/hero_cinematic.mp4') }}" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+      <div id="imageShowcase">
+        <img src="{{ url_for('static', filename='imgs/antigravity_platform_overview.png') }}" 
+             alt="DocHub Platform Overview - Dyslexia, Dysgraphia, and Dyscalculia Modules"
+             loading="eager">
+      </div>
+      <div class="ag-showcase-overlay-bar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px #10B981;"></span>
+          <span style="font-size: 0.85rem; color: #D1D5DB; font-weight: 500;">Three Interactive Deep Learning Diagnostic Engines</span>
+        </div>
+        <a href="/assessments" class="ag-btn ag-btn-sm ag-btn-accent">
+          Try Live Tests →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Assessment Engine Section -->
+  <section id="assessments" class="ag-section">
+    <div class="ag-container">
+      <div class="ag-section-header">
+        <span class="ag-section-tag">DIAGNOSTIC SUITE</span>
+        <h2 class="ag-section-title">One platform.<br>Multiple ways to understand learning.</h2>
+        <p class="ag-section-subtitle">
+          Interactive, research-backed cognitive mini-games designed to assess foundational phonological, motor, and quantitative processing without stressful testing environments.
+        </p>
+      </div>
+
+      <div class="ag-cards-grid">
+        <!-- Dyslexia Card -->
+        <div class="ag-card">
+          <div class="ag-card-media">
+            <img src="{{ url_for('static', filename='imgs/antigravity_dyslexia.png') }}" alt="Dyslexia Assessment">
+            <span class="ag-card-badge badge-dyslexia">Reading & Language</span>
+          </div>
+          <div class="ag-card-body">
+            <h3 class="ag-card-title">Dyslexia Screening</h3>
+            <p class="ag-card-desc">
+              Evaluates phonemic deletion, rhyming patterns, letter-sound matching, word unscrambling, lexical decisions, and rapid automated naming speed.
+            </p>
+            <div class="ag-card-meta">
+              <span class="ag-card-meta-item">⏱ 10–12 min</span>
+              <span class="ag-card-meta-item">• 6 Activities</span>
+              <span class="ag-card-meta-item">• Neural Classifier</span>
+            </div>
+            <div class="ag-card-actions">
+              <a href="/assessment/1" class="ag-btn ag-btn-md ag-btn-primary" style="width: 100%;">
+                Start Assessment →
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dysgraphia Card -->
+        <div class="ag-card">
+          <div class="ag-card-media">
+            <img src="{{ url_for('static', filename='imgs/antigravity_dysgraphia.png') }}" alt="Dysgraphia Evaluation">
+            <span class="ag-card-badge badge-dysgraphia">Handwriting & Motor</span>
+          </div>
+          <div class="ag-card-body">
+            <h3 class="ag-card-title">Dysgraphia Evaluation</h3>
+            <p class="ag-card-desc">
+              Measures touch/stylus coordinate kinematics including stroke smoothness, line deviation residuals, velocity stability, and fine motor fatigue.
+            </p>
+            <div class="ag-card-meta">
+              <span class="ag-card-meta-item">⏱ 8–10 min</span>
+              <span class="ag-card-meta-item">• 5 Canvas Tasks</span>
+              <span class="ag-card-meta-item">• Kinematic ML</span>
+            </div>
+            <div class="ag-card-actions">
+              <a href="/assessment/3" class="ag-btn ag-btn-md ag-btn-primary" style="width: 100%;">
+                Start Evaluation →
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dyscalculia Card -->
+        <div class="ag-card">
+          <div class="ag-card-media">
+            <img src="{{ url_for('static', filename='imgs/antigravity_dyscalculia.png') }}" alt="Dyscalculia Assessment">
+            <span class="ag-card-badge badge-dyscalculia">Numerical Processing</span>
+          </div>
+          <div class="ag-card-body">
+            <h3 class="ag-card-title">Dyscalculia Diagnostic</h3>
+            <p class="ag-card-desc">
+              Evaluates non-symbolic subitizing dot perception, numeric magnitude comparison, symbolic sequencing, digit memory span, and word problems.
+            </p>
+            <div class="ag-card-meta">
+              <span class="ag-card-meta-item">⏱ 10–15 min</span>
+              <span class="ag-card-meta-item">• 6 Modules</span>
+              <span class="ag-card-meta-item">• Quantitative ML</span>
+            </div>
+            <div class="ag-card-actions">
+              <a href="/assessment/2" class="ag-btn ag-btn-md ag-btn-primary" style="width: 100%;">
+                Start Diagnostic →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Processing Pipeline Section -->
+  <section id="ai-pipeline" class="ag-section" style="background: rgba(14, 16, 19, 0.5);">
+    <div class="ag-container">
+      <div class="ag-section-header">
+        <span class="ag-section-tag">SIGNAL INTEGRATION</span>
+        <h2 class="ag-section-title">How DocHub processes an assessment</h2>
+        <p class="ag-section-subtitle">
+          Invisible intelligence operating in real time: capturing interaction signals, passing them through specialized neural networks, and generating evidence-based educator insights.
+        </p>
+      </div>
+
+      <div class="ag-pipeline">
+        <div class="ag-pipeline-step">
+          <div class="ag-step-num">01</div>
+          <h4 class="ag-step-title">Interactive Signal Capture</h4>
+          <p class="ag-step-desc">
+            Browser captures touch paths, vector coordinates, millisecond response times, and phoneme choices.
+          </p>
+        </div>
+
+        <div class="ag-pipeline-step">
+          <div class="ag-step-num">02</div>
+          <h4 class="ag-step-title">Feature Extraction</h4>
+          <p class="ag-step-desc">
+            Computes 20+ specialized cognitive features: turning angle variance, line deviation, speed fatigue, error distribution.
+          </p>
+        </div>
+
+        <div class="ag-pipeline-step">
+          <div class="ag-step-num">03</div>
+          <h4 class="ag-step-title">Neural Forward Pass</h4>
+          <p class="ag-step-desc">
+            Trained deep learning architectures synthesize features into calibrated impairment risk probabilities.
+          </p>
+        </div>
+
+        <div class="ag-pipeline-step">
+          <div class="ag-step-num">04</div>
+          <h4 class="ag-step-title">Multi-Signal Classification</h4>
+          <p class="ag-step-desc">
+            Categorizes risk thresholds into None, Low, Medium, or High with confidence percentiles.
+          </p>
+        </div>
+
+        <div class="ag-pipeline-step">
+          <div class="ag-step-num">05</div>
+          <h4 class="ag-step-title">Actionable Guidance</h4>
+          <p class="ag-step-desc">
+            Selects personalized accommodations, multisensory learning strategies, and classroom recommendations.
+          </p>
+        </div>
+      </div>
+
+      <!-- Ethics & Screening Notice -->
+      <div class="ag-ethics-box">
+        <div class="ag-ethics-icon">✦</div>
+        <div class="ag-ethics-text">
+          <strong>Educational Screening Standard:</strong> DocHub provides AI-assisted screening and cognitive learning insights. Results are intended to support educators and parents in identifying early learning patterns and are not a substitute for formal clinical or medical diagnoses.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Showcase Section (Student & Faculty Experience) -->
+  <section id="how-it-works" class="ag-section">
+    <div class="ag-container">
+      <div class="ag-section-header">
+        <span class="ag-section-tag">DESIGNED AROUND USERS</span>
+        <h2 class="ag-section-title">From results to meaningful insight.</h2>
+        <p class="ag-section-subtitle">
+          Whether you are a student exploring learning strengths, a parent seeking guidance, or an educator managing a classroom cohort, DocHub provides a clean, unified workspace.
+        </p>
+      </div>
+
+      <div class="ag-showcase-frame">
+        <div class="ag-frame-header">
+          <div class="ag-frame-dots">
+            <span class="ag-frame-dot red"></span>
+            <span class="ag-frame-dot yellow"></span>
+            <span class="ag-frame-dot green"></span>
+          </div>
+          <div class="ag-frame-url">https://dochub.ai/dashboard</div>
+        </div>
+        <div class="ag-frame-body">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+            <!-- Feature 1 -->
+            <div style="background: rgba(255,255,255,0.03); padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="font-size: 1.5rem; margin-bottom: 12px; color: #A78BFA;">🎯</div>
+              <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 8px;">Public-First Access</h4>
+              <p style="font-size: 0.9rem; color: #9A9DA3;">Take assessments immediately as a guest. All progress is cached in your browser and can be saved to your permanent account at any time.</p>
+            </div>
+            <!-- Feature 2 -->
+            <div style="background: rgba(255,255,255,0.03); padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="font-size: 1.5rem; margin-bottom: 12px; color: #38BDF8;">📈</div>
+              <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 8px;">Longitudinal Progress</h4>
+              <p style="font-size: 0.9rem; color: #9A9DA3;">Track attempts over time across Dyslexia, Dyscalculia, and Dysgraphia with automatic highest score, average, and trend analysis.</p>
+            </div>
+            <!-- Feature 3 -->
+            <div style="background: rgba(255,255,255,0.03); padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="font-size: 1.5rem; margin-bottom: 12px; color: #34D399;">🏫</div>
+              <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 8px;">Faculty Cohort Analytics</h4>
+              <p style="font-size: 0.9rem; color: #9A9DA3;">Educators get instant visibility into student rosters, completion rates, attention-needed flags, and downloadable screening reports.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="ag-section" style="padding: 60px 0 100px;">
+    <div class="ag-container">
+      <div style="background: linear-gradient(135deg, rgba(124,58,237,0.18) 0%, rgba(99,102,241,0.08) 100%); border: 1px solid rgba(124,58,237,0.3); border-radius: 28px; padding: 60px 32px; text-align: center; position: relative; overflow: hidden;">
+        <h2 style="font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; margin-bottom: 16px;">
+          Ready to discover learning potential?
+        </h2>
+        <p style="color: #9A9DA3; font-size: 1.1rem; max-width: 600px; margin: 0 auto 32px;">
+          Begin a screening assessment right now — no credit card or account required to start.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+          <a href="/assessments" class="ag-btn ag-btn-lg ag-btn-primary">
+            Start Free Screening →
+          </a>
+          <a href="/signup" class="ag-btn ag-btn-lg ag-btn-outline">
+            Create Free Account
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer id="about" class="ag-footer">
+  <div class="ag-container">
+    <div class="ag-footer-grid">
+      <div class="ag-footer-brand">
+        <a href="/" class="ag-logo" style="display: inline-flex;">
+          <div class="ag-logo-mark">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="ag-logo-text">DocHub</span>
+        </a>
+        <p>
+          Next-generation AI educational screening platform empowering students, parents, and educators through scientific cognitive assessment and deep learning analysis.
+        </p>
+      </div>
+
+      <div class="ag-footer-col">
+        <h4>Assessments</h4>
+        <ul>
+          <li><a href="/assessment/1">Dyslexia Screening</a></li>
+          <li><a href="/assessment/3">Dysgraphia Evaluation</a></li>
+          <li><a href="/assessment/2">Dyscalculia Diagnostic</a></li>
+          <li><a href="/assessments">All Assessments</a></li>
+        </ul>
+      </div>
+
+      <div class="ag-footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#ai-pipeline">AI Architecture</a></li>
+          <li><a href="/login">Student Portal</a></li>
+          <li><a href="/login">Faculty Portal</a></li>
+        </ul>
+      </div>
+
+      <div class="ag-footer-col">
+        <h4>Trust & Ethics</h4>
+        <ul>
+          <li><a href="#ai-pipeline">Educational Disclaimer</a></li>
+          <li><a href="#ai-pipeline">Data Privacy</a></li>
+          <li><a href="/support">Help & Support</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ag-footer-bottom">
+      <div>© 2026 DocHub Platform. Inspired by Google Antigravity. All rights reserved.</div>
+      <div>Educational Screening & Research Platform</div>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Toggle cinematic hero video
+  const toggleBtn = document.getElementById('toggleVideoBtn');
+  const videoContainer = document.getElementById('videoContainer');
+  const imageShowcase = document.getElementById('imageShowcase');
+  const heroVideo = document.getElementById('heroVideo');
+
+  if (toggleBtn && videoContainer && imageShowcase) {
+    toggleBtn.addEventListener('click', () => {
+      if (videoContainer.style.display === 'none') {
+        videoContainer.style.display = 'block';
+        imageShowcase.style.display = 'none';
+        toggleBtn.innerHTML = '✕ Close Video';
+        heroVideo.play().catch(e => console.log('Autoplay blocked:', e));
+      } else {
+        videoContainer.style.display = 'none';
+        imageShowcase.style.display = 'block';
+        toggleBtn.innerHTML = '▶ Watch Preview';
+        heroVideo.pause();
+      }
+    });
+  }
+</script>
+{% endblock %}

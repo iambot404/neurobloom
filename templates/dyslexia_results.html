@@ -1,0 +1,927 @@
+{% extends "base.html" %}
+
+{% block title %}Dyslexia Screening Report | DocHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #08090B !important;
+        min-height: 100vh !important;
+        color: #FFFFFF !important;
+    }
+
+    .container {
+        background: transparent !important;
+        padding: 0 !important;
+    }
+
+    .results-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        padding-top: 120px;
+    }
+
+    .results-header {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 40px;
+        animation: slideDown 0.6s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-title h1 {
+        color: #fff;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    .header-title p {
+        color: #b0b0c0;
+        font-size: 1em;
+    }
+
+    .header-meta {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .meta-item {
+        text-align: center;
+    }
+
+    .meta-label {
+        color: #b0b0c0;
+        font-size: 0.9em;
+        margin-bottom: 5px;
+    }
+
+    .meta-value {
+        color: #667eea;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    .attempts-selector {
+        background: rgba(102, 126, 234, 0.1);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 40px;
+    }
+
+    .attempts-selector h2 {
+        color: #fff;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+    }
+
+    .attempts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .attempt-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .attempt-card:hover {
+        background: rgba(102, 126, 234, 0.2);
+        border-color: #667eea;
+        transform: translateY(-5px);
+    }
+
+    .attempt-card.active {
+        background: rgba(102, 126, 234, 0.3);
+        border-color: #667eea;
+    }
+
+    .attempt-number {
+        color: #667eea;
+        font-size: 0.9em;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .attempt-date {
+        color: #fff;
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+
+    .attempt-score {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 1.3em;
+    }
+
+    .results-content {
+        display: none;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    .results-content.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .result-section {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        color: #fff;
+        font-size: 1.5em;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .risk-badge {
+        display: inline-block;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .risk-high {
+        background: rgba(244, 67, 54, 0.2);
+        color: #ff6b6b;
+    }
+
+    .risk-medium {
+        background: rgba(255, 152, 0, 0.2);
+        color: #ffa726;
+    }
+
+    .risk-low {
+        background: rgba(76, 175, 80, 0.2);
+        color: #66bb6a;
+    }
+
+    .risk-none {
+        background: rgba(25, 118, 210, 0.2);
+        color: #42a5f5;
+    }
+
+    .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .game-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .game-card:hover {
+        background: rgba(102, 126, 234, 0.1);
+        border-color: #667eea;
+    }
+
+    .game-name {
+        color: #667eea;
+        font-weight: 600;
+        margin-bottom: 15px;
+        font-size: 1.1em;
+    }
+
+    .game-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #b0b0c0;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .game-stat:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .stat-label {
+        font-size: 0.9em;
+    }
+
+    .stat-value {
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .accuracy-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 15px 0;
+    }
+
+    .bar {
+        flex: 1;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 4px;
+    }
+
+    .bar-text {
+        color: #667eea;
+        font-weight: 600;
+        font-size: 0.9em;
+        min-width: 45px;
+    }
+
+    .warnings-section {
+        background: rgba(255, 152, 0, 0.05);
+        border-left: 4px solid #ffa726;
+        border-radius: 5px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+
+    .warnings-title {
+        color: #ffa726;
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 0.95em;
+    }
+
+    .warning-item {
+        color: #b0b0c0;
+        font-size: 0.9em;
+        margin-bottom: 8px;
+        padding-left: 10px;
+    }
+
+    .warning-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .comparison-section {
+        background: rgba(76, 175, 80, 0.05);
+        border-left: 4px solid #66bb6a;
+        border-radius: 5px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+
+    .comparison-title {
+        color: #66bb6a;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .comparison-item {
+        color: #b0b0c0;
+        font-size: 0.9em;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .recommendations {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .recommendation-card {
+        background: rgba(102, 126, 234, 0.1);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .rec-title {
+        color: #667eea;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .rec-content {
+        color: #b0b0c0;
+        font-size: 0.9em;
+        line-height: 1.5;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 40px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 28px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .loading {
+        text-align: center;
+        color: #b0b0c0;
+        padding: 40px;
+    }
+
+    .error-message {
+        background: rgba(244, 67, 54, 0.1);
+        border: 1px solid rgba(244, 67, 54, 0.3);
+        color: #ff6b6b;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .games-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .header-title h1 {
+            font-size: 1.8em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Floating Pill Navbar -->
+<header class="ag-nav-wrapper">
+  <nav class="ag-nav">
+    <a href="/" class="ag-logo">
+      <div class="ag-logo-mark">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="ag-logo-text">DocHub</span>
+    </a>
+
+    <ul class="ag-nav-links">
+      <li><a href="/" class="ag-nav-link">Home</a></li>
+      <li><a href="/assessments" class="ag-nav-link">Assessments</a></li>
+      <li><a href="/student-profile" class="ag-nav-link">Profile</a></li>
+    </ul>
+
+    <div class="ag-nav-actions">
+      <a href="/assessments" class="ag-btn ag-btn-sm ag-btn-primary">Take Another Test →</a>
+      <a href="/logout" class="ag-btn ag-btn-sm ag-btn-ghost">Exit</a>
+    </div>
+  </nav>
+</header>
+
+<div class="results-container">
+    <!-- Header -->
+    <div class="results-header">
+        <div class="header-content">
+            <div class="header-title">
+                <h1>Dyslexia Screening Report</h1>
+                <p id="assessmentStatus"></p>
+            </div>
+            <div class="header-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Total Attempts</div>
+                    <div class="meta-value" id="totalAttempts">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Latest Score</div>
+                    <div class="meta-value" id="latestScore">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attempt Selector -->
+    <div class="attempts-selector" id="attemptsSelector">
+        <h2>📋 Select Attempt to View</h2>
+        <div class="attempts-grid" id="attemptsGrid">
+            <!-- Populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Results Content -->
+    <div id="resultsContent">
+        <!-- Risk Assessment -->
+        <div class="result-section">
+            <div class="section-title">🎯 Risk Assessment</div>
+            <div id="riskAssessment">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Game Results -->
+        <div class="result-section">
+            <div class="section-title">📊 Game-by-Game Performance</div>
+            <div class="games-grid" id="gamesGrid">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="result-section">
+            <div class="section-title">💡 Recommendations</div>
+            <div class="recommendations" id="recommendationsGrid">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="window.location.href='/assessments'">
+                Back to Assessments
+            </button>
+            <button class="btn btn-secondary" onclick="downloadReport()">
+                Download Report
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const assessmentId = parseInt('{{ assessment_id }}');
+    let allAttempts = [];
+    let currentAttemptIndex = 0;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAssessmentAttempts();
+    });
+
+    async function loadAssessmentAttempts() {
+        try {
+            // Fetch all attempts for this dyslexia assessment
+            const response = await fetch(`/api/dyslexia-results/${assessmentId}`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                showError(data.error || 'Failed to load results');
+                return;
+            }
+
+            allAttempts = data.attempts || [];
+
+            // Check localStorage if server has no attempts for guest
+            if (allAttempts.length === 0) {
+                const localRaw = localStorage.getItem(`dochub_latest_attempt_${assessmentId}`);
+                if (localRaw) {
+                    try {
+                        const localData = JSON.parse(localRaw);
+                        if (localData && localData.results) {
+                            const anaRes = await fetch('/api/analyze-dyslexia', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ games: localData.results })
+                            });
+                            const anaJson = await anaRes.json();
+
+                            allAttempts = [{
+                                id: 'guest',
+                                student_id: null,
+                                assessment_id: assessmentId,
+                                results: localData.results,
+                                risk_level: anaJson.risk || 'Low risk',
+                                details: anaJson.details || {},
+                                status: 'completed',
+                                created_at: localData.created_at || new Date().toISOString(),
+                                is_guest: true
+                            }];
+
+                            const banner = document.createElement('div');
+                            banner.style.cssText = 'background: rgba(124, 58, 237, 0.15); border: 1px solid rgba(124, 58, 237, 0.4); padding: 14px 20px; border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: #E9D5FF;';
+                            banner.innerHTML = `
+                                <span>⚡ <strong>Guest Assessment Attempt:</strong> Showing results cached in this browser. <a href="/signup" style="color: #FFFFFF; font-weight: 700; text-decoration: underline;">Create account</a> or <a href="/login" style="color: #FFFFFF; font-weight: 700; text-decoration: underline;">Log in</a> to save permanently.</span>
+                                <a href="/assessments" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;">Take Another Test</a>
+                            `;
+                            const container = document.querySelector('.results-container');
+                            if (container) container.prepend(banner);
+                        }
+                    } catch (e) {
+                        console.warn('Could not parse local attempt:', e);
+                    }
+                }
+            }
+
+            if (allAttempts.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            // Display attempts and load latest
+            displayAttempts();
+            displayResults(allAttempts[0]);
+
+            // Update header
+            document.getElementById('totalAttempts').textContent = allAttempts.length;
+            document.getElementById('latestScore').textContent = getRiskBadgeText(allAttempts[0].risk_level);
+            document.getElementById('assessmentStatus').textContent = 'All your dyslexia assessment attempts';
+
+        } catch (error) {
+            console.error('Error loading attempts:', error);
+            showEmptyState();
+        }
+    }
+
+    function showEmptyState() {
+        const container = document.querySelector('.results-container');
+        if (!container) return;
+        container.innerHTML = `
+            <div style="background: rgba(18, 21, 26, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 60px 24px; text-align: center; max-width: 680px; margin: 40px auto; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                <div style="font-size: 3.5rem; margin-bottom: 16px;">📊</div>
+                <h2 style="font-size: 1.8rem; font-weight: 700; color: #FFFFFF; margin-bottom: 12px;">No Completed Assessments Yet</h2>
+                <p style="color: #9A9DA3; font-size: 1.05rem; line-height: 1.6; margin-bottom: 30px;">
+                    You haven't completed this assessment yet. Take the test now to see your cognitive profile, response latency, and evidence-based learning strategies.
+                </p>
+                <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+                    <a href="/assessment/${assessmentId}" class="btn btn-primary" style="padding: 12px 28px; font-size: 1rem; border-radius: 9999px; text-decoration: none;">
+                        Start Assessment Now →
+                    </a>
+                    <a href="/assessments" class="btn btn-secondary" style="padding: 12px 24px; font-size: 1rem; border-radius: 9999px; text-decoration: none;">
+                        All Assessments
+                    </a>
+                </div>
+            </div>
+        `;
+
+    function displayAttempts() {
+        const grid = document.getElementById('attemptsGrid');
+        grid.innerHTML = '';
+
+        allAttempts.forEach((attempt, index) => {
+            const card = document.createElement('div');
+            card.className = `attempt-card ${index === 0 ? 'active' : ''}`;
+            card.onclick = () => selectAttempt(index);
+
+            const date = new Date(attempt.created_at);
+            card.innerHTML = `
+                <div class="attempt-number">Attempt ${allAttempts.length - index}</div>
+                <div class="attempt-date">${date.toLocaleDateString()}</div>
+                <div class="attempt-score">${getRiskBadgeText(attempt.risk_level)}</div>
+            `;
+
+            grid.appendChild(card);
+        });
+    }
+
+    function selectAttempt(index) {
+        currentAttemptIndex = index;
+        
+        // Update UI
+        document.querySelectorAll('.attempt-card').forEach((card, i) => {
+            card.classList.toggle('active', i === index);
+        });
+
+        displayResults(allAttempts[index]);
+    }
+
+    function displayResults(attempt) {
+        // Risk Assessment
+        const riskSection = document.getElementById('riskAssessment');
+        const riskClass = getRiskClass(attempt.risk_level);
+        riskSection.innerHTML = `
+            <div class="risk-badge ${riskClass}">${getRiskBadgeText(attempt.risk_level)}</div>
+            <p style="color: #b0b0c0; margin-bottom: 20px;">Assessment completed on ${new Date(attempt.created_at).toLocaleDateString()}</p>
+            <div style="color: #fff; line-height: 1.6;">
+                <p><strong>Overall Assessment:</strong></p>
+                <p style="color: #b0b0c0; margin-top: 10px;">${getRiskDescription(attempt.risk_level)}</p>
+            </div>
+        `;
+
+        // Games Results
+        const gamesGrid = document.getElementById('gamesGrid');
+        gamesGrid.innerHTML = '';
+
+        const gamesData = attempt.results;
+        const gameNames = {
+            'phoneme_delete': '🔤 Phoneme Detective',
+            'letter_sound': '📝 Letter-Sound Match',
+            'rhyme_recog': '🎵 Rhyme Finder',
+            'word_scramble': '🔀 Unscramble Words',
+            'lexical_decision': '❓ Real or Made-up?',
+            'rapid_naming': '⚡ Fast Name'
+        };
+
+        for (const [gameKey, gameName] of Object.entries(gameNames)) {
+            if (gamesData[gameKey]) {
+                const game = gamesData[gameKey];
+                const accuracy = (game.correct / game.total * 100).toFixed(1);
+                
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `
+                    <div class="game-name">${gameName}</div>
+                    
+                    <div class="game-stat">
+                        <span class="stat-label">Accuracy</span>
+                        <span class="stat-value">${accuracy}%</span>
+                    </div>
+
+                    <div class="accuracy-bar">
+                        <div class="bar">
+                            <div class="bar-fill" style="width: ${accuracy}%"></div>
+                        </div>
+                        <div class="bar-text">${game.correct}/${game.total}</div>
+                    </div>
+
+                    <div class="game-stat">
+                        <span class="stat-label">Avg Response Time</span>
+                        <span class="stat-value">${game.avg_rt}ms</span>
+                    </div>
+                `;
+                gamesGrid.appendChild(card);
+            }
+        }
+
+        // Format notes and recommendations into structured sections
+        const existingWarnings = document.querySelector('.warnings-section');
+        if (existingWarnings) {
+            existingWarnings.remove();
+        }
+        
+        const rawNotes = (attempt.details && attempt.details.warnings) ? attempt.details.warnings : [];
+        const observations = [];
+        const strategies = [];
+        const homePractice = [];
+        const evaluation = [];
+
+        rawNotes.forEach(note => {
+            const clean = note.replace(/^[⚠🔴✓•\s]+/, '').trim();
+            if (!clean) return;
+            if (/^(HOME|Home Practice)/i.test(clean) || clean.toLowerCase().includes('home')) {
+                homePractice.push(clean.replace(/^HOME:\s*/i, ''));
+            } else if (clean.toLowerCase().includes('evaluat') || clean.toLowerCase().includes('specialist') || clean.toLowerCase().includes('iep') || clean.toLowerCase().includes('refer')) {
+                evaluation.push(clean);
+            } else if (clean.toLowerCase().includes('reading') || clean.toLowerCase().includes('phonological') || clean.toLowerCase().includes('practice') || clean.toLowerCase().includes('instruction')) {
+                strategies.push(clean);
+            } else {
+                observations.push(clean);
+            }
+        });
+
+        if (observations.length > 0 || strategies.length > 0 || homePractice.length > 0 || evaluation.length > 0) {
+            const reportCards = `
+                <div class="result-section warnings-section" style="margin-top: 30px;">
+                    <div class="section-title">📋 Comprehensive Assessment Report</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        ${observations.length > 0 ? `
+                            <div class="game-card" style="border-left: 4px solid #ffb74d;">
+                                <div class="game-name" style="color: #ffb74d;">🔍 Key Observations & Accommodations</div>
+                                <ul style="margin: 0; padding-left: 20px; color: #ddd; line-height: 1.6;">
+                                    ${observations.map(o => `<li>${o}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        ${strategies.length > 0 ? `
+                            <div class="game-card" style="border-left: 4px solid #667eea;">
+                                <div class="game-name" style="color: #667eea;">💡 Recommended Reading Strategies</div>
+                                <ul style="margin: 0; padding-left: 20px; color: #ddd; line-height: 1.6;">
+                                    ${strategies.map(s => `<li>${s}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        ${homePractice.length > 0 ? `
+                            <div class="game-card" style="border-left: 4px solid #81c784;">
+                                <div class="game-name" style="color: #81c784;">🏠 Home Practice & Activities</div>
+                                <ul style="margin: 0; padding-left: 20px; color: #ddd; line-height: 1.6;">
+                                    ${homePractice.map(h => `<li>${h}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        ${evaluation.length > 0 ? `
+                            <div class="game-card" style="border-left: 4px solid #ef5350;">
+                                <div class="game-name" style="color: #ef5350;">🏥 Evaluation & Next Steps</div>
+                                <ul style="margin: 0; padding-left: 20px; color: #ddd; line-height: 1.6;">
+                                    ${evaluation.map(e => `<li>${e}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            gamesGrid.insertAdjacentHTML('afterend', reportCards);
+        }
+
+        // Recommendations
+        const recsGrid = document.getElementById('recommendationsGrid');
+        recsGrid.innerHTML = '';
+
+        const recommendations = getRecommendations(attempt.risk_level);
+        recommendations.forEach(rec => {
+            const card = document.createElement('div');
+            card.className = 'recommendation-card';
+            card.innerHTML = `
+                <div class="rec-title">${rec.icon} ${rec.title}</div>
+                <div class="rec-content">${rec.description}</div>
+            `;
+            recsGrid.appendChild(card);
+        });
+    }
+
+    function getRiskClass(riskLevel) {
+        if (riskLevel.includes('High')) return 'risk-high';
+        if (riskLevel.includes('Medium')) return 'risk-medium';
+        if (riskLevel.includes('Low')) return 'risk-low';
+        return 'risk-none';
+    }
+
+    function getRiskBadgeText(riskLevel) {
+        if (riskLevel.includes('High')) return 'High Risk';
+        if (riskLevel.includes('Medium')) return 'Medium Risk';
+        if (riskLevel.includes('Low')) return 'Low Risk';
+        return 'No Risk';
+    }
+
+    function getRiskDescription(riskLevel) {
+        const descriptions = {
+            'High risk': 'Based on your performance, early intervention and specialized support are recommended. Consider consulting with a dyslexia specialist.',
+            'Medium risk': 'Your performance suggests some areas that may benefit from targeted practice and monitoring. Continue regular practice exercises.',
+            'Low risk': 'Great performance! Continue with regular reading practice to maintain and improve your skills.',
+            'No risk likely': 'Excellent performance! You demonstrate strong phonological awareness and reading skills.'
+        };
+        return descriptions[riskLevel] || 'Assessment complete.';
+    }
+
+    function getRecommendations(riskLevel) {
+        const recommendations = [
+            {
+                icon: '📚',
+                title: 'Reading Practice',
+                description: 'Engage in daily reading practice with age-appropriate materials. Start with simpler texts and gradually increase difficulty.'
+            },
+            {
+                icon: '🎮',
+                title: 'Interactive Games',
+                description: 'Continue using phonological awareness games to build stronger letter-sound connections and word recognition.'
+            },
+            {
+                icon: '👨‍🏫',
+                title: 'Professional Support',
+                description: 'If high risk is indicated, consider consulting with a dyslexia specialist or reading interventionist.'
+            }
+        ];
+
+        if (riskLevel.includes('High')) {
+            recommendations.push({
+                icon: '🏥',
+                title: 'Clinical Assessment',
+                description: 'A comprehensive dyslexia evaluation by a licensed professional is highly recommended.'
+            });
+        }
+
+        return recommendations;
+    }
+
+    function showError(message) {
+        const container = document.querySelector('.results-container');
+        container.innerHTML = `
+            <div class="error-message">
+                <h2>Error Loading Results</h2>
+                <p>${message}</p>
+                <button class="btn btn-secondary" onclick="window.location.href='/assessments'">
+                    Back to Assessments
+                </button>
+            </div>
+        `;
+    }
+
+    function downloadReport() {
+        const attempt = allAttempts[currentAttemptIndex];
+        let reportContent = 'DYSLEXIA ASSESSMENT REPORT\n';
+        reportContent += '='.repeat(50) + '\n\n';
+        reportContent += `Assessment Date: ${new Date(attempt.created_at).toLocaleDateString()}\n`;
+        reportContent += `Risk Level: ${getRiskBadgeText(attempt.risk_level)}\n\n`;
+        reportContent += 'GAME RESULTS:\n';
+        reportContent += '-'.repeat(50) + '\n';
+
+        const gameNames = {
+            'phoneme_delete': 'Phoneme Detective',
+            'letter_sound': 'Letter-Sound Match',
+            'rhyme_recog': 'Rhyme Finder',
+            'word_scramble': 'Unscramble Words',
+            'lexical_decision': 'Real or Made-up?',
+            'rapid_naming': 'Fast Name'
+        };
+
+        for (const [gameKey, gameName] of Object.entries(gameNames)) {
+            if (attempt.results[gameKey]) {
+                const game = attempt.results[gameKey];
+                const accuracy = (game.correct / game.total * 100).toFixed(1);
+                reportContent += `\n${gameName}:\n`;
+                reportContent += `  Accuracy: ${accuracy}% (${game.correct}/${game.total})\n`;
+                reportContent += `  Avg Response Time: ${game.avg_rt}ms\n`;
+            }
+        }
+
+        if (attempt.details && attempt.details.warnings) {
+            reportContent += '\n' + '-'.repeat(50) + '\nNOTES:\n';
+            attempt.details.warnings.forEach(w => {
+                reportContent += `• ${w}\n`;
+            });
+        }
+
+        // Download as text file
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(reportContent));
+        element.setAttribute('download', `dyslexia_report_${new Date().toISOString().split('T')[0]}.txt`);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+</script>
+{% endblock %}

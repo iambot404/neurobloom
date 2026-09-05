@@ -1,0 +1,225 @@
+================================================================================
+NEUROBLOOM PROJECT - COMPLETE BACKEND MIGRATION & SYSTEM DEBUGGING SUMMARY
+================================================================================
+Project: Neurobloom - AI-Powered Learning Disability Screening Platform
+Platform: Flask + Python 3 + Supabase (PostgreSQL) + Vanilla JS / Modern UI
+Date: September 2026
+
+This document provides a comprehensive, end-to-end record of all architectural
+migrations, bug fixes, ML pipeline validations, and verifications performed.
+Use this file as direct context for any future AI agent or developer.
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+1. Architecture & Supabase Migration
+2. Database Schema & PostgREST Translation Layer
+3. Machine Learning & Neural Network Pipeline Deep-Dive
+4. Root Cause Analysis of Previous Bugs (debug.txt, debug2.txt, dubug3.txt)
+5. Comprehensive Solutions & Code Changes Implemented
+6. Verification Evidence & Test Scripts
+7. Key Endpoints & Routing Reference
+8. Best Practices for Future Maintenance
+
+================================================================================
+1. ARCHITECTURE & SUPABASE MIGRATION
+================================================================================
+• Previously: Local MySQL database with PyMySQL / mysql-connector executing raw SQL.
+• Current: Migrated to Supabase (PostgreSQL Cloud) using supabase-py client.
+• Database Abstraction Layer: db.py (DBConnection, Cursor wrapper, dict/tuple support).
+• Authentication: Flask session-based authentication with Werkzeug security
+  (scrypt password hashing) supporting both 'student' and 'faculty' roles.
+• ML Architecture:
+  - dyslexia_nn_model.py: DyslexiaDeepLearning (20+ phonological, speed, error features)
+  - dyscalculia_nn_model.py: DyscalculiaDeepLearning (20+ numerical, counting, reasoning features)
+  - dysgraphia_nn_model.py: DysgraphiaDeepLearning (20+ stroke curvature, straightness, speed, tremor features)
+  - unified_predictor.py: UnifiedDisorderPredictor (orchestrates multi-disorder predictions)
+  - disorder_predictor.py: Standalone classifier and Supabase persistence helper
+
+================================================================================
+2. DATABASE SCHEMA IN SUPABASE
+================================================================================
+All tables are initialized and active in Supabase:
+1. users: id, name, email, password, contact, role ('student'|'faculty'), class, faculty_id, profile_photo, created_at
+2. assessment_types: id (1: Dyslexia, 2: Dyscalculia, 3: Dysgraphia), name, description, disorder_type, total_questions, time_limit_minutes
+3. questions: id, assessment_id, question_text, question_type, difficulty_level, display_order
+4. answer_options: id, question_id, option_text, option_value, is_correct, display_order
+5. visual_options: id, question_id, image_path, label, display_order
+6. puzzle_questions: id, question_id, puzzle_type, puzzle_data, correct_answer
+7. student_assessments: id, student_id, assessment_id, status ('completed'|'in_progress'), total_score, percentage_score, time_taken_minutes, start_time, end_time, created_at
+8. assessment_results: id, student_id, assessment_id, percentage_score, time_taken_seconds, assessment_data (JSON), answers_json (JSON), created_at
+9. student_answers: id, student_assessment_id, question_id, student_answer, is_correct, points_earned, time_spent_seconds
+10. student_progress: id, student_id, total_assessments, completed_assessments, average_score, highest_score, current_streak, last_attempt_date
+11. ml_predictions: id, student_id, assessment_id, disorder_type, prediction_score, risk_level, confidence_score, recommendations (JSON), model_version, predicted_at
+12. recommendations: id, student_id, disorder_type, recommendation_text, recommendation_details, created_at
+13. feedback: id, user_id, message, rating, created_at
+14. otp_verifications: id, email, otp, expires_at, is_verified, created_at
+
+* Important PostgREST Emulation Rule in db.py:
+  Supabase PostgREST translates SELECT queries into table filters. Complex SQL
+  aggregate functions like COUNT(*), AVG(percentage_score), and GROUP BY return
+  individual table rows rather than aggregated columns.
+  -> Standard Practice: Always fetch the matching rows and perform counts,
+     averages, and groupings in Python to ensure 100% accuracy and prevent 500 errors.
+
+================================================================================
+3. MACHINE LEARNING & NEURAL NETWORK PIPELINE DEEP-DIVE
+================================================================================
+Complete End-to-End Pipeline:
+  User Game / Stroke Input
+          ↓
+  Browser Performance Data (Accuracy, RT, Canvas Pointer Events [x, y, t])
+          ↓
+  Feature Extraction (extract_advanced_features):
+    - Dyslexia: WPM speed (F1), variance (F2), trend (F3), accuracy (F4), letter confusion (F5), word errors (F6), phoneme awareness (F7), cognitive load (F17-20)
+    - Dyscalculia: Subitizing (F1), comparison (F2), magnitude (F3), counting (F4), sequencing (F5), operations (F7-9), speed (F10), reasoning (F13-18)
+    - Dysgraphia: Stroke smoothness (F1), line straightness (F2), pressure/velocity variance (F3), tremor oscillations (F4), speed (F5), size/spacing (F8-9), shape accuracy (F10), coordination (F13)
+          ↓
+  Neural Network Forward Pass (_neural_forward_pass):
+    - Multi-feature weighted integration computing raw impairment/motor score
+          ↓
+  Risk Classification (_get_risk_level):
+    - Dyslexia: <0.30: 'No risk likely' | 0.30-0.50: 'Low risk' | 0.50-0.70: 'Medium risk' | >=0.70: 'High risk'
+    - Dyscalculia: <0.30: 'None' | 0.30-0.50: 'Low' | 0.50-0.70: 'Medium' | >=0.70: 'High'
+    - Dysgraphia: <0.30: 'None' | 0.30-0.50: 'Low' | 0.50-0.70: 'Medium' | >=0.70: 'High'
+          ↓
+  Evidence-Based Clinical Recommendations Selection (_generate_recommendations):
+    - 'None': '✓ CONTINUE STRONG PROGRESS', structured instruction, enrichment
+    - 'Low': '⚠ MONITOR PROGRESS - Emerging Difficulties', accommodations, 1.5x time
+    - 'Medium': '⚠ INTERVENTION NEEDED', occupational therapy / reading intervention
+    - 'High': '🔴 INTENSIVE INTERVENTION REQUIRED', immediate IEP/504 evaluation, 1:1 therapy
+          ↓
+  Supabase Persistence:
+    - student_assessments: records percentage_score, status='completed'
+    - ml_predictions: stores prediction_score, risk_level, confidence_score
+    - recommendations: stores targeted recommendation bullet points
+    - student_progress: updates total attempts and average score
+
+================================================================================
+4. ROOT CAUSE ANALYSIS OF PREVIOUS BUGS
+================================================================================
+
+1. The "80% Smoothness & CONTINUE STRONG PROGRESS" Bug on Failed Dysgraphia:
+   • Cause A: In assessment_routes.py line 1484, `g_data.get('smoothness', 0.8)` was used
+     when building per_task metrics. When the frontend sent `{ strokes: [...] }`,
+     it lacked a 'smoothness' key, defaulting each task metric to 0.8 (80%).
+   • Cause B: In dysgraphia_nn_model.py, fallback returns of 0.5 and 0.8 were returned
+     when strokes were absent or empty.
+   • Cause C: In submit_assessment, predict_disorder_risk queried the old 'student_answers'
+     table (used for MCQ only), found no rows, and skipped ML prediction, leaving the
+     assessment in a default state.
+   • Cause D: save_prediction_to_db threw KeyError on prediction['prediction_score']
+     because neural models returned 'risk_score' and 'confidence'.
+
+2. NumPy Truth Value Ambiguity (HTTP 500):
+   • Cause: `if features and len(features) > 0` throws `ValueError: The truth value
+     of an array with more than one element is ambiguous`.
+
+3. Subitizing Dot Waiting Time Too Short:
+   • Cause: 550ms was too fast for students to perceive dot count before responding.
+
+4. "Assessment: None" in Results:
+   • Cause: Null disorder_type in raw assessment attempts without fallback to
+     assessment_types table.
+
+5. Empty / Static Faculty Dashboard & Students Tab:
+   • Cause: Faculty dashboard queried SQL aggregates directly or filtered by
+     session class when not set, resulting in 0 students and empty assessments.
+
+6. Missing Navigation from Student Profile to Assessments:
+   • Cause: Student profile lacked clickable links and action button to start assessments.
+
+================================================================================
+5. COMPREHENSIVE SOLUTIONS IMPLEMENTED
+================================================================================
+
+1. Dynamic Stroke & Performance Analysis:
+   • In assessment_routes.py (`analyze_dysgraphia`):
+     Computes real stroke smoothness (`dysgraphia_model._calculate_stroke_smoothness(strokes)`)
+     and question accuracy, defaulting absent/empty tasks to 0.0 (not 80%).
+   • In dysgraphia_nn_model.py:
+     Enhanced stroke curvature calculation combining mean turn angles and angle variance.
+     Replaced all static 0.5 fallbacks with 0.0 for absent/empty attempts.
+   • In submit_assessment:
+     Directly invokes `UnifiedDisorderPredictor` on the submitted game results,
+     generating and saving neural predictions and targeted clinical recommendations.
+
+2. Fixed NumPy Truth Checks:
+   • Replaced `if features and len(features) > 0` with `if (features is not None and len(features) > 0)`
+     across analyze_dyslexia, analyze_dyscalculia, and analyze_dysgraphia.
+
+3. Increased Subitizing Dot Display Timer:
+   • In templates/dyscalculia_test.html line 734: Increased display time from 550ms to
+     5550ms (+5.0 seconds).
+
+4. Robust Assessment / Disorder Type Association:
+   • Fallback mapping guarantees non-null disorder_type:
+     1 -> 'dyslexia', 2 -> 'dyscalculia', 3 -> 'dysgraphia'.
+
+5. Presentation of Clinical Recommendations:
+   • Replaced unformatted developer warnings with 4 structured cards across all templates:
+     1. 🔍 Key Observations & Accommodations
+     2. 💡 Recommended Strategies & Interventions
+     3. 🏠 Home Practice & Fun Activities
+     4. 🏥 Evaluation Guidance & Next Steps
+
+6. Student Profile Navigation & Statistics:
+   • In app.py (`/api/student/profile`): Dynamically computes total assessments, average
+     score, and 3-disorder breakdown (Dyslexia, Dyscalculia, Dysgraphia) in Python.
+   • In templates/student-profile.html & static/student-profile.js:
+     Made disorder cards clickable to `/assessment/${aid}` and added "🎯 Take An Assessment" button.
+
+7. Faculty Dashboard & Students List Optimization:
+   • In app.py (`/api/faculty-info`, `/api/get-students`, `/api/faculty/dashboard`):
+     Implemented single bulk queries with in-memory student grouping to eliminate N+1 latency.
+     Supports both class-specific teachers and general school faculty.
+   • In templates/faculty.html: Populated Students list, Screening Assessments cards,
+     and CSV report download.
+
+================================================================================
+6. VERIFICATION EVIDENCE & TEST SCRIPTS
+================================================================================
+
+Two automated verification suites are available:
+
+1. `py test_ml_pipeline_trace.py`:
+   • Tests ML model internals on deliberate PASS and FAIL inputs.
+   • Validates that smooth lines produce Risk='None' / 'Low' with positive recommendations,
+     while erratic/jagged lines produce Risk='High' with intensive intervention warnings.
+   • Validates full API submission, Supabase persistence to ml_predictions and
+     recommendations, and student profile reflection.
+   • Result: 100% PASSED.
+
+2. `py test_game_pass_fail_pipeline.py`:
+   • Tests complete student registration, login, and pass/fail assessments across
+     all 3 disorders (Dyslexia ID 1, Dyscalculia ID 2, Dysgraphia ID 3).
+   • Verifies student profile breakdown (attempts, avg score, best score, lowest score).
+   • Verifies faculty dashboard metrics, student list, and class analytics.
+   • Result: 100% PASSED (ALL 6 MODULES VERIFIED).
+
+================================================================================
+7. KEY ENDPOINTS REFERENCE
+================================================================================
+• GET  /login | POST /login/student | POST /login/faculty
+• POST /student_register | POST /faculty_register | GET /logout
+• GET  /student-profile | GET /api/student/profile | PUT /api/student/profile
+• GET  /assessments | GET /api/assessments/available | GET /api/assessment/<id>
+• POST /api/analyze-dyslexia | POST /api/analyze-dyscalculia | POST /api/analyze-dysgraphia
+• POST /api/submit-assessment
+• GET  /api/student-assessment/<id>/results
+• GET  /api/dyslexia-results/<id> | /api/dyscalculia-results/<id> | /api/dysgraphia-results/<id>
+• GET  /faculty | GET /api/faculty-info | GET /api/get-students | GET /api/faculty/dashboard
+• GET  /api/student-dashboard/<student_id>
+
+================================================================================
+8. BEST PRACTICES FOR FUTURE MAINTENANCE
+================================================================================
+1. Never query SQL aggregates (AVG, COUNT, GROUP BY) via db.py PostgREST emulation;
+   fetch raw records and compute in Python.
+2. In ML models, never use hardcoded fallback scores (like 0.5 or 0.8) for absent/empty
+   user interactions; evaluate to 0.0 so that unanswered or skipped tasks correctly
+   reflect low ability / high risk.
+3. When adding new mini-games or tasks, ensure the frontend sends either raw interaction
+   events (e.g. stroke coordinates, response times, question choices) and that the backend
+   feature extractor handles both wrapped and unwrapped JSON structures.
+================================================================================

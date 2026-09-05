@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}Assessments Library | DocHub{% endblock %}
+
+{% block extra_css %}
+<style>
+  .ag-assessments-page {
+    padding: 130px 20px 80px;
+    min-height: 100vh;
+    position: relative;
+    z-index: 2;
+  }
+
+  .ag-page-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 40px;
+  }
+
+  .ag-guest-banner {
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: var(--radius-pill);
+    padding: 12px 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    font-size: 0.9rem;
+    color: #C7D2FE;
+    backdrop-filter: blur(8px);
+  }
+
+  .ag-filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 45px;
+    flex-wrap: wrap;
+  }
+
+  .ag-filter-pill {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    padding: 8px 18px;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .ag-filter-pill:hover,
+  .ag-filter-pill.active {
+    background: #FFFFFF;
+    color: #08090B;
+    border-color: #FFFFFF;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+  }
+
+  .ag-score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34D399;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Floating Pill Navbar -->
+<header class="ag-nav-wrapper">
+  <nav class="ag-nav">
+    <a href="/" class="ag-logo">
+      <div class="ag-logo-mark">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="ag-logo-text">DocHub</span>
+    </a>
+
+    <ul class="ag-nav-links">
+      <li><a href="/" class="ag-nav-link">Home</a></li>
+      <li><a href="/assessments" class="ag-nav-link active">Assessments</a></li>
+      <li><a href="/#how-it-works" class="ag-nav-link">How It Works</a></li>
+      <li><a href="/#ai-pipeline" class="ag-nav-link">AI Pipeline</a></li>
+    </ul>
+
+    <div class="ag-nav-actions">
+      {% if is_authenticated %}
+        {% if user_role == 'faculty' %}
+          <a href="/faculty" class="ag-user-pill">
+            <span class="ag-status-dot"></span>
+            <span>Faculty Portal</span>
+          </a>
+        {% else %}
+          <a href="/student-profile" class="ag-user-pill">
+            <span class="ag-status-dot"></span>
+            <span>My Profile</span>
+          </a>
+        {% endif %}
+        <a href="/logout" class="ag-btn ag-btn-sm ag-btn-ghost">Logout</a>
+      {% else %}
+        <a href="/login" class="ag-btn ag-btn-sm ag-btn-ghost">Login</a>
+        <a href="/signup" class="ag-btn ag-btn-sm ag-btn-outline">Sign Up</a>
+      {% endif %}
+    </div>
+  </nav>
+</header>
+
+<div class="ag-assessments-page">
+  <div class="ag-container">
+    <div class="ag-page-header">
+      {% if not is_authenticated %}
+        <div class="ag-guest-banner">
+          <span>⚡ <strong>Public Screening Mode:</strong> You can take any assessment immediately without an account.</span>
+          <a href="/login" style="color: #FFFFFF; text-decoration: underline; margin-left: 6px;">Login to save permanently</a>
+        </div>
+      {% endif %}
+
+      <span class="ag-section-tag">COGNITIVE SCREENING LIBRARY</span>
+      <h1 class="ag-section-title">Explore Learning Assessments</h1>
+      <p class="ag-section-subtitle">
+        Scientifically designed interactive assessments evaluated by multi-signal deep learning neural networks. Choose an assessment to begin.
+      </p>
+    </div>
+
+    <!-- Filters -->
+    <div class="ag-filter-bar">
+      <button class="ag-filter-pill active" data-filter="all">All Assessments</button>
+      <button class="ag-filter-pill" data-filter="dyslexia">Dyslexia (Reading)</button>
+      <button class="ag-filter-pill" data-filter="dysgraphia">Dysgraphia (Motor/Stylus)</button>
+      <button class="ag-filter-pill" data-filter="dyscalculia">Dyscalculia (Math)</button>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="ag-cards-grid" id="assessmentsGrid">
+      <!-- Dyslexia Card (ID 1) -->
+      <div class="ag-card" data-disorder="dyslexia">
+        <div class="ag-card-media">
+          <img src="{{ url_for('static', filename='imgs/antigravity_dyslexia.png') }}" alt="Dyslexia Assessment">
+          <span class="ag-card-badge badge-dyslexia">Phonological Processing</span>
+        </div>
+        <div class="ag-card-body">
+          <h3 class="ag-card-title">Dyslexia Screening</h3>
+          <p class="ag-card-desc">
+            Evaluates phoneme manipulation, letter-sound association, lexical decisions, word unscrambling, rhyming, and millisecond rapid naming fluency.
+          </p>
+          <div class="ag-card-meta">
+            <span class="ag-card-meta-item">⏱ 10–12 min</span>
+            <span class="ag-card-meta-item">• 6 Exercises</span>
+            <span class="ag-card-meta-item">• Neural Classifier</span>
+          </div>
+          <div class="ag-card-actions">
+            <button onclick="startAssessment(1)" class="ag-btn ag-btn-md ag-btn-primary" style="flex: 1;">
+              Start Assessment →
+            </button>
+            <button onclick="viewResults(1)" class="ag-btn ag-btn-md ag-btn-outline" title="View historical results">
+              📊 Results
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dysgraphia Card (ID 3) -->
+      <div class="ag-card" data-disorder="dysgraphia">
+        <div class="ag-card-media">
+          <img src="{{ url_for('static', filename='imgs/antigravity_dysgraphia.png') }}" alt="Dysgraphia Evaluation">
+          <span class="ag-card-badge badge-dysgraphia">Motor & Kinematics</span>
+        </div>
+        <div class="ag-card-body">
+          <h3 class="ag-card-title">Dysgraphia Evaluation</h3>
+          <p class="ag-card-desc">
+            Digital stylus and touch vector coordinate tracking measuring stroke curvature smoothness, line straightness, pressure variance, and fine-motor tremor.
+          </p>
+          <div class="ag-card-meta">
+            <span class="ag-card-meta-item">⏱ 8–10 min</span>
+            <span class="ag-card-meta-item">• 5 Canvas Tasks</span>
+            <span class="ag-card-meta-item">• Kinematic ML</span>
+          </div>
+          <div class="ag-card-actions">
+            <button onclick="startAssessment(3)" class="ag-btn ag-btn-md ag-btn-primary" style="flex: 1;">
+              Start Assessment →
+            </button>
+            <button onclick="viewResults(3)" class="ag-btn ag-btn-md ag-btn-outline" title="View historical results">
+              📊 Results
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dyscalculia Card (ID 2) -->
+      <div class="ag-card" data-disorder="dyscalculia">
+        <div class="ag-card-media">
+          <img src="{{ url_for('static', filename='imgs/antigravity_dyscalculia.png') }}" alt="Dyscalculia Diagnostic">
+          <span class="ag-card-badge badge-dyscalculia">Numerical Processing</span>
+        </div>
+        <div class="ag-card-body">
+          <h3 class="ag-card-title">Dyscalculia Diagnostic</h3>
+          <p class="ag-card-desc">
+            Assesses non-symbolic dot array subitizing, numerical magnitude comparison, mathematical sequencing, digit memory span, and word problem arithmetic.
+          </p>
+          <div class="ag-card-meta">
+            <span class="ag-card-meta-item">⏱ 10–15 min</span>
+            <span class="ag-card-meta-item">• 6 Modules</span>
+            <span class="ag-card-meta-item">• Quantitative ML</span>
+          </div>
+          <div class="ag-card-actions">
+            <button onclick="startAssessment(2)" class="ag-btn ag-btn-md ag-btn-primary" style="flex: 1;">
+              Start Assessment →
+            </button>
+            <button onclick="viewResults(2)" class="ag-btn ag-btn-md ag-btn-outline" title="View historical results">
+              📊 Results
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Filter functionality
+  document.querySelectorAll('.ag-filter-pill').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.ag-filter-pill').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const filter = this.dataset.filter;
+      
+      document.querySelectorAll('#assessmentsGrid .ag-card').forEach(card => {
+        if (filter === 'all' || card.dataset.disorder === filter) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Start Assessment: Works for both guests and authenticated students
+  async function startAssessment(assessmentId) {
+    try {
+      // Attempt to register session if logged in
+      const res = await fetch('/api/student-assessment/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ assessment_id: assessmentId })
+      });
+      // Regardless of auth state, proceed directly to assessment
+      window.location.href = `/assessment/${assessmentId}`;
+    } catch (e) {
+      // Direct redirect if offline or guest
+      window.location.href = `/assessment/${assessmentId}`;
+    }
+  }
+
+  // View Results handler
+  function viewResults(assessmentId) {
+    if (assessmentId === 1) {
+      window.location.href = `/dyslexia-results/1`;
+    } else if (assessmentId === 2) {
+      window.location.href = `/dyscalculia-results/2`;
+    } else if (assessmentId === 3) {
+      window.location.href = `/dysgraphia-results/3`;
+    } else {
+      window.location.href = `/assessment/results/${assessmentId}`;
+    }
+  }
+</script>
+{% endblock %}

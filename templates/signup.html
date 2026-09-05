@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up | DocHub{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='signup.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Floating Pill Navbar -->
+<header class="ag-nav-wrapper">
+  <nav class="ag-nav">
+    <a href="/" class="ag-logo">
+      <div class="ag-logo-mark">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="ag-logo-text">DocHub</span>
+    </a>
+
+    <ul class="ag-nav-links">
+      <li><a href="/" class="ag-nav-link">Home</a></li>
+      <li><a href="/assessments" class="ag-nav-link">Assessments</a></li>
+      <li><a href="/#how-it-works" class="ag-nav-link">How It Works</a></li>
+    </ul>
+
+    <div class="ag-nav-actions">
+      <a href="/assessments" class="ag-btn ag-btn-sm ag-btn-primary">Take Test →</a>
+      <a href="/login" class="ag-btn ag-btn-sm ag-btn-outline">Login</a>
+    </div>
+  </nav>
+</header>
+
+<main class="category-container" style="padding-top: 120px; position: relative; z-index: 2;">
+  <div class="category-wrapper">
+    <!-- Left Text Section -->
+    <div class="category-text">
+      <h5 class="step">...</h5>
+      <h2 class="title">Registration Category</h2>
+      <p class="desc">
+        Select the category you would like to apply for: <strong>Student</strong> or <strong>Faculty</strong>.
+      </p>
+
+      <p class="info">
+        You can register under only one category. Choosing the wrong category may require restarting the registration process.
+        <br><br>
+        Please note: Applications are available only for authorized regions and institutions.
+      </p>
+    </div>
+
+    <!-- Right Selection Cards -->
+    <div class="category-selection">
+      <div class="card-section">
+        <div class="category-card" id="studentCard">
+          <div class="category-image">
+            <img src="{{ url_for('static', filename='imgs/student.gif') }}" alt="Student">
+          </div>
+          <div class="category-overlay">Student</div>
+        </div>
+
+        <div class="category-card" id="facultyCard">
+          <div class="category-image">
+            <img src="{{ url_for('static', filename='imgs/teacher.gif') }}" alt="Faculty">
+          </div>
+          <div class="category-overlay">Faculty</div>
+        </div>
+      </div>
+
+      <button id="continueBtn" class="continue-btn" disabled>Continue</button>
+    </div>
+  </div>
+</main>
+
+<!-- 🔹 Faculty Registration Popup Modal -->
+<div id="facultyModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2>Faculty Registration</h2>
+    <form action="/faculty_register" method="POST" class="faculty-form" id="facultyForm">
+       
+      <input type="text" name="name" placeholder="Full Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" id="password" name="password" placeholder="Password" required>
+      <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+      <p id="passwordError" class="error-text"></p>
+       
+      <input type="tel" name="contact" placeholder="Contact Number" required>
+      <button type="submit" class="submit-btn" id="submitBtn">Register</button>
+    </form>
+  </div>
+</div>
+
+
+
+<!-- 🔹 Student Registration Popup Modal -->
+<div id="studentModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn student-close">&times;</span>
+    <h2>Student Registration</h2>
+    <form action="/student_register" method="POST" class="faculty-form" id="studentForm">
+      <input type="text" name="name" placeholder="Full Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" id="student_password" name="password" placeholder="Password" required>
+      <input type="password" id="student_confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+      <p id="studentPasswordError" class="error-text"></p>
+      <input type="tel" name="contact" placeholder="Contact Number" required>
+      <button type="submit" class="submit-btn" id="studentSubmitBtn">Register</button>
+    </form>
+  </div>
+</div>
+
+
+<script>
+  const studentCard = document.getElementById('studentCard');
+  const facultyCard = document.getElementById('facultyCard');
+  const continueBtn = document.getElementById('continueBtn');
+
+  const facultyModal = document.getElementById('facultyModal');
+  const studentModal = document.getElementById('studentModal');
+
+  const closeBtn = document.querySelector('.close-btn');
+  const facultyCloseBtn = document.querySelector('.close-btn');
+  const studentCloseBtn = document.querySelector('.student-close');
+
+  const passwordInput = document.getElementById('password');
+  const confirmPasswordInput = document.getElementById('confirm_password');
+  const passwordError = document.getElementById('passwordError');
+  const submitBtn = document.getElementById('submitBtn');
+
+  const studentPasswordInput = document.getElementById('student_password');
+  const studentConfirmPasswordInput = document.getElementById('student_confirm_password');
+  const studentPasswordError = document.getElementById('studentPasswordError');
+  const studentSubmitBtn = document.getElementById('studentSubmitBtn');
+
+  let selected = null;
+
+  function selectCard(card) {
+    [studentCard, facultyCard].forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    selected = card.id;
+    continueBtn.disabled = false;
+  }
+
+  studentCard.onclick = () => selectCard(studentCard);
+  facultyCard.onclick = () => selectCard(facultyCard);
+
+  continueBtn.onclick = () => {
+    if (selected === 'studentCard') {
+      studentModal.style.display = 'flex';
+    } else if (selected === 'facultyCard') {
+      facultyModal.style.display = 'flex';
+    }
+  };
+
+  // Close modals
+  facultyCloseBtn.onclick = () => facultyModal.style.display = 'none';
+  studentCloseBtn.onclick = () => studentModal.style.display = 'none';
+  window.onclick = (event) => {
+    if (event.target === facultyModal) facultyModal.style.display = 'none';
+    if (event.target === studentModal) studentModal.style.display = 'none';
+  };
+
+  // Password validation function
+  function validatePasswords(passInput, confirmInput, errorText, btn) {
+    const password = passInput.value.trim();
+    const confirm = confirmInput.value.trim();
+    const regexStrong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+
+    if (!password || !confirm) {
+      errorText.textContent = '';
+      btn.disabled = false;
+      return;
+    }
+
+    if (!regexStrong.test(password)) {
+      errorText.textContent = '⚠️ Password must be at least 8 characters, include uppercase, lowercase, number, and special character';
+      errorText.style.color = 'red';
+      btn.disabled = true;
+    } else if (password !== confirm) {
+      errorText.textContent = '⚠️ Passwords do not match';
+      errorText.style.color = 'red';
+      btn.disabled = true;
+    } else {
+      errorText.textContent = '✅ Password is strong and matches';
+      errorText.style.color = 'green';
+      btn.disabled = false;
+    }
+  }
+
+  // Faculty password validation
+  passwordInput.addEventListener('input', () => validatePasswords(passwordInput, confirmPasswordInput, passwordError, submitBtn));
+  confirmPasswordInput.addEventListener('input', () => validatePasswords(passwordInput, confirmPasswordInput, passwordError, submitBtn));
+
+  // Student password validation
+  studentPasswordInput.addEventListener('input', () => validatePasswords(studentPasswordInput, studentConfirmPasswordInput, studentPasswordError, studentSubmitBtn));
+  studentConfirmPasswordInput.addEventListener('input', () => validatePasswords(studentPasswordInput, studentConfirmPasswordInput, studentPasswordError, studentSubmitBtn));
+</script>
+
+{% endblock %}

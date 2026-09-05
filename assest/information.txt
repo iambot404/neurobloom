@@ -1,0 +1,25 @@
+Here are text-to-image prompts tailored to the sleek, ultra-clean Google Antigravity aesthetic (minimalist UI, soft gradients, rounded dark/light containers, floating iconography, modern sans-serif typography) designed for your three tests:
+
+---
+
+### 1. Dyslexia Test Card / Visual
+
+> **Prompt:** A minimalist web UI product interface card inspired by modern Google tech design. On a clean off-white background, a rounded dark navy container showcases a sleek interactive feature. Inside, glowing floating typography featuring stylized letters ("A", "B", "p", "q") gently rotates in 3D space with subtle blue and violet lighting. Below the display, modern sans-serif text reads "Dyslexia Assessment" with a smooth, rounded CTA button. Soft pastel gradients, studio lighting, hyper-detailed UI mockup, 8k resolution, photorealistic rendering.
+
+---
+
+### 2. Dysgraphia Test Card / Visual
+
+> **Prompt:** A high-tech, minimalist software interface mockup in the aesthetic of a premium developer tool platform. A light-themed card with rounded corners displays a sleek digital canvas where smooth vector handwriting paths and stylus stroke animations transform into neat, structured typography. Floating minimal icon badges (a pen tip, grid lines, and alignment markers) surround the display. Soft glowing pastel background glow, Google-style typography reading "Dysgraphia Evaluation", clean layout, 8k render, professional UI design.
+
+---
+
+### 3. Dyscalculia Test Card / Visual
+
+> **Prompt:** A futuristic, ultra-clean UI hero section mockup. On a soft neutral background, a dark rounded container highlights an abstract mathematical visualizer. Floating glowing geometric shapes, numbers ("1", "7", "+", "×"), and interactive dot matrices float with subtle depth-of-field against a deep indigo radial background. Clean modern typography underneath reads "Dyscalculia Diagnostic". Ultra-sleek design, soft shadow effects, minimalism, high-end digital product design, 8k, octane render.
+
+---
+
+### 4. Hero Section / Platform Overview Graphic
+
+> **Prompt:** A cohesive modern web application dashboard mockup. Clean white background with three floating rounded feature cards arranged in a smooth horizontal curve. The cards represent Dyslexia, Dysgraphia, and Dyscalculia with subtle abstract micro-illustrations and minimal iconography. Soft ambient glowing gradients (light blue, lavender, and mint), Google Antigravity aesthetic, clean typography, soft drop shadows, isometric perspective, 8k resolution, UI design showcase.

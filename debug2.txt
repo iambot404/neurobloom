@@ -1,0 +1,285 @@
+### RESULTS, ASSESSMENT LOGIC & GAME VERIFICATION
+
+Also verify the **actual assessment/game result pipeline** for every assessment type, including Dyslexia, Dyscalculia, Dysgraphia, and any other assessment present in the codebase.
+
+Do NOT assume the expected scoring logic. First inspect the existing implementation to determine how each game calculates:
+
+* Correct/incorrect answers
+* Accuracy
+* Response time
+* Average response time
+* Difficulty-wise results
+* Overall results
+* Per-question results
+* Pass/fail status
+* Assessment/disorder classification
+* Metrics
+* Notes/recommendations
+* Attempts/history
+
+#### 1. Undefined Results
+
+Investigate and fix cases such as:
+
+* `undefined accuracy`
+* `undefinedms avg response`
+* `by_difficulty: undefined`
+* `overall: undefined`
+* `per_question: undefined`
+
+Determine whether the issue is caused by:
+
+* Missing database fields
+* Incorrect Supabase column names
+* Incorrect API response mapping
+* Null/undefined values
+* Frontend state handling
+* Incorrect calculation logic
+* MySQL → PostgreSQL migration changes
+* Incorrect assessment/game result structure
+
+The result page must display valid values whenever a completed assessment has valid data.
+
+Do not simply replace `undefined` with `0` unless `0` is actually the correct value.
+
+---
+
+#### 2. Assessment Attempt / Results Loading
+
+Investigate:
+
+`Error Loading Results`
+`No assessment attempts found`
+
+If an assessment/game was actually completed, verify that:
+
+* The attempt is saved correctly.
+* The correct user/student ID is stored.
+* The correct assessment/game ID is stored.
+* Results are linked to the correct attempt.
+* Supabase queries retrieve the attempt correctly.
+* The frontend requests the correct data.
+* Refreshing the page still shows the completed attempt.
+
+Test this with real completed assessments.
+
+---
+
+#### 3. Pass AND Fail Testing
+
+For **EVERY assessment/game**, test both:
+
+**PASS scenario**
+
+* Give answers that should produce a passing/normal result.
+* Verify the result is classified correctly.
+* Verify metrics and notes are generated correctly.
+
+**FAIL scenario**
+
+* Deliberately give incorrect answers according to the game's expected scoring logic.
+* Verify the result is classified correctly.
+* Verify metrics, disorder indicators, notes, and recommendations correspond to the actual result.
+
+Do NOT assume that every wrong answer means the user has a disorder. Verify the existing scoring/classification logic.
+
+Specifically test **Dyslexia, Dysgraphia, and Dyscalculia**, including both passing and failing scenarios.
+
+---
+
+#### 4. Dyslexia First Game — Waiting Time
+
+Inspect the **first Dyslexia game** and increase the waiting/display time by **5 seconds** so the user has enough time to see the dots before responding.
+
+Preserve the existing game logic and scoring behavior.
+
+After changing it, verify:
+
+* Dots are clearly visible.
+* Timer/waiting logic still works.
+* User interaction still works.
+* Response time is calculated correctly.
+* Results are saved correctly.
+
+---
+
+#### 5. Assessment / Disorder Association
+
+I tested wrong answers across the games and the result currently shows:
+
+`Assessment: None`
+
+Investigate why.
+
+For every completed assessment:
+
+* Determine how the assessment type is identified.
+* Verify the game is associated with the correct assessment.
+* Verify the assessment type is stored in Supabase.
+* Verify the result API returns the assessment type.
+* Verify the frontend displays the correct assessment.
+* Verify this works for both PASS and FAIL results.
+
+Do not hardcode `Assessment: None` or a disorder name just to make the UI display something. Fix the underlying association.
+
+---
+
+### FACULTY DASHBOARD VERIFICATION
+
+The Faculty dashboard currently has incorrect/missing data.
+
+Verify the entire Faculty dashboard based on the functionality actually discovered in the code.
+
+#### Student tab
+
+Currently:
+
+`No students found`
+
+But student data exists elsewhere.
+
+Verify:
+
+* Faculty can retrieve the students they are supposed to see.
+* Student records are correctly queried from Supabase.
+* Relationships between faculty/student/classes/etc. are correct.
+* Student count is accurate.
+* The student list displays the correct students.
+* Clicking a student opens the correct student profile.
+* Student profile data loads correctly.
+
+#### Assessment tab
+
+Currently:
+
+`No assessments created yet`
+
+Verify:
+
+* Existing assessment attempts/results are retrieved correctly.
+* Assessment count is accurate.
+* Assessment records are associated with the correct student.
+* Faculty can view the assessment details they are authorized to see.
+* Assessment history/results are displayed correctly.
+
+Do NOT create fake assessment records just to populate the dashboard.
+
+#### Dashboard Numbers
+
+The Faculty dashboard's:
+
+* Student count
+* Assessment count
+* Any other statistics
+
+must be calculated from the actual Supabase data.
+
+Verify that counts are:
+
+* Not hardcoded.
+* Not based on stale local/MySQL data.
+* Not counting the wrong records.
+* Correct after creating a new student/assessment.
+* Correct after refreshing the dashboard.
+
+---
+
+### STUDENT PROFILE → ASSESSMENT ROUTING
+
+There is still no way to navigate from the **Student Profile** to the student's Assessment functionality.
+
+Inspect the existing application structure and determine what the intended flow is.
+
+If the Assessment feature is supposed to be accessible from the Student Profile:
+
+* Add/fix the appropriate route/navigation.
+* Ensure the correct student ID/context is passed.
+* Ensure the correct assessment page opens.
+* Ensure the assessment data belongs to the selected student.
+* Ensure browser refresh does not lose the student context.
+* Ensure unauthorized users cannot access another student's assessment by modifying the URL.
+
+Also check all other similar feature connections throughout the application for missing navigation.
+
+---
+
+### DISORDER BREAKDOWN
+
+The dashboard currently shows:
+
+`Dyscalculia`
+`0 attempt(s) • Best: 0.0%`
+`Avg: 0.0%`
+
+even though **1 attempt has actually been completed**.
+
+Investigate the complete calculation.
+
+For each disorder/assessment:
+
+* Count the actual completed attempts.
+* Calculate the best score from actual attempts.
+* Calculate average score from actual attempts.
+* Use the correct student/user relationship.
+* Ensure the correct assessment type is used.
+* Ensure failed and passed attempts are both counted appropriately according to the existing design.
+* Verify the values against the raw Supabase records.
+
+Example:
+
+If there is 1 completed Dyscalculia attempt, the UI must not display:
+
+`0 attempt(s)`
+
+unless that attempt genuinely does not qualify under the application's intended attempt-counting rules.
+
+---
+
+### PRESENTATION OF RESULTS
+
+The current result output looks too much like raw developer notes, for example:
+
+`⚠ MONITOR PROGRESS - Emerging Indicators Present`
+`⚠ Implement CRA approach`
+`⚠ Use manipulatives...`
+
+Improve the presentation so the user sees a **clear, readable assessment report**, rather than a large block of notes.
+
+Do NOT remove useful information.
+
+Instead, inspect the existing UI/design and organize the information into appropriate sections/cards such as:
+
+* Overall Performance
+* Accuracy
+* Response Time
+* Performance by Difficulty
+* Question Results
+* Assessment Outcome
+* Key Observations
+* Recommended Activities
+* Home Practice
+* When to Consider Further Evaluation
+
+Use the project's existing design system/components where possible.
+
+The result should be understandable to a normal user and should not look like raw internal assessment notes.
+
+---
+
+### FINAL REQUIREMENT
+
+After fixing these issues, test the complete flow for each discovered assessment:
+
+**Student → Start Assessment → Play Every Game → Pass Test → Save Result → View Result**
+
+AND:
+
+**Student → Start Assessment → Deliberately Fail Test → Save Result → View Result**
+
+Then verify:
+
+**Student Profile → Assessment → Result → Faculty Dashboard → Student → Assessment History**
+
+Everything must use the migrated **Supabase backend**, with no accidental dependency on the old local MySQL database.
+
+Do not mark a feature as fixed just because the page loads. Verify the actual data, calculations, routing, database records, and UI output end-to-end.

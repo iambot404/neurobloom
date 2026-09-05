@@ -1,0 +1,589 @@
+# SUPABASE MIGRATION — DEBUG, FIX & FULL VERIFICATION
+
+The MySQL → Supabase migration has already been implemented, but the project currently has errors.
+
+**Do NOT redo the migration from scratch.**
+
+Your task now is to **systematically diagnose, fix, and verify every issue caused by or exposed by the migration.**
+
+I do not know all of the project's functionality, so discover it from the existing codebase.
+
+---
+
+## 1. FIRST: RUN THE PROJECT
+
+Start by running the complete project using its existing setup.
+
+Run:
+
+* Backend
+* Frontend
+* Database-related components
+* Tests if they exist
+
+Capture the actual errors.
+
+Do NOT guess the problem before seeing the error.
+
+Classify every error into categories such as:
+
+* Backend startup
+* Frontend
+* API
+* Supabase connection
+* PostgreSQL/SQL
+* Authentication
+* Authorization
+* RLS
+* Environment variables
+* Data/schema
+* Foreign keys
+* Type mismatch
+* CORS
+* Runtime errors
+* UI errors
+
+---
+
+# 2. FIND THE ROOT CAUSE
+
+For every error:
+
+1. Reproduce it.
+2. Read the complete error/stack trace.
+3. Locate the responsible code.
+4. Determine the root cause.
+5. Fix the underlying issue.
+6. Run the affected functionality again.
+7. Confirm the error is actually gone.
+
+Do NOT simply suppress errors or add broad try/catch blocks.
+
+Do NOT change unrelated functionality just to make an error disappear.
+
+---
+
+# 3. CHECK THE SUPABASE DATABASE
+
+Use the connected Supabase MCP to inspect the actual database.
+
+Compare:
+
+**Application expectations**
+
+vs.
+
+**Actual Supabase schema**
+
+Check:
+
+* Tables
+* Columns
+* Data types
+* Primary keys
+* Foreign keys
+* Unique constraints
+* NOT NULL constraints
+* Default values
+* Indexes
+* Relationships
+* RLS policies
+* Existing data
+
+Look specifically for differences between the old MySQL schema and the new Supabase schema.
+
+---
+
+# 4. CHECK ALL DATABASE QUERIES
+
+Search the entire backend for database operations.
+
+Verify every query is PostgreSQL/Supabase compatible.
+
+Look for:
+
+* MySQL-specific syntax
+* Incorrect column names
+* Incorrect table names
+* Wrong data types
+* Incorrect joins
+* Incorrect date handling
+* Incorrect boolean handling
+* Incorrect NULL handling
+* Incorrect ID handling
+* Broken pagination
+* Broken sorting/filtering
+* Aggregation differences
+* Transaction problems
+
+Fix each issue without changing the intended application behavior.
+
+---
+
+# 5. CHECK AUTHENTICATION
+
+Test every existing authentication flow discovered in the project.
+
+Determine whether the project uses:
+
+* Existing custom authentication
+* Supabase Auth
+* JWT
+* Sessions
+* Another authentication mechanism
+
+Do not replace the authentication architecture unless necessary.
+
+Test:
+
+* Login
+* Logout
+* Registration if present
+* Session persistence
+* Protected routes
+* Invalid credentials
+* Expired/invalid sessions
+* Role identification
+
+Make sure authentication still behaves the same as before migration.
+
+---
+
+# 6. DISCOVER ALL ROLES
+
+Inspect the codebase and identify every role.
+
+Do NOT assume the roles or their functionality.
+
+Find role checks in:
+
+* Backend middleware
+* API routes
+* Database
+* Frontend routing
+* Components
+* Authorization functions
+* JWT/session handling
+
+Create an internal map:
+
+**Role → Pages → Features → APIs → Database operations → Permissions**
+
+---
+
+# 7. TEST EVERY ROLE
+
+For every role discovered, test the complete available functionality.
+
+Especially test:
+
+### Faculty
+
+Discover what Faculty can actually do from the existing project.
+
+Then test every discovered Faculty:
+
+* Page
+* Dashboard
+* Form
+* API
+* CRUD operation
+* Database operation
+* Workflow
+* Permission
+
+Do NOT assume what Faculty functionality should be.
+
+### Admin
+
+Discover what Admin can actually do.
+
+Then test every discovered Admin:
+
+* Page
+* Dashboard
+* User management
+* Faculty management
+* CRUD operation
+* Reports
+* Settings
+* API
+* Database operation
+* Workflow
+* Permission
+
+Again, test only functionality that actually exists in the project.
+
+### Other roles
+
+Repeat the same process for every other role found.
+
+---
+
+# 8. TEST COMPLETE USER FLOWS
+
+Do not only test individual endpoints.
+
+Test real workflows.
+
+For every major feature:
+
+**Login → Page → User action → API → Supabase → Response → UI update → Refresh → Verify persistence**
+
+Example:
+
+**Admin → Create Faculty → API → Supabase → Faculty appears → Refresh → Faculty still exists**
+
+Do this for all major workflows discovered.
+
+---
+
+# 9. TEST API DIRECTLY
+
+Do not rely exclusively on the frontend.
+
+Test the backend APIs independently.
+
+For every important endpoint verify:
+
+* Correct HTTP method
+* Correct parameters
+* Correct request body
+* Correct authentication
+* Correct authorization
+* Correct Supabase query
+* Correct response
+* Correct status code
+* Correct error handling
+
+Also test unauthorized requests.
+
+---
+
+# 10. TEST ROLE SECURITY
+
+For every protected endpoint:
+
+### Correct role
+
+Verify access succeeds.
+
+### Incorrect role
+
+Verify access is rejected.
+
+### Unauthenticated
+
+Verify access is rejected.
+
+Test attempts to:
+
+* Access another user's data
+* Modify another user's data
+* Delete unauthorized records
+* Change a user's role
+* Access admin endpoints
+* Access faculty endpoints
+* Bypass frontend restrictions through direct API calls
+
+The backend must enforce permissions.
+
+---
+
+# 11. VERIFY RLS
+
+If Supabase RLS is being used:
+
+Test the actual policies.
+
+Verify that users can:
+
+* Read permitted data
+* Insert permitted data
+* Update permitted data
+* Delete permitted data
+
+Verify that users CANNOT access unauthorized data.
+
+Do not solve an RLS problem by making all tables publicly accessible.
+
+---
+
+# 12. CHECK ENVIRONMENT VARIABLES
+
+Inspect:
+
+* `.env`
+* `.env.example`
+* Backend configuration
+* Frontend configuration
+* Deployment configuration
+
+Make sure:
+
+* Supabase URL is correct
+* Public/anonymous key is correctly used where appropriate
+* Service-role key is server-side only
+* Database credentials are not exposed
+* Old MySQL variables are removed only when no longer required
+
+Never print actual secret values in the final report.
+
+---
+
+# 13. CHECK FRONTEND-BACKEND INTEGRATION
+
+After fixing the backend, test the frontend.
+
+Look for:
+
+* API URL problems
+* CORS
+* Authentication headers
+* Token/session handling
+* JSON format differences
+* Null values
+* Date formatting
+* Changed response structures
+* Loading states
+* Error handling
+
+The frontend should continue working with the existing backend API contract.
+
+---
+
+# 14. DO NOT STOP AT THE FIRST ERROR
+
+Fix errors iteratively.
+
+Use this cycle:
+
+**Run → Error → Diagnose → Fix → Retest → Next error**
+
+Continue until the project reaches a stable state.
+
+If fixing one error causes another, diagnose that as well.
+
+---
+
+# 15. FINAL FULL REGRESSION TEST
+
+After all fixes, restart the project from a clean state and test everything again.
+
+Do NOT rely on previously successful tests.
+
+Test:
+
+* Application startup
+* Authentication
+* Every discovered role
+* Every discovered major feature
+* Every important API
+* CRUD operations
+* Database persistence
+* Authorization
+* RLS
+* Faculty functionality
+* Admin functionality
+* Frontend/backend integration
+
+---
+
+# 16. FINAL CODEBASE SCAN
+
+Search the entire repository for remaining migration problems:
+
+* mysql
+* mysql2
+* pymysql
+* localhost
+* MySQL connection strings
+* obsolete database variables
+* MySQL-specific SQL
+* old database initialization
+* old authentication assumptions
+
+Remove or update only what is genuinely obsolete.
+
+---
+
+# 17. FINAL REPORT
+
+When finished, provide a report with:
+
+## Errors Found
+
+| Error | Root Cause | Fix | Retested |
+| ----- | ---------- | --- | -------- |
+| ...   | ...        | ... | PASS     |
+
+## Functionality Discovered
+
+### Student/User
+
+List actual features found.
+
+### Faculty
+
+List actual features found.
+
+### Admin
+
+List actual features found.
+
+### Other roles
+
+List actual features found.
+
+## Testing
+
+| Category       | Tested | Passed | Failed |
+| -------------- | -----: | -----: | -----: |
+| Backend        |        |        |        |
+| Frontend       |        |        |        |
+| Database       |        |        |        |
+| API            |        |        |        |
+| Authentication |        |        |        |
+| Faculty        |        |        |        |
+| Admin          |        |        |        |
+| Authorization  |        |        |        |
+| RLS            |        |        |        |
+| Regression     |        |        |        |
+
+## Remaining Issues
+
+If anything cannot be fixed, clearly explain:
+
+* Exact problem
+* Why it cannot currently be fixed
+* What I need to provide/do
+
+---
+
+# CRITICAL RULES
+
+* Do NOT redo the migration unnecessarily.
+* Do NOT guess functionality.
+* Discover functionality from the code.
+* Do NOT delete existing data.
+* Do NOT disable security to make tests pass.
+* Do NOT make tables publicly accessible just to bypass RLS errors.
+* Do NOT expose secrets.
+* Do NOT hide errors.
+* Do NOT stop after fixing the first error.
+* Do NOT claim success without actually testing.
+* Fix the ROOT CAUSE, not just the visible symptom.
+
+The final goal is:
+
+**Existing Project + Existing Functionality + Supabase Backend + Zero Known Migration Errors**
+### ROLE-BASED FUNCTIONALITY VERIFICATION — DISCOVER FIRST
+
+I do **not know the exact functionality of this project**, so do NOT assume what Student, Faculty, Admin, or any other role is supposed to do.
+
+First, inspect the existing codebase and **discover all roles and their actual functionality** from:
+
+* Frontend pages/components/routes
+* Backend routes/controllers/services
+* Database tables and relationships
+* Authentication and authorization logic
+* Navigation/sidebar/menu items
+* API endpoints
+* Existing permissions/checks
+* Forms, buttons, actions, and workflows
+
+Create a clear mapping:
+
+**Role → Pages → Features → Actions → API endpoints → Database operations → Permissions**
+
+Then verify **every discovered function for every role**.
+
+For each role:
+
+1. Log in/authenticate as that role.
+2. Check every page accessible to that role.
+3. Test every button, form, CRUD operation, search, filter, upload, download, approval, assignment, etc. that actually exists in the code.
+4. Verify the complete flow:
+   **UI → API → Backend → Supabase → Response → UI**
+5. Verify data is correctly created, read, updated, and deleted where applicable.
+6. Refresh/reload and confirm persisted data behaves correctly.
+7. Test invalid inputs and expected error handling.
+8. Verify the role cannot perform functions belonging to unauthorized roles.
+9. Verify direct API access is also properly protected, not just the frontend UI.
+
+Pay special attention to **Faculty and Admin**, but discover their functionality from the code rather than assuming what they should do.
+
+Do not invent new functionality or change the intended behavior. The goal is to verify that **all functionality that already exists in the project still works correctly after the MySQL → Supabase migration**.
+
+If a function fails:
+
+* Identify the root cause.
+* Fix it.
+* Retest the function.
+* Then continue testing the remaining functions.
+
+At the end, provide:
+
+**Role**
+
+* Discovered functions
+* Passed
+* Failed
+* Fixed
+* Remaining issues
+
+Also report any functionality that appears incomplete, disconnected, unreachable, or broken after the migration.
+
+### ROUTING & NAVIGATION VERIFICATION
+
+Also verify that the **entire application is correctly routed and navigable**.
+
+Do not assume the routing structure is correct. Discover all routes from the codebase and verify:
+
+* Every page/component that is supposed to be accessible has a working route.
+* Navigation links, buttons, cards, sidebar items, menus, and redirects point to the correct pages.
+* Related functionality is actually reachable through the UI.
+* There are no orphaned pages that exist in the code but cannot be reached through the application.
+* There are no links pointing to nonexistent or incorrect routes.
+* Browser refresh works correctly on every important route.
+* Back/forward browser navigation works correctly.
+* Protected routes correctly enforce authentication.
+* Role-specific routes correctly enforce authorization.
+* Unauthorized users cannot access another role's routes by manually entering the URL.
+
+### FUNCTIONAL FLOW / ROUTE CONNECTION CHECK
+
+For every discovered feature, verify not only that the feature works, but that the user can **actually reach it through the intended navigation flow**.
+
+For example, if the project has:
+
+**Profile → Assessment**
+
+verify that:
+
+1. The Profile page loads.
+2. The Assessment option/link/button exists if the existing design intends it to be there.
+3. Clicking it actually navigates to the correct Assessment route.
+4. The Assessment page loads without errors.
+5. The correct user/role context is preserved.
+6. The Assessment APIs and Supabase operations work.
+7. After completing the Assessment, navigation to the next intended page works.
+8. Refreshing the Assessment route does not break the application.
+
+Apply the same verification to **every discovered feature and page**, not just Profile → Assessment.
+
+Specifically identify:
+
+* Broken navigation links
+* Missing routes
+* Incorrect routes
+* Dead-end pages
+* Orphaned pages
+* Broken redirects
+* Incorrect role-based redirects
+* Features that work internally but cannot be reached from the UI
+* Pages that are reachable but have no valid way to return/navigate onward
+
+If a route or navigation flow is broken, determine whether the problem is in the frontend routing, navigation component, authentication/authorization logic, backend/API integration, or Supabase data flow, then fix and retest it.
+
+The final verification should confirm that the application is not only **functionally working**, but that users can actually navigate through the complete intended application flow.

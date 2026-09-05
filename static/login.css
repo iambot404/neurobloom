@@ -1,0 +1,203 @@
+/* ==========================================================================
+   DocHub - Login Stylesheet (Google Antigravity Dark Theme)
+   ========================================================================== */
+
+:root {
+  --bg-primary: #08090B;
+  --bg-secondary: #0E1013;
+  --bg-surface: #12151A;
+  --bg-surface-elevated: #161A22;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(124, 58, 237, 0.4);
+  --text-primary: #FFFFFF;
+  --text-secondary: #9A9DA3;
+  --text-tertiary: #606368;
+  --accent-violet: #7C3AED;
+  --accent-indigo: #6366F1;
+  --accent-emerald: #10B981;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-pill: 9999px;
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 130px 20px 60px;
+  position: relative;
+  z-index: 2;
+}
+
+.login-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  width: 100%;
+  max-width: 1060px;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  .login-wrapper {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* Left Section - Image / Illustration */
+.login-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-subtle);
+  transition: transform 0.4s ease;
+}
+
+.login-image img:hover {
+  transform: scale(1.02);
+}
+
+/* Right Section - Card Form */
+.login-form {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.login-form h2 {
+  color: #FFFFFF;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px 0;
+}
+
+.login-subtitle {
+  color: var(--text-secondary);
+  margin: 0 0 28px 0;
+  font-size: 0.95rem;
+}
+
+/* Role Selector */
+.role-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 5px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-subtle);
+}
+
+.role-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 0.85rem;
+}
+
+.role-btn:hover {
+  color: #FFFFFF;
+}
+
+.role-btn.active {
+  background: #FFFFFF;
+  color: #08090B;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+/* Forms */
+.form {
+  display: none;
+}
+
+.form.active {
+  display: block;
+}
+
+.form input {
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  color: #FFFFFF;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all var(--transition-fast);
+  box-sizing: border-box;
+}
+
+.form input:focus {
+  border-color: var(--accent-violet);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 14px rgba(124, 58, 237, 0.35);
+}
+
+.form input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, var(--accent-violet) 0%, var(--accent-indigo) 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+  transition: all var(--transition-fast);
+}
+
+.btn-submit:hover {
+  opacity: 0.95;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.5);
+}
+
+/* Redirects */
+.signup-redirect {
+  text-align: center;
+  margin-top: 24px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.signup-redirect a {
+  color: #DDD6FE;
+  font-weight: 600;
+  text-decoration: underline;
+  margin-left: 4px;
+}

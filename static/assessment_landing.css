@@ -1,0 +1,357 @@
+/* Assessment Landing Page Styles */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.assessment-container {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0a0e27 0%, #1a2847 50%, #0f1823 100%);
+    color: #e8e8f0;
+    overflow-x: hidden;
+}
+
+.assessment-header {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: #0a0e27;
+    padding: 80px 20px 60px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-content h1 {
+    font-size: 3em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.header-subtitle {
+    font-size: 1.2em;
+    opacity: 0.95;
+    font-weight: 300;
+}
+
+.assessment-main {
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Welcome Section */
+.welcome-section {
+    margin-bottom: 80px;
+}
+
+.welcome-card {
+    background: white;
+    border-radius: 15px;
+    padding: 50px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.welcome-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.welcome-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+
+.welcome-card h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.welcome-card p {
+    font-size: 1.1em;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+/* Features Section */
+.features-section {
+    margin-bottom: 80px;
+}
+
+.features-section h2 {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 50px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.feature-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+.feature-card h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #4facfe;
+}
+
+.feature-card p {
+    color: #b0b0c0;
+    line-height: 1.6;
+    font-size: 1em;
+}
+
+/* How It Works */
+.how-it-works {
+    margin-bottom: 80px;
+}
+
+.how-it-works h2 {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 50px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.step-card {
+    background: white;
+    border-radius: 12px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.step-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: #0a0e27;
+    border-radius: 50%;
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(79, 172, 254, 0.3);
+}
+
+.step-card h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.step-card p {
+    color: #666;
+    line-height: 1.6;
+    font-size: 1em;
+}
+
+/* CTA Section */
+.cta-section {
+    margin-bottom: 60px;
+}
+
+.cta-card {
+    background: linear-gradient(135deg, rgba(15, 24, 40, 0.8) 0%, rgba(25, 40, 65, 0.8) 100%);
+    border-radius: 15px;
+    padding: 60px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-left: 5px solid #4facfe;
+    border: 1px solid rgba(79, 172, 254, 0.2);
+    border-left: 5px solid #4facfe;
+    transition: all 0.3s ease;
+}
+
+.cta-card:hover {
+    box-shadow: 0 15px 40px rgba(79, 172, 254, 0.2);
+    transform: translateY(-3px);
+}
+
+.cta-card h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #e8e8f0;
+}
+
+.cta-card p {
+    font-size: 1.1em;
+    color: #b0b0c0;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: #0a0e27 !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-large {
+    padding: 15px 50px;
+    font-size: 1.2em;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .assessment-header {
+        padding: 40px 20px 30px;
+    }
+
+    .header-content h1 {
+        font-size: 2em;
+    }
+
+    .header-subtitle {
+        font-size: 1em;
+    }
+
+    .assessment-main {
+        padding: 40px 20px;
+    }
+
+    .welcome-card {
+        padding: 30px 20px;
+    }
+
+    .welcome-card h2 {
+        font-size: 1.8em;
+    }
+
+    .welcome-card p {
+        font-size: 1em;
+    }
+
+    .features-section h2,
+    .how-it-works h2 {
+        font-size: 1.8em;
+        margin-bottom: 30px;
+    }
+
+    .features-grid,
+    .steps-grid {
+        gap: 20px;
+    }
+
+    .feature-card,
+    .step-card {
+        padding: 20px;
+    }
+
+    .feature-icon {
+        font-size: 2.5em;
+    }
+
+    .cta-card {
+        padding: 30px 20px;
+    }
+
+    .cta-card h2 {
+        font-size: 1.8em;
+    }
+
+    .btn-large {
+        padding: 12px 30px;
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content h1 {
+        font-size: 1.5em;
+    }
+
+    .welcome-card h2 {
+        font-size: 1.5em;
+    }
+
+    .features-grid,
+    .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .welcome-icon {
+        font-size: 3em;
+    }
+
+    .feature-icon {
+        font-size: 2em;
+    }
+
+    .assessment-main {
+        padding: 30px 15px;
+    }
+
+    .welcome-card {
+        padding: 20px 15px;
+    }
+
+    .welcome-section {
+        margin-bottom: 50px;
+    }
+
+    .features-section,
+    .how-it-works {
+        margin-bottom: 50px;
+    }
+}

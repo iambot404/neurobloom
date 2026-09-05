@@ -1,0 +1,345 @@
+Yes. What you want is a **public-first architecture**, where authentication is optional rather than being the entry point.
+
+The flow should be:
+
+```text
+                    ┌─────────────────┐
+                    │   DocHub Home   │
+                    │   /             │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              ↓              ↓              ↓
+         Take Test       Login/Signup    About/Info
+              │              │
+              │              ↓
+              │         Profile
+              │              │
+              │              ↓
+              │          Dashboard
+              │
+              ↓
+       Assessment List
+              │
+              ↓
+        Take Assessment
+              │
+       ┌──────┴──────┐
+       │             │
+   Guest User    Logged User
+       │             │
+       ↓             ↓
+ Temporary       Save Progress
+ Progress        to Account
+       │             │
+       ↓             ↓
+ Result          Result + History
+```
+
+### The key behavior
+
+**Guest:**
+
+`Home → Take Test → Assessment → Result`
+
+No account required.
+
+But:
+
+> Guest progress is temporary and should not be stored permanently.
+
+So if they close the browser, their progress can disappear.
+
+**Logged-in user:**
+
+`Home → Login → Profile → Dashboard`
+
+But they should also be able to go directly:
+
+`Home → Assessments → Assessment → ...`
+
+The important part is that **the authentication state follows the user throughout the application**.
+
+---
+
+## Navbar
+
+### Logged out
+
+```text
+DocHub
+
+Assessments     How It Works     About
+
+                         Take Test
+                         Login
+                         Sign Up
+```
+
+### Logged in
+
+```text
+DocHub
+
+Assessments     How It Works     About
+
+                         Take Test
+                         Profile ●
+```
+
+Clicking **Profile** → Dashboard/Profile.
+
+---
+
+## The important part: Assessment route
+
+Don't make two completely separate assessment systems.
+
+For example:
+
+```text
+/assessments
+/assessment/<id>
+/assessment/<id>/result
+```
+
+These routes should detect whether the user is authenticated.
+
+### Guest
+
+```text
+GET /assessments
+
+user = not logged in
+
+→ show assessments
+→ allow test
+→ keep answers/progress in session/localStorage
+→ don't write permanent progress to database
+```
+
+### Logged in
+
+```text
+GET /assessments
+
+user = logged in
+
+→ show assessments
+→ load user's existing progress
+→ show completed/in-progress assessments
+→ save progress to database
+```
+
+---
+
+# Very important: guest → login conversion
+
+This is the part I'd specifically implement.
+
+Suppose a guest starts **Dysgraphia Assessment**.
+
+They answer:
+
+```text
+Question 1 ✓
+Question 2 ✓
+Question 3 ✓
+Question 4 → currently here
+```
+
+They haven't logged in.
+
+Then they decide:
+
+> "I want to save my progress."
+
+They click:
+
+**Login to save progress**
+
+After login:
+
+```text
+Guest temporary progress
+          ↓
+      User logs in
+          ↓
+Identify assessment
+          ↓
+Transfer temporary progress
+          ↓
+Save to user's account
+          ↓
+Continue assessment
+```
+
+So they don't lose what they already did.
+
+---
+
+# Dashboard
+
+The dashboard should become a **personalized home for logged-in users**.
+
+For example:
+
+```text
+Good evening, Aniket
+
+Continue where you left off
+────────────────────────────
+
+Dysgraphia Assessment
+Question 7 of 15
+
+[ Continue Assessment → ]
+
+
+Your Assessments
+────────────────────────────
+
+Dyslexia          Completed
+Dysgraphia        In Progress
+Color Vision      Not Started
+
+
+Recent Results
+────────────────────────────
+
+Dyslexia Screening
+Completed Sep 1
+
+[ View Result ]
+```
+
+---
+
+# Profile vs Dashboard
+
+I'd separate these concepts.
+
+### Profile
+
+```text
+/profile
+
+Name
+Email
+Profile picture
+Account settings
+Preferences
+
+[ Go to Dashboard ]
+```
+
+### Dashboard
+
+```text
+/dashboard
+
+Progress
+Assessments
+Results
+Insights
+Recent activity
+```
+
+So:
+
+```text
+Navbar Profile
+       ↓
+   /profile
+       ↓
+ Dashboard
+```
+
+But **Assessments** in the navbar should directly go to:
+
+```text
+/assessments
+```
+
+rather than forcing the user through the profile/dashboard.
+
+---
+
+# Recommended routes
+
+For your Flask project, I'd structure it roughly like this:
+
+```text
+/
+├── /about
+├── /how-it-works
+│
+├── /assessments
+├── /assessment/<id>
+├── /assessment/<id>/result
+│
+├── /login
+├── /signup
+├── /logout
+│
+├── /profile
+├── /dashboard
+│
+├── /faculty
+├── /faculty/dashboard
+├── /faculty/students
+├── /faculty/assessments
+└── /faculty/results
+```
+
+The **root `/` must be the DocHub information/landing page**, not login.
+
+---
+
+# One more important distinction
+
+I'd use three states:
+
+```text
+                 USER
+                  │
+        ┌─────────┴─────────┐
+        │                   │
+      Guest              Logged in
+        │                   │
+        ↓                   ↓
+ Temporary state       Database state
+        │                   │
+        ↓                   ↓
+   localStorage          User ID
+```
+
+For guest users:
+
+```javascript
+localStorage
+```
+
+can hold something like:
+
+```json
+{
+  "assessmentId": "dysgraphia",
+  "currentQuestion": 7,
+  "answers": {
+    "1": "A",
+    "2": "C",
+    "3": "B"
+  }
+}
+```
+
+For authenticated users, the same information should be associated with their account in your database.
+
+That gives you exactly what you're describing:
+
+> **The user can enter from Profile → Assessment, Navbar → Assessment, or Take Test, and DocHub knows whether to load their saved progress or create a temporary guest session.**
+
+And I would make **"Take Test" the prominent CTA on the public homepage**, while **Login/Signup are secondary actions**.
+
+If you're going to give this to the coding AI you're using, I can also turn this into a **specific implementation prompt that tells it how to modify your existing Flask routes, authentication, database models, navbar, and assessment state without breaking your current project**.

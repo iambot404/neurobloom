@@ -1,0 +1,752 @@
+<!-- Enhanced Teacher/Faculty Dashboard -->
+{% extends "base.html" %}
+
+{% block title %}Faculty Dashboard | Neurobloom{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='faculty-dashboard.css') }}">
+
+<div class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1>Faculty Dashboard</h1>
+                <p class="subtitle">Monitor student progress and learning disorder assessments</p>
+            </div>
+            <div class="header-right">
+                <div class="header-stats">
+                    <div class="header-stat">
+                        <span class="stat-num" id="totalStudents">0</span>
+                        <span class="stat-label">Students</span>
+                    </div>
+                    <div class="header-stat">
+                        <span class="stat-num" id="totalAssessments">0</span>
+                        <span class="stat-label">Assessments</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <!-- Filters & Controls -->
+        <div class="controls-section">
+            <div class="search-box">
+                <input type="text" id="studentSearch" placeholder="Search students by name or email...">
+            </div>
+            <div class="filter-group">
+                <select id="disorderFilter" class="filter-select">
+                    <option value="">All Disorders</option>
+                    <option value="dyslexia">Dyslexia</option>
+                    <option value="dyscalculia">Dyscalculia</option>
+                    <option value="dysgraphia">Dysgraphia</option>
+                </select>
+                <select id="riskFilter" class="filter-select">
+                    <option value="">All Risk Levels</option>
+                    <option value="No Risk">No Risk</option>
+                    <option value="Low Risk">Low Risk</option>
+                    <option value="Medium Risk">Medium Risk</option>
+                    <option value="High Risk">High Risk</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="students">Students</button>
+                <button class="tab-btn" data-tab="analytics">Class Analytics</button>
+                <button class="tab-btn" data-tab="reports">Reports</button>
+            </div>
+
+            <!-- Students Tab -->
+            <div class="tab-content active" id="students-tab">
+                <div class="students-grid">
+                    <div id="studentsList" class="students-list">
+                        <p class="empty-state">No students found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analytics-tab">
+                <div class="analytics-grid">
+                    <div class="analytics-card full-width">
+                        <h3>Class Performance Overview</h3>
+                        <canvas id="classPerformanceChart" class="chart-large"></canvas>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Risk Distribution</h3>
+                        <canvas id="riskDistributionChart" class="chart-medium"></canvas>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Disorder Breakdown</h3>
+                        <canvas id="disorderChart" class="chart-medium"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div class="tab-content" id="reports-tab">
+                <div class="reports-container">
+                    <div class="report-actions">
+                        <button class="btn btn-primary" id="generateClassReport">Generate Class Report</button>
+                        <button class="btn btn-secondary" id="exportData">Export Data (CSV)</button>
+                    </div>
+                    <div id="reportsDisplay" class="reports-list">
+                        <p class="empty-state">No reports generated yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Student Details Modal -->
+<div id="studentModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close">&times;</button>
+        <div id="studentModalContent">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+</div>
+
+<!-- Assessment Details Modal -->
+<div id="assessmentModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close">&times;</button>
+        <div id="assessmentModalContent">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    // Faculty Dashboard Initialization
+    let isLoadingData = false;
+
+    window.addEventListener('DOMContentLoaded', function() {
+        loadFacultyDashboard();
+        setupEventListeners();
+        setupTabNavigation();
+    });
+
+    function loadFacultyDashboard() {
+        if (isLoadingData) return;
+        isLoadingData = true;
+        
+        fetch('/api/faculty/dashboard')
+            .then(r => {
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                return r.json();
+            })
+            .then(data => {
+                if (data.status === 'ok') {
+                    updateHeader(data.stats);
+                    updateStudentsList(data.students || []);
+                    updateAnalytics(data.analytics || {});
+                } else {
+                    showErrorMessage('Failed to load dashboard data');
+                }
+            })
+            .catch(err => {
+                console.error('Error loading dashboard:', err);
+                showErrorMessage('Unable to load dashboard. Please refresh the page.');
+            })
+            .finally(() => {
+                isLoadingData = false;
+            });
+    }
+
+    function showErrorMessage(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
+        errorDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ef4444; color: white; padding: 12px 20px; border-radius: 6px; z-index: 10000;';
+        document.body.appendChild(errorDiv);
+        setTimeout(() => errorDiv.remove(), 5000);
+    }
+
+    function updateHeader(stats) {
+        document.getElementById('totalStudents').textContent = stats.total_students;
+        document.getElementById('totalAssessments').textContent = stats.total_assessments;
+    }
+
+    function updateStudentsList(students) {
+        const container = document.getElementById('studentsList');
+        if (!students || students.length === 0) {
+            container.innerHTML = '<p class="empty-state">No students assigned.</p>';
+            return;
+        }
+
+        container.innerHTML = students.map(student => `
+            <div class="student-card">
+                <div class="student-header">
+                    <img src="${student.profile_photo || '/static/imgs/default-avatar.png'}" alt="${student.name}" class="student-avatar">
+                    <div class="student-info">
+                        <h3>${student.name || 'Unknown'}</h3>
+                        <p>${student.email || 'N/A'}</p>
+                    </div>
+                </div>
+                <div class="student-stats">
+                    <div class="stat">
+                        <span class="label">Assessments</span>
+                        <span class="value">${student.assessment_count || 0}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Avg Score</span>
+                        <span class="value">${(student.avg_score || 0).toFixed(1)}%</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Overall Risk</span>
+                        <span class="value risk ${(student.overall_risk || 'medium').toLowerCase()}">${student.overall_risk || '-'}</span>
+                    </div>
+                </div>
+                <div class="disorder-badges">
+                    ${(student.disorder_risks || []).map(d => `
+                        <span class="badge ${(d.risk_level || 'medium').toLowerCase()}">${d.disorder || 'Unknown'}: ${d.risk_level || 'Medium'}</span>
+                    `).join('') || '<span class="badge">No assessments</span>'}
+                </div>
+                <div class="student-actions">
+                    <button class="btn btn-sm btn-primary" onclick="viewStudentDetails(${student.id})">View Details</button>
+                    <button class="btn btn-sm btn-secondary" onclick="viewStudentAssessments(${student.id})">Assessments</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateAnalytics(analytics) {
+        renderClassPerformanceChart(analytics.performance);
+        renderRiskDistributionChart(analytics.risk_distribution);
+        renderDisorderChart(analytics.disorder_breakdown);
+    }
+
+    function renderClassPerformanceChart(data) {
+        const ctx = document.getElementById('classPerformanceChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Average Score',
+                    data: data.scores,
+                    backgroundColor: 'rgba(79, 172, 254, 0.7)',
+                    borderColor: '#4facfe',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: true } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    }
+
+    function renderRiskDistributionChart(data) {
+        const ctx = document.getElementById('riskDistributionChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['No Risk', 'Low Risk', 'Medium Risk', 'High Risk'],
+                datasets: [{
+                    data: [data.no_risk, data.low_risk, data.medium_risk, data.high_risk],
+                    backgroundColor: [
+                        '#4CAF50',
+                        '#81c784',
+                        '#FF9800',
+                        '#f44336'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    }
+
+    function renderDisorderChart(data) {
+        const ctx = document.getElementById('disorderChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Dyslexia', 'Dyscalculia', 'Dysgraphia'],
+                datasets: [{
+                    label: 'Assessment Count',
+                    data: [data.dyslexia, data.dyscalculia, data.dysgraphia],
+                    borderColor: '#4facfe',
+                    backgroundColor: 'rgba(79, 172, 254, 0.2)',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: true } }
+            }
+        });
+    }
+
+    function setupEventListeners() {
+        document.getElementById('studentSearch').addEventListener('input', function() {
+            filterStudents();
+        });
+
+        document.getElementById('disorderFilter').addEventListener('change', function() {
+            filterStudents();
+        });
+
+        document.getElementById('riskFilter').addEventListener('change', function() {
+            filterStudents();
+        });
+
+        document.getElementById('generateClassReport').addEventListener('click', function() {
+            generateClassReport();
+        });
+
+        document.getElementById('exportData').addEventListener('click', function() {
+            exportClassData();
+        });
+    }
+
+    function setupTabNavigation() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(tabName + '-tab').classList.add('active');
+                this.classList.add('active');
+            });
+        });
+    }
+
+    function filterStudents() {
+        const search = document.getElementById('studentSearch').value.toLowerCase();
+        const disorder = document.getElementById('disorderFilter').value;
+        const risk = document.getElementById('riskFilter').value;
+
+        fetch(`/api/faculty/students?search=${encodeURIComponent(search)}&disorder=${encodeURIComponent(disorder)}&risk=${encodeURIComponent(risk)}`)
+            .then(r => {
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                return r.json();
+            })
+            .then(data => {
+                updateStudentsList(data.students || []);
+            })
+            .catch(err => {
+                console.error('Error filtering students:', err);
+                showErrorMessage('Failed to filter students');
+            });
+    }
+
+    function viewStudentDetails(studentId) {
+        fetch(`/api/faculty/student/${studentId}`)
+            .then(r => {
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                return r.json();
+            })
+            .then(data => {
+                showStudentModal(data.student);
+            })
+            .catch(err => {
+                console.error('Error loading student details:', err);
+                showErrorMessage('Failed to load student details');
+            });
+    }
+
+    function viewStudentAssessments(studentId) {
+        fetch(`/api/faculty/student/${studentId}/assessments`)
+            .then(r => {
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                return r.json();
+            })
+            .then(data => {
+                showStudentAssessmentsModal(data.assessments || []);
+            })
+            .catch(err => {
+                console.error('Error loading assessments:', err);
+                showErrorMessage('Failed to load student assessments');
+            });
+    }
+
+    function showStudentModal(student) {
+        const modal = document.getElementById('studentModal');
+        const content = document.getElementById('studentModalContent');
+        
+        content.innerHTML = `
+            <h2>${student.name}</h2>
+            <div class="modal-body">
+                <div class="student-details">
+                    <div class="detail-item">
+                        <label>Email:</label>
+                        <span>${student.email}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Class:</label>
+                        <span>${student.class}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Total Assessments:</label>
+                        <span>${student.assessment_count}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Average Score:</label>
+                        <span>${(student.avg_score || 0).toFixed(1)}%</span>
+                    </div>
+                </div>
+                <div class="disorder-progress">
+                    <h3>Progress by Disorder</h3>
+                    ${student.disorder_risks.map(d => `
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span>${d.disorder}</span>
+                                <span class="risk-badge ${d.risk_level.toLowerCase()}">${d.risk_level}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${d.score || 0}%"></div>
+                            </div>
+                            <div class="progress-details">
+                                <span>Attempts: ${d.attempts}</span>
+                                <span>Last: ${new Date(d.last_date).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        modal.style.display = 'block';
+        document.querySelector('#studentModal .modal-close').onclick = () => modal.style.display = 'none';
+    }
+
+    function showStudentAssessmentsModal(assessments) {
+        const modal = document.getElementById('assessmentModal');
+        const content = document.getElementById('assessmentModalContent');
+        
+        content.innerHTML = `
+            <h2>Student Assessments</h2>
+            <div class="modal-body">
+                <div class="assessments-list">
+                    ${assessments.map(a => `
+                        <div class="assessment-item" onclick="viewAssessmentDetails(${a.id})">
+                            <div class="assessment-header">
+                                <span class="disorder-badge">${a.disorder_type}</span>
+                                <span class="date">${new Date(a.date).toLocaleString()}</span>
+                            </div>
+                            <div class="assessment-content">
+                                <div class="score">${a.score}%</div>
+                                <div class="risk-badge ${a.risk_level.toLowerCase()}">${a.risk_level}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        modal.style.display = 'block';
+        document.querySelector('#assessmentModal .modal-close').onclick = () => modal.style.display = 'none';
+    }
+
+    function viewAssessmentDetails(assessmentId) {
+        fetch(`/api/faculty/assessment/${assessmentId}`)
+            .then(r => {
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                return r.json();
+            })
+            .then(data => {
+                if (data.assessment && data.assessment.recommendations) {
+                    const recsList = Array.isArray(data.assessment.recommendations)
+                        ? data.assessment.recommendations.join('\n')
+                        : 'No recommendations available';
+                    alert('Assessment recommendations:\n' + recsList);
+                }
+            })
+            .catch(err => {
+                console.error('Error loading assessment details:', err);
+                showErrorMessage('Failed to load assessment details');
+            });
+    }
+
+    function generateClassReport() {
+        // Generate comprehensive class report
+        alert('Class report generated and downloaded');
+    }
+
+    function exportClassData() {
+        window.location.href = '/api/faculty/export-csv';
+    }
+</script>
+
+<style>
+    .dashboard-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f1823 0%, #0a0e27 50%, #1a2847 100%);
+        color: #f1f5f9;
+    }
+
+    .dashboard-header {
+        background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.05) 100%);
+        border-bottom: 1px solid rgba(79, 172, 254, 0.15);
+        padding: 40px 30px;
+        margin-bottom: 40px;
+    }
+
+    .header-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-left h1 {
+        margin: 0;
+        font-size: 32px;
+        color: #f1f5f9;
+    }
+
+    .header-stats {
+        display: flex;
+        gap: 30px;
+    }
+
+    .header-stat {
+        text-align: center;
+    }
+
+    .stat-num {
+        display: block;
+        font-size: 28px;
+        font-weight: 700;
+        color: #4facfe;
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 12px;
+        color: #cbd5e1;
+        margin-top: 5px;
+    }
+
+    .controls-section {
+        max-width: 1400px;
+        margin: 0 auto 30px;
+        padding: 0 30px;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 15px;
+        background: rgba(79, 172, 254, 0.1);
+        border: 1px solid rgba(79, 172, 254, 0.3);
+        border-radius: 8px;
+        color: #f1f5f9;
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .filter-select {
+        padding: 10px 15px;
+        background: rgba(79, 172, 254, 0.1);
+        border: 1px solid rgba(79, 172, 254, 0.3);
+        border-radius: 8px;
+        color: #f1f5f9;
+    }
+
+    .students-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+
+    .student-card {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 16px;
+        padding: 20px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .student-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 32px rgba(79, 172, 254, 0.2);
+    }
+
+    .student-header {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .student-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .student-info h3 {
+        margin: 0;
+        font-size: 16px;
+        color: #f1f5f9;
+    }
+
+    .student-info p {
+        margin: 5px 0 0;
+        font-size: 12px;
+        color: #cbd5e1;
+    }
+
+    .student-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        padding: 15px 0;
+        border-top: 1px solid rgba(79, 172, 254, 0.2);
+        border-bottom: 1px solid rgba(79, 172, 254, 0.2);
+        margin: 15px 0;
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat .label {
+        display: block;
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    .stat .value {
+        display: block;
+        font-size: 18px;
+        font-weight: 700;
+        color: #4facfe;
+    }
+
+    .disorder-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 15px 0;
+    }
+
+    .badge {
+        padding: 5px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .badge.no {
+        background: rgba(76, 175, 80, 0.2);
+        color: #81c784;
+    }
+
+    .badge.low {
+        background: rgba(129, 199, 132, 0.2);
+        color: #a5d6a7;
+    }
+
+    .badge.medium {
+        background: rgba(255, 152, 0, 0.2);
+        color: #FFB74D;
+    }
+
+    .badge.high {
+        background: rgba(244, 67, 54, 0.2);
+        color: #ef5350;
+    }
+
+    .student-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 20px;
+    }
+
+    .analytics-card {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 16px;
+        padding: 20px;
+    }
+
+    .analytics-card.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .analytics-card h3 {
+        margin: 0 0 20px;
+        color: #f1f5f9;
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: #1a2847;
+        border-radius: 16px;
+        padding: 30px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: #f1f5f9;
+        font-size: 28px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}

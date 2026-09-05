@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocHub | Dyscalculia Diagnostic</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='antigravity.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #08090B;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 110px 20px 40px;
+        }
+
+        .app {
+            background: #12151A;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            max-width: 650px;
+            width: 100%;
+            overflow: hidden;
+            color: #FFFFFF;
+            position: relative;
+            z-index: 2;
+        }
+
+        .topbar {
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: white;
+            padding: 26px 20px;
+            text-align: center;
+        }
+
+        .topbar h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: #FFFFFF;
+        }
+
+        .topbar p {
+            font-size: 13px;
+            color: #9A9DA3;
+        }
+
+        .card {
+            padding: 40px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #intro {
+            text-align: center;
+        }
+
+        .intro-text {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .consent-group {
+            background: #e0f7f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .consent-group input {
+            margin-right: 8px;
+        }
+
+        .progress-row {
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ECDC4 0%, #45B7AA 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-label {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .game-area {
+            display: none;
+        }
+
+        .game-area.active {
+            display: block;
+        }
+
+        .game-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .game-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .game-timer {
+            display: inline-block;
+            background: #4ECDC4;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .prompt {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            border-left: 4px solid #4ECDC4;
+        }
+
+        .dots {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            min-height: 80px;
+        }
+
+        .dot {
+            width: 30px;
+            height: 30px;
+            background: #4ECDC4;
+            border-radius: 50%;
+        }
+
+        .pile {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            flex: 1;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .pile:hover {
+            background: #e8f6f5;
+            border-color: #4ECDC4;
+            transform: scale(1.02);
+        }
+
+        .small-dot {
+            width: 20px;
+            height: 20px;
+            background: #4ECDC4;
+            border-radius: 50%;
+        }
+
+        .piles-container {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+            margin: 10px 0;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #4ECDC4;
+        }
+
+        .buttons-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 80px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4ECDC4 0%, #45B7AA 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-option {
+            background: white;
+            border: 2px solid #e0e0e0;
+            color: #333;
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .btn-option:hover {
+            border-color: #4ECDC4;
+            background: #f9f9f9;
+        }
+
+        .btn-option.selected {
+            background: #4ECDC4;
+            color: white;
+            border-color: #4ECDC4;
+        }
+
+        .results-section {
+            text-align: center;
+        }
+
+        .results-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .result-box {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .risk-high {
+            color: #d32f2f;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .risk-medium {
+            color: #f57c00;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .risk-low {
+            color: #388e3c;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .risk-none {
+            color: #00897b;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .details-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #666;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 20px;
+        }
+
+        .shake {
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .pop {
+            animation: pop 0.3s;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .confetti-canvas {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Pill Navbar -->
+    <header class="ag-nav-wrapper">
+      <nav class="ag-nav">
+        <a href="/" class="ag-logo">
+          <div class="ag-logo-mark">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="ag-logo-text">DocHub</span>
+        </a>
+
+        <ul class="ag-nav-links">
+          <li><a href="/" class="ag-nav-link">Home</a></li>
+          <li><a href="/assessments" class="ag-nav-link active">Assessments</a></li>
+          <li><a href="/#how-it-works" class="ag-nav-link">How It Works</a></li>
+        </ul>
+
+        <div class="ag-nav-actions">
+          <a href="/assessments" class="ag-btn ag-btn-sm ag-btn-outline">Exit Test</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="app">
+        <div class="topbar">
+            <h1>Dyscalculia Diagnostic Assessment</h1>
+            <p>Interactive cognitive modules • Deep learning evaluated • Non-clinical screening</p>
+        </div>
+
+        <div class="card">
+            <!-- INTRO SECTION -->
+            <section id="intro" class="section active">
+                <div class="intro-text">
+                    <p>This assessment contains 6 short, interactive games that check early math and number skills. Each game takes about 2-3 minutes.</p>
+                    <p style="margin-top: 15px; font-size: 13px; color: #666;">Audio prompts will speak instructions aloud. Make sure your audio is enabled.</p>
+                </div>
+
+                <div class="consent-group">
+                    <label>
+                        <input id="consent" type="checkbox" />
+                        I confirm I have permission from the student to run this assessment.
+                    </label>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="startAssessment()">Start Games</button>
+                    <button class="btn-secondary" onclick="goBack()">Back</button>
+                </div>
+            </section>
+
+            <!-- GAME AREA -->
+            <section id="gameArea" class="section game-area">
+                <div class="progress-row">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                    <div class="progress-label" id="progressLabel">0 / 6</div>
+                </div>
+
+                <div class="game-header">
+                    <h2 id="gameTitle">Game</h2>
+                    <span class="game-timer" id="gameTimer">⏱ 0s</span>
+                </div>
+
+                <div id="gameContainer"></div>
+
+                <div class="controls">
+                    <button id="nextBtn" class="btn-primary hidden" onclick="nextGame()">Next Game</button>
+                </div>
+            </section>
+
+            <!-- RESULTS SECTION -->
+            <section id="results" class="section results-section">
+                <h2>Assessment Complete! 🎉</h2>
+                <div class="result-box">
+                    <p>Your assessment result:</p>
+                    <p id="resultSummary" style="margin-top: 15px; min-height: 30px;"></p>
+                </div>
+                <div id="resultDetails" class="details-box"></div>
+                <div class="controls" id="resultsControls">
+                    <button class="btn-primary" onclick="submitResults()">Submit & Save Results</button>
+                    <button class="btn-secondary" onclick="restartAssessment()">Run Again</button>
+                </div>
+                <div class="controls" id="afterSubmitControls" style="display: none;">
+                    <button class="btn-primary" onclick="viewResults()">📊 View Results</button>
+                    <button class="btn-secondary" onclick="window.location.href='/assessments'">Back to Assessments</button>
+                </div>
+            </section>
+
+            <div class="footer">
+                <p>Designed for early screening. For clinical diagnosis, consult a specialist.</p>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const gamesOrder = ['subitizing', 'comparison', 'symbol_match', 'sequencing', 'memory_span', 'story_arith'];
+        const assessmentId = {{ assessment_id|default(2) }};
+        const studentId = {{ session.get('user_id')|default(1) }};
+
+        // ===== STATE =====
+        let currentIdx = 0;
+        let results = {};
+        let gameStart = 0;
+        let timerInterval = null;
+
+        // ===== AUDIO & SPEECH SYNTHESIS =====
+        function speak(text, opts = {}) {
+            if (!('speechSynthesis' in window)) {
+                console.warn('TTS not supported');
+                return Promise.resolve();
+            }
+            return new Promise((resolve) => {
+                const synth = window.speechSynthesis;
+                synth.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = opts.voiceLang || 'en-US';
+                u.rate = opts.rate || 0.98;
+                u.pitch = opts.pitch || 1.0;
+                u.volume = 1.0;
+                u.onend = () => resolve();
+                u.onerror = () => resolve();
+                const voices = synth.getVoices();
+                if (voices && voices.length) {
+                    const preferred = voices.find(v => v.lang.startsWith('en')) || voices[0];
+                    if (preferred) u.voice = preferred;
+                }
+                synth.speak(u);
+                setTimeout(() => resolve(), 2300);
+            });
+        }
+
+        // ===== ANIMATIONS & CONFETTI =====
+        function popOn(el) {
+            if (!el) return;
+            el.classList.add('pop');
+            setTimeout(() => el.classList.remove('pop'), 240);
+        }
+
+        function shake(el) {
+            if (!el) return;
+            el.classList.add('shake');
+            setTimeout(() => el.classList.remove('shake'), 600);
+        }
+
+        const confetti = (() => {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
+            let active = false, pieces = [];
+
+            function resize() {
+                if (!canvas) return;
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            function rand(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            function spawn(count = 60) {
+                if (!ctx) return;
+                resize();
+                pieces = [];
+                for (let i = 0; i < count; i++) {
+                    pieces.push({
+                        x: rand(0, canvas.width),
+                        y: rand(-canvas.height * 0.6, 0),
+                        vx: rand(-2, 2),
+                        vy: rand(2, 8),
+                        size: rand(6, 12),
+                        rot: rand(0, 360),
+                        vr: rand(-6, 6),
+                        color: `hsl(${Math.floor(rand(0, 360))}, 80%, 60%)`
+                    });
+                }
+                canvas.style.display = 'block';
+                active = true;
+                requestAnimationFrame(loop);
+                setTimeout(() => stop(), 2200);
+            }
+
+            function loop() {
+                if (!active) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (const p of pieces) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rot += p.vr * 0.02;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+                    ctx.restore();
+                }
+                pieces = pieces.filter(p => p.y < canvas.height + 40);
+                if (pieces.length) requestAnimationFrame(loop);
+            }
+
+            function stop() {
+                active = false;
+                if (canvas) canvas.style.display = 'none';
+            }
+
+            window.addEventListener('resize', resize);
+            return { spawn };
+        })();
+
+        // ===== UI HELPERS =====
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.game-area').forEach(s => s.classList.remove('active'));
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('active');
+                if (id === 'gameArea') document.getElementById('gameArea').classList.add('active');
+            }
+        }
+
+        function updateProgress() {
+            const fill = Math.round((currentIdx / gamesOrder.length) * 100);
+            document.getElementById('progressFill').style.width = `${fill}%`;
+            document.getElementById('progressLabel').innerText = `${currentIdx + 1} / ${gamesOrder.length}`;
+        }
+
+        function setTimer() {
+            gameStart = performance.now();
+            const tEl = document.getElementById('gameTimer');
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const s = Math.round((performance.now() - gameStart) / 1000);
+                tEl.innerText = `⏱ ${s}s`;
+            }, 300);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // ===== MAIN FLOW =====
+        function startAssessment() {
+            if (!document.getElementById('consent').checked) {
+                if (!confirm("Please confirm you have permission to continue.")) return;
+            }
+            results = {};
+            currentIdx = 0;
+            showSection('gameArea');
+            loadGame(gamesOrder[currentIdx]);
+            updateProgress();
+        }
+
+        function nextGame() {
+            currentIdx++;
+            stopTimer();
+            if (currentIdx >= gamesOrder.length) {
+                finishSession();
+            } else {
+                loadGame(gamesOrder[currentIdx]);
+                updateProgress();
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function restartAssessment() {
+            location.reload();
+        }
+
+        // ===== LOAD GAME =====
+        function prettify(k) {
+            const map = {
+                'subitizing': 'Dot Quick-Count (Subitizing)',
+                'comparison': 'Which is More?',
+                'symbol_match': 'Match Number to Group',
+                'sequencing': 'Number Maze (Sequencing)',
+                'memory_span': 'Number Memory',
+                'story_arith': 'Story Arithmetic'
+            };
+            return map[k] || k;
+        }
+
+        function loadGame(name) {
+            document.getElementById('gameContainer').innerHTML = '';
+            document.getElementById('gameTitle').innerText = prettify(name);
+            document.getElementById('nextBtn').classList.add('hidden');
+            setTimer();
+
+            const texts = {
+                'subitizing': "Quick count the dots. You will see a small group of dots for a moment, then pick the right number.",
+                'comparison': "Which is more? You will see two piles of dots. Click on the pile with more dots.",
+                'symbol_match': "Match the number to the group. Count the dots and click the matching number.",
+                'sequencing': "Number maze. Follow the numbers in order from 1 to 10 as fast as you can.",
+                'memory_span': "Number memory. I will say some numbers. Then you repeat them back.",
+                'story_arith': "Story math. Listen to the story and solve the math problem."
+            };
+
+            speak(texts[name]).then(() => {
+                if (name === 'subitizing') subitizingGame();
+                else if (name === 'comparison') comparisonGame();
+                else if (name === 'symbol_match') symbolMatchGame();
+                else if (name === 'sequencing') sequencingGame();
+                else if (name === 'memory_span') memorySpanGame();
+                else if (name === 'story_arith') storyArithGame();
+            });
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function rint(a, b) {
+            return Math.floor(Math.random() * (b - a + 1)) + a;
+        }
+
+        function shuffle(a) {
+            let arr = a.slice();
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // ===== GAMES =====
+        function subitizingGame() {
+            const container = document.getElementById('gameContainer');
+            let trials = 8;
+            let correct = 0;
+            let total = 0;
+            let rts = [];
+
+            const el = document.createElement('div');
+            container.appendChild(el);
+
+            function trial() {
+                if (total >= trials) { finish(); return; }
+                el.innerHTML = '';
+                const n = rint(1, 6);
+                const dotsDiv = document.createElement('div');
+                dotsDiv.className = 'dots';
+                for (let i = 0; i < n; i++) {
+                    const d = document.createElement('div');
+                    d.className = 'dot';
+                    dotsDiv.appendChild(d);
+                }
+                el.appendChild(dotsDiv);
+
+                setTimeout(() => {
+                    dotsDiv.style.visibility = 'hidden';
+                    const opts = shuffle([n, ...Array.from({length: 3}, () => rint(1, 9))]).slice(0, 4);
+                    const btns = document.createElement('div');
+                    btns.className = 'buttons-row';
+                    const t0 = performance.now();
+                    opts.forEach(v => {
+                        const b = document.createElement('button');
+                        b.className = 'btn-option';
+                        b.innerText = v;
+                        b.onclick = () => {
+                            const rt = performance.now() - t0;
+                            rts.push(rt);
+                            total++;
+                            if (v === n) correct++;
+                            trial();
+                        };
+                        btns.appendChild(b);
+                    });
+                    el.appendChild(btns);
+                }, 5550);
+            }
+            trial();
+
+            function finish() {
+                const avg_rt = rts.length ? (rts.reduce((a, b) => a + b, 0) / rts.length) : 1000;
+                results['subitizing'] = { correct, total, avg_rt: Math.round(avg_rt) };
+                document.getElementById('nextBtn').classList.remove('hidden');
+                speak('Great job counting!');
+            }
+        }
+
+        function comparisonGame() {
+            const container = document.getElementById('gameContainer');
+            let trials = 8, correct = 0, total = 0, rts = [];
+
+            function trial() {
+                if (total >= trials) { finish(); return; }
+                container.innerHTML = '';
+                const a = rint(1, 9), b = rint(1, 9);
+                const piles = document.createElement('div');
+                piles.className = 'piles-container';
+
+                const left = document.createElement('div');
+                left.className = 'pile';
+                const right = document.createElement('div');
+                right.className = 'pile';
+
+                for (let i = 0; i < a; i++) {
+                    left.appendChild(Object.assign(document.createElement('div'), { className: 'small-dot' }));
+                }
+                for (let i = 0; i < b; i++) {
+                    right.appendChild(Object.assign(document.createElement('div'), { className: 'small-dot' }));
+                }
+
+                piles.appendChild(left);
+                piles.appendChild(right);
+                container.appendChild(piles);
+
+                const t0 = performance.now();
+                left.onclick = () => { handleChoice(a >= b); };
+                right.onclick = () => { handleChoice(b >= a); };
+
+                function handleChoice(ch) {
+                    const rt = performance.now() - t0;
+                    rts.push(rt);
+                    total++;
+                    if (ch) correct++;
+                    trial();
+                }
+            }
+            trial();
+
+            function finish() {
+                const avg_rt = rts.length ? rts.reduce((a, b) => a + b, 0) / rts.length : 1000;
+                results['comparison'] = { correct, total, avg_rt: Math.round(avg_rt) };
+                document.getElementById('nextBtn').classList.remove('hidden');
+                speak('Excellent comparison skills!');
+            }
+        }
+
+        function symbolMatchGame() {
+            const container = document.getElementById('gameContainer');
+            let trials = 6, correct = 0, total = 0, rts = [];
+
+            function trial() {
+                if (total >= trials) { finish(); return; }
+                container.innerHTML = '';
+                const n = rint(1, 9);
+                const count = rint(1, 9);
+
+                const prompt = document.createElement('div');
+                prompt.className = 'prompt';
+                prompt.innerText = 'Count the dots and pick the matching number.';
+                container.appendChild(prompt);
+
+                const dotsDiv = document.createElement('div');
+                dotsDiv.className = 'dots';
+                for (let i = 0; i < count; i++) {
+                    const d = document.createElement('div');
+                    d.className = 'dot';
+                    dotsDiv.appendChild(d);
+                }
+                container.appendChild(dotsDiv);
+
+                const opts = shuffle([count, ...Array.from({length: 3}, () => rint(1, 9))]).slice(0, 4);
+                const btns = document.createElement('div');
+                btns.className = 'buttons-row';
+
+                const t0 = performance.now();
+                opts.forEach(v => {
+                    const b = document.createElement('button');
+                    b.className = 'btn-option';
+                    b.innerText = v;
+                    b.onclick = () => {
+                        const rt = performance.now() - t0;
+                        rts.push(rt);
+                        total++;
+                        if (v === count) correct++;
+                        trial();
+                    };
+                    btns.appendChild(b);
+                });
+                container.appendChild(btns);
+            }
+            trial();
+
+            function finish() {
+                const avg_rt = rts.length ? rts.reduce((a, b) => a + b, 0) / rts.length : 1000;
+                results['symbol_match'] = { correct, total, avg_rt: Math.round(avg_rt) };
+                document.getElementById('nextBtn').classList.remove('hidden');
+                speak('Perfect matching!');
+            }
+        }
+
+        function sequencingGame() {
+            const container = document.getElementById('gameContainer');
+            let trials = 1, correct = 0, total = 0, rts = [];
+
+            function trial() {
+                if (total >= trials) { finish(); return; }
+                container.innerHTML = '';
+
+                const prompt = document.createElement('div');
+                prompt.className = 'prompt';
+                prompt.innerText = 'Click the numbers in order from 1 to 10 as fast as you can.';
+                container.appendChild(prompt);
+
+                const numbers = shuffle(Array.from({length: 10}, (_, i) => i + 1));
+                const btns = document.createElement('div');
+                btns.className = 'buttons-row';
+
+                let nextNum = 1;
+                const t0 = performance.now();
+
+                numbers.forEach(v => {
+                    const b = document.createElement('button');
+                    b.className = 'btn-option';
+                    b.innerText = v;
+                    btns.appendChild(b);
+
+                    b.onclick = () => {
+                        if (v === nextNum) {
+                            correct++;
+                            popOn(b);
+                            b.disabled = true;
+                            b.style.opacity = '0.5';
+                            nextNum++;
+                            if (nextNum > 10) {
+                                const rt = performance.now() - t0;
+                                rts.push(rt);
+                                total++;
+                                trial();
+                            }
+                        } else {
+                            shake(b);
+                        }
+                    };
+                });
+                container.appendChild(btns);
+            }
+            trial();
+
+            function finish() {
+                const avg_rt = rts.length ? rts.reduce((a, b) => a + b, 0) / rts.length : 5000;
+                results['sequencing'] = { correct: 10, total: 10, avg_rt: Math.round(avg_rt) };
+                document.getElementById('nextBtn').classList.remove('hidden');
+                speak('Fantastic sequencing!');
+            }
+        }
+
+        function memorySpanGame() {
+            const container = document.getElementById('gameContainer');
+            let trials = 3, current = 0, correct = 0, totalItems = 0, rts = [];
+
+            function trial() {
+                if (current >= trials) { finish(); return; }
+                container.innerHTML = '';
+
+                const prompt = document.createElement('div');
+                prompt.className = 'prompt';
+                prompt.innerText = 'Listen carefully and repeat the numbers you hear.';
+                container.appendChild(prompt);
+
+                const span = 3 + current;
+                const numbers = Array.from({length: span}, () => rint(1, 9));
+                const spokenNumbers = numbers.join(', ');
+
+                const result = document.createElement('div');
+                result.style.marginTop = '20px';
+                result.style.textAlign = 'center';
+                container.appendChild(result);
+
+                speak(`Say these numbers: ${spokenNumbers}`).then(() => {
+                    result.innerHTML = '<p style="font-weight: bold; color: #4ECDC4;">Now type the numbers you heard (separated by commas):</p>';
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = '1, 2, 3';
+
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-primary';
+                    btn.innerText = 'Check';
+
+                    result.appendChild(input);
+                    result.appendChild(btn);
+
+                    const t0 = performance.now();
+                    btn.onclick = () => {
+                        const rt = performance.now() - t0;
+                        rts.push(rt);
+                        totalItems += span;
+
+                        const typed = input.value.split(',').map(x => x.trim()).join(',');
+                        const expected = numbers.join(',');
+
+                        if (typed === expected) {
+                            correct += span;
+                            popOn(btn);
+                            speak('Perfect!');
+                        } else {
+                            shake(input);
+                            speak('Not quite. Try the next one.');
+                        }
+
+                        current++;
+                        setTimeout(() => trial(), 800);
+                    };
+                });
+            }
+            trial();
+
+            function finish() {
+                const avg_rt = rts.length ? rts.reduce((a, b) => a + b, 0) / rts.length : 2000;
+                results['memory_span'] = { correct, total: totalItems, avg_rt: Math.round(avg_rt) };
+                document.getElementById('nextBtn').classList.remove('hidden');
+                speak('Excellent memory!');
+            }
+        }
+
+        function storyArithGame() {
+            const container = document.getElementById('gameContainer');
+            const stories = [
+                { text: 'Sara has 3 apples. Her friend gives her 2 more. How many does she have now?', answer: 5 },
+                { text: 'There are 8 birds on a tree. 3 fly away. How many are left?', answer: 5 },
+                { text: 'Tom has 4 toys. He gets 4 more for his birthday. How many toys does he have?', answer: 8 },
+                { text: 'There are 10 cookies in a box. You eat 2. How many are left?', answer: 8 },
+                { text: 'In a classroom there are 6 boys and 4 girls. How many students are there?', answer: 10 }
+            ];
+
+            let trials = 5, total = 0, correct = 0, rts = [];
+
+            function trial() {
+                if (total >= trials) { finish(); return; }
+                container.innerHTML = '';
+
+                const story = stories[total];
+                const prompt = document.createElement('div');
+                prompt.className = 'prompt';
+                prompt.innerText = story.text;
+                container.appendChild(prompt);
+
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.placeholder = 'Your answer';
+                input.min = '0';
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-primary';
+                btn.innerText = 'Submit';
+
+                container.appendChild(input);
+                container.appendChild(btn);
+
+                speak(story.text + ' What is the answer?').then(() => {
+                    input.focus();
+                });
+
+                const t0 = performance.now();
+                btn.onclick = () => {
+                    const rt = performance.now() - t0;
+                    rts.push(rt);
+                    total++;
+
+                    if (parseInt(input.value) === story.answer) {
+                        correct++;
+                        popOn(btn);
+                        speak('Correct!');
+                    } else {
+                        shake(input);
+                        speak('Try the next one.');
+                    }
+                    setTimeout(() => trial(), 800);
+                };
+            }
+            trial();
+
+            function finish() {
+                const avg_rt = rts.length ? rts.reduce((a, b) => a + b, 0) / rts.length : 2000;
+                results['story_arith'] = { correct, total, avg_rt: Math.round(avg_rt) };
+                document.getElementById('nextBtn').classList.remove('hidden');
+                speak('Amazing arithmetic skills!');
+            }
+        }
+
+        // ===== RESULT HANDLING =====
+        function finishSession() {
+            stopTimer();
+            confetti.spawn(80);
+
+            console.log("Results:", results);
+            fetch('/api/analyze-dyscalculia', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ games: results })
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log("Analysis result:", data);
+                displayResults(data.risk, data.details);
+            })
+            .catch(err => {
+                console.error("Analysis error:", err);
+                displayResults('Unable to analyze', { error: err.message });
+            });
+        }
+
+        let savedAssessmentSessionId = null;
+
+        function displayResults(risk, details) {
+            showSection('results');
+
+            const riskClass = risk.includes('High') ? 'risk-high' : 
+                             risk.includes('Medium') ? 'risk-medium' :
+                             risk.includes('Low') ? 'risk-low' : 'risk-none';
+            document.getElementById('resultSummary').innerHTML = `<span class="${riskClass}">${risk}</span>`;
+
+            let detailsHTML = '<div style="margin-bottom: 20px;"><strong>📊 Game Performance Breakdown:</strong></div>';
+            
+            const gameTitles = {
+                'subitizing': '⚫ Dot Quick-Count',
+                'comparison': '⚖️ Quantity Comparison',
+                'symbol_match': '🔢 Number-Group Match',
+                'sequencing': '🔀 Number Sequencing',
+                'memory_span': '🧠 Number Memory',
+                'story_arith': '📖 Story Arithmetic'
+            };
+
+            const perTask = details.per_task || {};
+            for (const [game, data] of Object.entries(perTask)) {
+                if (data && typeof data === 'object' && (data.acc !== undefined || data.accuracy !== undefined || data.correct !== undefined)) {
+                    const title = gameTitles[game] || game.replace(/_/g, ' ').toUpperCase();
+                    const accVal = data.acc !== undefined ? data.acc : (data.accuracy !== undefined ? `${data.accuracy}%` : '100%');
+                    const rtVal = data.avg_rt !== undefined ? `${Math.round(data.avg_rt)}ms` : 'N/A';
+                    const scoreStr = (data.correct !== undefined && data.total !== undefined) ? ` (${data.correct}/${data.total})` : '';
+                    detailsHTML += `<div style="background: rgba(255,255,255,0.06); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <span><strong>${title}</strong>${scoreStr}</span>
+                        <span style="color: #4ECDC4; font-weight: 600;">${accVal} • ${rtVal}</span>
+                    </div>`;
+                }
+            }
+            
+            // Format notes and recommendations into structured sections
+            const rawNotes = details.warnings || [];
+            if (rawNotes.length > 0) {
+                const observations = [];
+                const strategies = [];
+                const homePractice = [];
+                const evaluation = [];
+
+                rawNotes.forEach(note => {
+                    const clean = note.replace(/^[⚠🔴✓•\s]+/, '').trim();
+                    if (!clean) return;
+                    if (/^(HOME|Home Practice)/i.test(clean) || clean.toLowerCase().includes('home')) {
+                        homePractice.push(clean.replace(/^HOME:\s*/i, ''));
+                    } else if (clean.toLowerCase().includes('evaluat') || clean.toLowerCase().includes('specialist') || clean.toLowerCase().includes('iep') || clean.toLowerCase().includes('refer')) {
+                        evaluation.push(clean);
+                    } else if (clean.toLowerCase().includes('cra') || clean.toLowerCase().includes('manipulative') || clean.toLowerCase().includes('practice') || clean.toLowerCase().includes('instruction')) {
+                        strategies.push(clean);
+                    } else {
+                        observations.push(clean);
+                    }
+                });
+
+                detailsHTML += '<div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 15px;">';
+                if (observations.length > 0) {
+                    detailsHTML += '<div style="margin-bottom: 12px;"><strong style="color: #ffb74d;">🔍 Key Observations & Accommodations:</strong><ul style="margin: 6px 0 0 20px; color: #ddd;">' +
+                        observations.map(o => `<li>${o}</li>`).join('') + '</ul></div>';
+                }
+                if (strategies.length > 0) {
+                    detailsHTML += '<div style="margin-bottom: 12px;"><strong style="color: #4ECDC4;">💡 Recommended Learning Strategies:</strong><ul style="margin: 6px 0 0 20px; color: #ddd;">' +
+                        strategies.map(s => `<li>${s}</li>`).join('') + '</ul></div>';
+                }
+                if (homePractice.length > 0) {
+                    detailsHTML += '<div style="margin-bottom: 12px;"><strong style="color: #81c784;">🏠 Home Practice & Activities:</strong><ul style="margin: 6px 0 0 20px; color: #ddd;">' +
+                        homePractice.map(h => `<li>${h}</li>`).join('') + '</ul></div>';
+                }
+                if (evaluation.length > 0) {
+                    detailsHTML += '<div style="margin-bottom: 12px;"><strong style="color: #ef5350;">📋 Next Steps & Evaluation Guidance:</strong><ul style="margin: 6px 0 0 20px; color: #ddd;">' +
+                        evaluation.map(e => `<li>${e}</li>`).join('') + '</ul></div>';
+                }
+                detailsHTML += '</div>';
+            }
+
+            document.getElementById('resultDetails').innerHTML = detailsHTML;
+        }
+
+        function submitResults() {
+            // Cache attempt in localStorage for immediate guest results display
+            try {
+                localStorage.setItem(`dochub_latest_attempt_${assessmentId}`, JSON.stringify({
+                    assessment_id: assessmentId,
+                    student_id: studentId || null,
+                    results: results,
+                    created_at: new Date().toISOString()
+                }));
+            } catch(e) {
+                console.warn('localStorage caching error:', e);
+            }
+
+            fetch('/api/submit-assessment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    assessment_id: assessmentId,
+                    student_id: studentId,
+                    results: results,
+                    status: 'completed'
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    savedAssessmentSessionId = data.student_assessment_id;
+                    document.getElementById('resultsControls').style.display = 'none';
+                    document.getElementById('afterSubmitControls').style.display = 'flex';
+
+                    const resultBox = document.querySelector('.result-box');
+                    const successMsg = document.createElement('div');
+                    successMsg.style.cssText = 'background: #c8e6c9; color: #2e7d32; padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: 600;';
+                    successMsg.innerHTML = '✅ Results saved successfully! You can now view your detailed results.';
+                    resultBox.appendChild(successMsg);
+                } else {
+                    alert('Error saving results: ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error('Save error:', err);
+                alert('Error saving results');
+            });
+        }
+
+        function viewResults() {
+            window.location.href = `/dyscalculia-results/${assessmentId}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Dyscalculia Assessment loaded');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+### CRITICAL: ML MODULE & ASSESSMENT MODEL VERIFICATION
+
+The assessment results currently appear to be incorrect.
+
+I deliberately performed **wrong answers for the Dysgraphia assessment**, but the system still produced:
+
+* `CONTINUE STRONG PROGRESS`
+* All performance metrics around `80%`
+* Positive recommendations
+
+This raises a serious concern that the **ML/scoring module may not actually be evaluating the user's responses correctly**.
+
+Do NOT assume the ML module is working just because it returns a result.
+
+#### 1. Trace the Complete ML Pipeline
+
+Identify the actual ML/assessment pipeline in the codebase:
+
+**User Input → Game Data → Feature Extraction → ML Model/Scoring Logic → Prediction → Score → Assessment Classification → Recommendations → Database → Result UI**
+
+Document:
+
+* Which files implement the ML module.
+* Which model(s) are used.
+* Which inputs/features are provided to the model.
+* What the model expects.
+* What output the model produces.
+* How the output is converted into a score.
+* How the score becomes PASS/FAIL or an assessment outcome.
+* How recommendations are selected.
+
+Do not replace the ML module with hardcoded rules just to make the tests pass.
+
+---
+
+#### 2. Verify That User Responses Actually Reach the ML Module
+
+For each assessment/game, verify that the actual responses from the user are being passed into the ML/scoring pipeline.
+
+Test with deliberately different inputs:
+
+**Test A — Correct/normal behavior**
+
+* Complete the game with expected correct/normal responses.
+
+**Test B — Deliberately incorrect behavior**
+
+* Give clearly incorrect responses for every possible question/task.
+
+Compare the data entering the ML module between Test A and Test B.
+
+The input/features should actually change when the user's behavior changes.
+
+If the same or nearly identical features are being sent to the model regardless of user input, identify and fix the problem.
+
+---
+
+#### 3. Verify ML Output Changes With Input
+
+For each ML-based assessment:
+
+Run at minimum:
+
+**Normal/Pass Test**
+→ Record raw input/features
+→ Record ML output
+→ Record calculated score
+→ Record classification
+
+**Incorrect/Fail Test**
+→ Record raw input/features
+→ Record ML output
+→ Record calculated score
+→ Record classification
+
+The system must demonstrate that different user behavior can produce different outputs when the model/scoring design expects it to.
+
+Do NOT artificially force the fail test to produce a disorder classification.
+
+The purpose is to verify that the ML module is actually responding to the assessment data.
+
+---
+
+#### 4. Dysgraphia Investigation
+
+Specifically investigate why an intentionally incorrect Dysgraphia assessment produced:
+
+`Letter Formation Smoothness: 80%`
+
+`Geometric Shape Drawing Smoothness: 80%`
+
+`Timed Writing Speed Smoothness: 80%`
+
+`Line Tracing & Stability Smoothness: 80%`
+
+`Audio-to-Write Accuracy Smoothness: 80%`
+
+and:
+
+`CONTINUE STRONG PROGRESS`
+
+Determine whether these values are:
+
+* Hardcoded defaults
+* Placeholder values
+* Fallback values
+* Mock/demo values
+* Incorrect calculations
+* Incorrect ML predictions
+* Incorrect feature extraction
+* Incorrect API mapping
+* Incorrect database retrieval
+* Cached/stale assessment results
+
+Search the entire codebase for these values and identify their source.
+
+If `80%` is a default/fallback value, it MUST NOT be presented as the user's actual ML result.
+
+---
+
+#### 5. Verify Each Dysgraphia Feature
+
+For every discovered Dysgraphia metric, verify that it is calculated from the actual user activity.
+
+For example:
+
+* Letter formation → actual handwriting/interaction data
+* Shape drawing → actual drawing data
+* Timed writing → actual timing/input data
+* Line tracing → actual tracing/path data
+* Audio-to-write → actual transcription/writing data
+
+Do not accept a metric simply because the UI displays a number.
+
+Trace each metric backwards to its actual source.
+
+For each metric document:
+
+**UI value → API field → backend calculation → ML/scoring function → raw user input**
+
+If any metric is disconnected from the actual user data, fix it.
+
+---
+
+#### 6. Verify Dyslexia AND Dyscalculia
+
+Perform the same ML/scoring investigation for:
+
+* Dyslexia
+* Dyscalculia
+* Dysgraphia
+
+And any other assessment that uses ML or an algorithmic scoring system.
+
+For each one determine:
+
+**What data does the game collect?**
+↓
+**What features are calculated?**
+↓
+**What model/algorithm evaluates them?**
+↓
+**What score is produced?**
+↓
+**How is PASS/FAIL determined?**
+↓
+**How is the final assessment displayed?**
+
+---
+
+#### 7. PASS/FAIL Must Be Based on Actual Assessment Data
+
+Verify that PASS/FAIL is not accidentally based on:
+
+* A hardcoded value
+* Default score
+* Missing value fallback
+* Game completion alone
+* Number of questions answered
+* Static 80% score
+* Previous attempt
+* Cached result
+* Wrong assessment ID
+* Wrong student ID
+* Wrong database record
+
+The classification must use the actual result produced by the intended assessment/ML logic.
+
+---
+
+#### 8. Test With Extreme Cases
+
+Where the game's design allows it, test clearly different cases:
+
+1. All/mostly correct responses
+2. Mixed responses
+3. All/mostly incorrect responses
+4. Minimum possible score
+5. Maximum possible score
+6. Very fast responses
+7. Very slow responses
+
+Record whether the underlying features, score, and classification respond appropriately.
+
+Do not expect every metric to change for every test; verify against the actual algorithm/model design.
+
+---
+
+#### 9. Check for Fake / Placeholder ML
+
+Search the codebase for suspicious patterns such as:
+
+* Hardcoded `80`
+* Hardcoded `0.8`
+* Hardcoded accuracy
+* Default positive results
+* Mock predictions
+* Random scores
+* Static recommendations
+* Placeholder model outputs
+* Fallback values being treated as real predictions
+* `if error -> 80%`
+* `if no data -> positive`
+* Fake/demo assessment records
+* Previously generated results being reused
+
+If any are found, determine whether they are legitimate fallback behavior or an implementation bug.
+
+Never silently remove legitimate fallback behavior without understanding why it exists.
+
+---
+
+#### 10. Model Loading & Runtime Verification
+
+If an actual ML model is used, verify:
+
+* Model file exists.
+* Model loads successfully.
+* Correct model version is used.
+* Correct input shape/features are supplied.
+* Correct preprocessing is applied.
+* Correct output interpretation is used.
+* No exception causes the system to silently fall back to a default result.
+* ML inference actually executes during an assessment.
+
+If the ML model fails to load or inference fails, the system must not falsely present a confident assessment result.
+
+---
+
+#### 11. Evidence Required
+
+For at least one PASS and one FAIL test for each ML-based assessment, provide evidence showing:
+
+```text
+Raw user/game input
+        ↓
+Extracted features
+        ↓
+ML/scoring input
+        ↓
+ML/scoring output
+        ↓
+Calculated score
+        ↓
+PASS/FAIL or classification
+        ↓
+Saved Supabase record
+        ↓
+Displayed result
+```
+
+The values must be traceable through the entire pipeline.
+
+---
+
+### IMPORTANT: DO NOT FAKE THE RESULT
+
+Do NOT modify the scoring thresholds, hardcode a failing result, hardcode a passing result, or artificially manipulate the ML output simply to make my test cases pass.
+
+The goal is to determine whether the **existing ML/assessment implementation is genuinely evaluating the user's behavior correctly**.
+
+If the ML model itself is poorly designed or cannot reliably determine the intended condition, report that separately instead of pretending it works.
+
+Also clearly distinguish between:
+
+**ML prediction**
+and
+**rule-based/game scoring**
+and
+**UI recommendation logic**.
+
+I specifically want to know whether the actual **ML module is functioning and receiving the correct data**, not merely whether the result page displays correctly.

@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocHub | Dysgraphia Evaluation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='antigravity.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #08090B;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 110px 20px 40px;
+        }
+
+        .app {
+            background: #12151A;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            max-width: 650px;
+            width: 100%;
+            overflow: hidden;
+            color: #FFFFFF;
+            position: relative;
+            z-index: 2;
+        }
+
+        .topbar {
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: white;
+            padding: 26px 20px;
+            text-align: center;
+        }
+
+        .topbar h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: #FFFFFF;
+        }
+
+        .topbar p {
+            font-size: 13px;
+            color: #9A9DA3;
+        }
+
+        .card {
+            padding: 40px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #intro {
+            text-align: center;
+        }
+
+        .intro-text {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .consent-group {
+            background: #e0f9f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .consent-group input {
+            margin-right: 8px;
+        }
+
+        .progress-row {
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #95E1D3 0%, #7ECDC8 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-label {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .game-area {
+            display: none;
+        }
+
+        .game-area.active {
+            display: block;
+        }
+
+        .game-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .game-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .game-timer {
+            display: inline-block;
+            background: #95E1D3;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .prompt {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            border-left: 4px solid #95E1D3;
+        }
+
+        .canvas-container {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin: 20px 0;
+            padding: 10px;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        .paint-canvas {
+            display: block;
+            width: 100%;
+            height: 300px;
+            background: white;
+            border-radius: 6px;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        .guide-line {
+            width: 100%;
+            height: 60px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #d0d0d0;
+            font-family: Arial, sans-serif;
+        }
+
+        .letter-template {
+            font-size: 64px;
+            font-weight: bold;
+            color: #95E1D3;
+            text-align: center;
+            margin: 20px 0;
+            font-family: Arial, sans-serif;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+            margin: 10px 0;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #95E1D3;
+        }
+
+        .buttons-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 80px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #95E1D3 0%, #7ECDC8 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(149, 225, 211, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-option {
+            background: white;
+            border: 2px solid #e0e0e0;
+            color: #333;
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .btn-option:hover {
+            border-color: #95E1D3;
+            background: #f9f9f9;
+        }
+
+        .btn-option.selected {
+            background: #95E1D3;
+            color: white;
+            border-color: #95E1D3;
+        }
+
+        .results-section {
+            text-align: center;
+        }
+
+        .results-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .result-box {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .risk-high {
+            color: #d32f2f;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .risk-medium {
+            color: #f57c00;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .risk-low {
+            color: #388e3c;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .risk-none {
+            color: #00897b;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .details-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #666;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 20px;
+        }
+
+        .shake {
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .pop {
+            animation: pop 0.3s;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .confetti-canvas {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .instruction {
+            font-size: 14px;
+            color: #666;
+            margin: 15px 0;
+            font-style: italic;
+        }
+
+        .clear-btn {
+            background: #f44336;
+            color: white;
+            padding: 8px 16px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .clear-btn:hover {
+            background: #d32f2f;
+        }
+
+        .shape-guide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .shape-preview {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #95E1D3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .canvas-label {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Pill Navbar -->
+    <header class="ag-nav-wrapper">
+      <nav class="ag-nav">
+        <a href="/" class="ag-logo">
+          <div class="ag-logo-mark">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="ag-logo-text">DocHub</span>
+        </a>
+
+        <ul class="ag-nav-links">
+          <li><a href="/" class="ag-nav-link">Home</a></li>
+          <li><a href="/assessments" class="ag-nav-link active">Assessments</a></li>
+          <li><a href="/#how-it-works" class="ag-nav-link">How It Works</a></li>
+        </ul>
+
+        <div class="ag-nav-actions">
+          <a href="/assessments" class="ag-btn ag-btn-sm ag-btn-outline">Exit Test</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="app">
+        <div class="topbar">
+            <h1>Dysgraphia Evaluation Assessment</h1>
+            <p>Interactive motor & stroke tasks • Kinematic ML evaluated • Non-clinical screening</p>
+        </div>
+
+        <div class="card">
+            <!-- INTRO SECTION -->
+            <section id="intro" class="section active">
+                <div class="intro-text">
+                    <p>This assessment contains 5 short, interactive handwriting and writing activities. Each activity takes about 2-3 minutes.</p>
+                    <p style="margin-top: 15px; font-size: 13px; color: #666;">Audio prompts will speak instructions aloud. Make sure your audio is enabled. You will use the mouse or touch screen to draw and write.</p>
+                </div>
+
+                <div class="consent-group">
+                    <label>
+                        <input id="consent" type="checkbox" />
+                        I confirm I have permission from the student to run this assessment.
+                    </label>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="startAssessment()">Start Games</button>
+                    <button class="btn-secondary" onclick="goBack()">Back</button>
+                </div>
+            </section>
+
+            <!-- GAME AREA -->
+            <section id="gameArea" class="section game-area">
+                <div class="progress-row">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                    <div class="progress-label" id="progressLabel">0 / 5</div>
+                </div>
+
+                <div class="game-header">
+                    <h2 id="gameTitle">Game</h2>
+                    <span class="game-timer" id="gameTimer">⏱ 0s</span>
+                </div>
+
+                <div id="gameContainer"></div>
+
+                <div class="controls">
+                    <button id="nextBtn" class="btn-primary hidden" onclick="nextGame()">Next Game</button>
+                </div>
+            </section>
+
+            <!-- RESULTS SECTION -->
+            <section id="results" class="section results-section">
+                <h2>Assessment Complete! 🎉</h2>
+                <div class="result-box">
+                    <p>Your assessment result:</p>
+                    <p id="resultSummary" style="margin-top: 15px; min-height: 30px;"></p>
+                </div>
+                <div id="resultDetails" class="details-box"></div>
+                <div class="controls" id="resultsControls">
+                    <button class="btn-primary" onclick="submitResults()">Submit & Save Results</button>
+                    <button class="btn-secondary" onclick="restartAssessment()">Run Again</button>
+                </div>
+                <div class="controls" id="afterSubmitControls" style="display: none;">
+                    <button class="btn-primary" onclick="viewResults()">📊 View Results</button>
+                    <button class="btn-secondary" onclick="window.location.href='/assessments'">Back to Assessments</button>
+                </div>
+            </section>
+
+            <div class="footer">
+                <p>Designed for early screening. For clinical diagnosis, consult a specialist.</p>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+    <canvas id="paintCanvas" class="paint-canvas" style="display: none;"></canvas>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const gamesOrder = ['trace_line', 'copy_letter', 'write_audio', 'timed_write', 'shape_draw'];
+        const assessmentId = {{ assessment_id|default(3) }};
+        const studentId = {{ session.get('user_id')|default(1) }};
+
+        // ===== STATE =====
+        let currentIdx = 0;
+        let results = {};
+        let gameStart = 0;
+        let timerInterval = null;
+        let canvas = null;
+        let ctx = null;
+        let strokes = [];
+        let isDrawing = false;
+        let currentStroke = null;
+
+        // ===== CANVAS SETUP =====
+        function initCanvas() {
+            const container = document.getElementById('gameContainer');
+            const canvasDiv = document.createElement('div');
+            canvasDiv.className = 'canvas-container';
+
+            canvas = document.createElement('canvas');
+            canvas.className = 'paint-canvas';
+            canvas.width = 500;
+            canvas.height = 300;
+            
+            canvasDiv.appendChild(canvas);
+            container.appendChild(canvasDiv);
+
+            ctx = canvas.getContext('2d');
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#333';
+
+            setupPointerEvents();
+        }
+
+        function clearCanvas() {
+            if (ctx && canvas) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                strokes = [];
+            }
+        }
+
+        function setupPointerEvents() {
+            if (!canvas) return;
+
+            canvas.onpointerdown = (e) => {
+                e.preventDefault();
+                isDrawing = true;
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+                currentStroke = { points: [[x, y]], t_start: performance.now() };
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.arc(x, y, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            };
+
+            canvas.onpointermove = (e) => {
+                if (!isDrawing || !currentStroke) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+                currentStroke.points.push([x, y]);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            };
+
+            const finishStroke = (e) => {
+                if (!isDrawing) return;
+                isDrawing = false;
+                if (currentStroke) {
+                    currentStroke.t_end = performance.now();
+                    currentStroke.duration_ms = currentStroke.t_end - currentStroke.t_start;
+                    strokes.push(currentStroke);
+                }
+                currentStroke = null;
+                ctx.beginPath();
+            };
+
+            canvas.onpointerup = finishStroke;
+            canvas.onpointercancel = finishStroke;
+            canvas.onpointerout = finishStroke;
+        }
+
+        // ===== AUDIO & SPEECH SYNTHESIS =====
+        function speak(text, opts = {}) {
+            if (!('speechSynthesis' in window)) {
+                console.warn('TTS not supported');
+                return Promise.resolve();
+            }
+            return new Promise((resolve) => {
+                const synth = window.speechSynthesis;
+                synth.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = opts.voiceLang || 'en-US';
+                u.rate = opts.rate || 0.98;
+                u.pitch = opts.pitch || 1.0;
+                u.volume = 1.0;
+                u.onend = () => resolve();
+                u.onerror = () => resolve();
+                const voices = synth.getVoices();
+                if (voices && voices.length) {
+                    const preferred = voices.find(v => v.lang.startsWith('en')) || voices[0];
+                    if (preferred) u.voice = preferred;
+                }
+                synth.speak(u);
+                setTimeout(() => resolve(), 2300);
+            });
+        }
+
+        // ===== ANIMATIONS & CONFETTI =====
+        function popOn(el) {
+            if (!el) return;
+            el.classList.add('pop');
+            setTimeout(() => el.classList.remove('pop'), 240);
+        }
+
+        function shake(el) {
+            if (!el) return;
+            el.classList.add('shake');
+            setTimeout(() => el.classList.remove('shake'), 600);
+        }
+
+        const confetti = (() => {
+            const confettiCanvas = document.getElementById('confettiCanvas');
+            const ctx = confettiCanvas && confettiCanvas.getContext ? confettiCanvas.getContext('2d') : null;
+            let active = false, pieces = [];
+
+            function resize() {
+                if (!confettiCanvas) return;
+                confettiCanvas.width = window.innerWidth;
+                confettiCanvas.height = window.innerHeight;
+            }
+
+            function rand(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            function spawn(count = 60) {
+                if (!ctx) return;
+                resize();
+                pieces = [];
+                for (let i = 0; i < count; i++) {
+                    pieces.push({
+                        x: rand(0, confettiCanvas.width),
+                        y: rand(-confettiCanvas.height * 0.6, 0),
+                        vx: rand(-2, 2),
+                        vy: rand(2, 8),
+                        size: rand(6, 12),
+                        rot: rand(0, 360),
+                        vr: rand(-6, 6),
+                        color: `hsl(${Math.floor(rand(0, 360))}, 80%, 60%)`
+                    });
+                }
+                confettiCanvas.style.display = 'block';
+                active = true;
+                requestAnimationFrame(loop);
+                setTimeout(() => stop(), 2200);
+            }
+
+            function loop() {
+                if (!active) return;
+                ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+                for (const p of pieces) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rot += p.vr * 0.02;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+                    ctx.restore();
+                }
+                pieces = pieces.filter(p => p.y < confettiCanvas.height + 40);
+                if (pieces.length) requestAnimationFrame(loop);
+            }
+
+            function stop() {
+                active = false;
+                if (confettiCanvas) confettiCanvas.style.display = 'none';
+            }
+
+            window.addEventListener('resize', resize);
+            return { spawn };
+        })();
+
+        // ===== UI HELPERS =====
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.game-area').forEach(s => s.classList.remove('active'));
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('active');
+                if (id === 'gameArea') document.getElementById('gameArea').classList.add('active');
+            }
+        }
+
+        function updateProgress() {
+            const fill = Math.round((currentIdx / gamesOrder.length) * 100);
+            document.getElementById('progressFill').style.width = `${fill}%`;
+            document.getElementById('progressLabel').innerText = `${currentIdx + 1} / ${gamesOrder.length}`;
+        }
+
+        function setTimer() {
+            gameStart = performance.now();
+            const tEl = document.getElementById('gameTimer');
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const s = Math.round((performance.now() - gameStart) / 1000);
+                tEl.innerText = `⏱ ${s}s`;
+            }, 300);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // ===== MAIN FLOW =====
+        function startAssessment() {
+            if (!document.getElementById('consent').checked) {
+                if (!confirm("Please confirm you have permission to continue.")) return;
+            }
+            results = {};
+            currentIdx = 0;
+            showSection('gameArea');
+            loadGame(gamesOrder[currentIdx]);
+            updateProgress();
+        }
+
+        function nextGame() {
+            currentIdx++;
+            stopTimer();
+            if (currentIdx >= gamesOrder.length) {
+                finishSession();
+            } else {
+                loadGame(gamesOrder[currentIdx]);
+                updateProgress();
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function restartAssessment() {
+            location.reload();
+        }
+
+        // ===== LOAD GAME =====
+        function prettify(k) {
+            const map = {
+                'trace_line': 'Trace the Line',
+                'copy_letter': 'Copy the Letter',
+                'write_audio': 'Write the Word You Hear',
+                'timed_write': 'Timed Writing',
+                'shape_draw': 'Draw the Shape'
+            };
+            return map[k] || k;
+        }
+
+        function loadGame(name) {
+            document.getElementById('gameContainer').innerHTML = '';
+            document.getElementById('gameTitle').innerText = prettify(name);
+            document.getElementById('nextBtn').classList.add('hidden');
+            setTimer();
+
+            const texts = {
+                'trace_line': "Trace the line. Use your mouse or touch to follow the line as smoothly as possible.",
+                'copy_letter': "Copy the letter. Look at the letter shown and write it in the white box below.",
+                'write_audio': "Write the word. Listen to the word spoken aloud, then type it in the box.",
+                'timed_write': "Timed writing. Write as many words as you can in 30 seconds.",
+                'shape_draw': "Draw the shape. Draw a square or triangle in the white area."
+            };
+
+            speak(texts[name]).then(() => {
+                if (name === 'trace_line') traceLineGame();
+                else if (name === 'copy_letter') copyLetterGame();
+                else if (name === 'write_audio') writeAudioGame();
+                else if (name === 'timed_write') timedWriteGame();
+                else if (name === 'shape_draw') shapeDrawGame();
+            });
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function rint(a, b) {
+            return Math.floor(Math.random() * (b - a + 1)) + a;
+        }
+
+        function shuffle(a) {
+            let arr = a.slice();
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // ===== GAMES =====
+        function traceLineGame() {
+            const container = document.getElementById('gameContainer');
+            
+            const prompt = document.createElement('div');
+            prompt.className = 'prompt';
+            prompt.innerText = 'Trace the line smoothly from left to right. Follow the dotted line carefully.';
+            container.appendChild(prompt);
+
+            initCanvas();
+
+            // Draw guide line (dotted)
+            const dottedLineCanvas = canvas;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(20, 150);
+            ctx.lineTo(480, 150);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#333';
+
+            const guideLine = document.createElement('div');
+            guideLine.className = 'instruction';
+            guideLine.innerText = 'Draw your line on the canvas above. Try to stay on the dotted line.';
+            container.appendChild(guideLine);
+
+            const btn = document.createElement('button');
+            btn.className = 'btn-primary';
+            btn.innerText = 'Done Tracing';
+            btn.style.marginTop = '20px';
+
+            container.appendChild(btn);
+
+            btn.onclick = () => {
+                const data = {
+                    strokes: strokes,
+                    duration_ms: performance.now() - gameStart
+                };
+                results['trace_line'] = data;
+                document.getElementById('nextBtn').classList.remove('hidden');
+                speak('Great tracing!');
+            };
+        }
+
+        function copyLetterGame() {
+            const container = document.getElementById('gameContainer');
+            const letters = ['A', 'B', 'C', 'D', 'E', 'P', 'Q', 'R'];
+            let trial = 0;
+            let allStrokes = [];
+
+            function runTrial() {
+                if (trial >= 3) {
+                    results['copy_letter'] = { strokes: allStrokes, duration_ms: performance.now() - gameStart, attempts: 3 };
+                    document.getElementById('nextBtn').classList.remove('hidden');
+                    speak('Excellent letter copying!');
+                    return;
+                }
+
+                container.innerHTML = '';
+                strokes = [];
+
+                const letterTemplate = document.createElement('div');
+                letterTemplate.className = 'letter-template';
+                letterTemplate.innerText = letters[trial];
+                container.appendChild(letterTemplate);
+
+                const prompt = document.createElement('div');
+                prompt.className = 'prompt';
+                prompt.innerText = 'Now copy this letter below by drawing it on the whiteboard.';
+                container.appendChild(prompt);
+
+                initCanvas();
+
+                const clearBtn = document.createElement('button');
+                clearBtn.className = 'clear-btn';
+                clearBtn.innerText = 'Clear Canvas';
+                clearBtn.onclick = clearCanvas;
+                container.appendChild(clearBtn);
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-primary';
+                btn.innerText = 'Next Letter';
+                btn.style.marginTop = '20px';
+
+                container.appendChild(btn);
+
+                btn.onclick = () => {
+                    allStrokes = allStrokes.concat(strokes);
+                    trial++;
+                    runTrial();
+                };
+            }
+
+            runTrial();
+        }
+
+        function writeAudioGame() {
+            const container = document.getElementById('gameContainer');
+            const words = ['apple', 'book', 'cat', 'dog', 'elephant'];
+
+            let trial = 0;
+            let allStrokes = [];
+
+            function runTrial() {
+                if (trial >= 3) {
+                    results['write_audio'] = { strokes: allStrokes, attempts: 3, duration_ms: performance.now() - gameStart };
+                    document.getElementById('nextBtn').classList.remove('hidden');
+                    speak('Great listening and writing!');
+                    return;
+                }
+
+                container.innerHTML = '';
+                strokes = [];
+                const word = words[trial];
+
+                const prompt = document.createElement('div');
+                prompt.className = 'prompt';
+                prompt.innerText = `Listen to the word, then write it on the whiteboard below.`;
+                container.appendChild(prompt);
+
+                initCanvas();
+
+                const clearBtn = document.createElement('button');
+                clearBtn.className = 'clear-btn';
+                clearBtn.innerText = 'Clear Canvas';
+                clearBtn.onclick = clearCanvas;
+                container.appendChild(clearBtn);
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-primary';
+                btn.innerText = 'Next Word';
+                btn.style.marginTop = '20px';
+
+                container.appendChild(btn);
+
+                speak(word).then(() => {
+                    canvas.focus();
+                });
+
+                btn.onclick = () => {
+                    allStrokes = allStrokes.concat(strokes);
+                    trial++;
+                    setTimeout(() => runTrial(), 800);
+                };
+            }
+
+            runTrial();
+        }
+
+        function timedWriteGame() {
+            const container = document.getElementById('gameContainer');
+
+            const prompt = document.createElement('div');
+            prompt.className = 'prompt';
+            prompt.innerText = 'Write as many words as you can on the whiteboard in 30 seconds. Draw the letters/words.';
+            container.appendChild(prompt);
+
+            initCanvas();
+
+            const clearBtn = document.createElement('button');
+            clearBtn.className = 'clear-btn';
+            clearBtn.innerText = 'Clear Canvas';
+            clearBtn.onclick = clearCanvas;
+            container.appendChild(clearBtn);
+
+            const countdown = document.createElement('div');
+            countdown.style.textAlign = 'center';
+            countdown.style.marginTop = '20px';
+            countdown.style.fontSize = '18px';
+            countdown.style.fontWeight = 'bold';
+            countdown.style.color = '#95E1D3';
+            countdown.innerText = '30s';
+
+            container.appendChild(countdown);
+
+            let timeLeft = 30;
+            const t0 = performance.now();
+
+            canvas.focus();
+
+            const interval = setInterval(() => {
+                timeLeft--;
+                countdown.innerText = timeLeft + 's';
+
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    results['timed_write'] = { strokes: strokes, duration_ms: 30000 };
+                    document.getElementById('nextBtn').classList.remove('hidden');
+                    speak('Time is up! Great work!');
+                }
+            }, 1000);
+        }
+
+        function shapeDrawGame() {
+            const container = document.getElementById('gameContainer');
+
+            const prompt = document.createElement('div');
+            prompt.className = 'prompt';
+            prompt.innerText = 'Draw a square and a triangle in the white area below. Look at the shapes to the left for reference.';
+            container.appendChild(prompt);
+
+            // Show shape guides
+            const shapeGuide = document.createElement('div');
+            shapeGuide.className = 'shape-guide';
+            
+            const squarePreview = document.createElement('div');
+            squarePreview.style.cssText = 'width: 80px; height: 80px; border: 3px solid #95E1D3; border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-direction: column;';
+            const squareLabel = document.createElement('div');
+            squareLabel.innerText = 'Square';
+            squareLabel.style.cssText = 'font-size: 12px; color: #666; font-weight: 600; margin-top: 10px;';
+            squarePreview.appendChild(squareLabel);
+            
+            const trianglePreview = document.createElement('div');
+            trianglePreview.style.cssText = 'width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; flex-direction: column;';
+            const triangleSvg = document.createElement('svg');
+            triangleSvg.setAttribute('width', '60');
+            triangleSvg.setAttribute('height', '60');
+            triangleSvg.setAttribute('viewBox', '0 0 60 60');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', 'M30 5 L55 50 L5 50 Z');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', '#95E1D3');
+            path.setAttribute('stroke-width', '3');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            triangleSvg.appendChild(path);
+            const triangleLabel = document.createElement('div');
+            triangleLabel.innerText = 'Triangle';
+            triangleLabel.style.cssText = 'font-size: 12px; color: #666; font-weight: 600; margin-top: 5px;';
+            trianglePreview.appendChild(triangleSvg);
+            trianglePreview.appendChild(triangleLabel);
+            
+            shapeGuide.appendChild(squarePreview);
+            shapeGuide.appendChild(trianglePreview);
+            container.appendChild(shapeGuide);
+
+            initCanvas();
+
+            const clearBtn = document.createElement('button');
+            clearBtn.className = 'clear-btn';
+            clearBtn.innerText = 'Clear Canvas';
+            clearBtn.onclick = clearCanvas;
+            container.appendChild(clearBtn);
+
+            const btn = document.createElement('button');
+            btn.className = 'btn-primary';
+            btn.innerText = 'Done Drawing';
+            btn.style.marginTop = '20px';
+
+            container.appendChild(btn);
+
+            btn.onclick = () => {
+                results['shape_draw'] = { strokes: strokes, duration_ms: performance.now() - gameStart };
+                document.getElementById('nextBtn').classList.remove('hidden');
+                speak('Beautiful shapes!');
+            };
+        }
+
+        // ===== RESULT HANDLING =====
+        function finishSession() {
+            stopTimer();
+            confetti.spawn(80);
+
+            console.log("Results:", results);
+            fetch('/api/analyze-dysgraphia', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ games: results })
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log("Analysis result:", data);
+                displayResults(data.risk, data.details);
+            })
+            .catch(err => {
+                console.error("Analysis error:", err);
+                displayResults('Unable to analyze', { error: err.message });
+            });
+        }
+
+        let savedAssessmentSessionId = null;
+
+        function displayResults(risk, details) {
+            showSection('results');
+
+            const riskClass = risk.includes('High') ? 'risk-high' : 
+                             risk.includes('Medium') ? 'risk-medium' :
+                             risk.includes('Low') ? 'risk-low' : 'risk-none';
+            document.getElementById('resultSummary').innerHTML = `<span class="${riskClass}">${risk}</span>`;
+
+            let detailsHTML = '<div style="margin-bottom: 20px;"><strong>📊 Writing & Motor Performance Breakdown:</strong></div>';
+            
+            const taskTitles = {
+                'trace_line': '📍 Line Tracing & Stability',
+                'copy_letter': '📝 Letter Formation',
+                'write_audio': '🎤 Audio-to-Write Accuracy',
+                'timed_write': '⏱️ Timed Writing Speed',
+                'shape_draw': '🔷 Geometric Shape Drawing'
+            };
+
+            const perTask = details.per_task || details.per_task_metrics || {};
+            for (const [task, data] of Object.entries(perTask)) {
+                if (data && typeof data === 'object') {
+                    const title = taskTitles[task] || task.replace(/_/g, ' ').toUpperCase();
+                    const smoothVal = data.smoothness !== undefined ? (typeof data.smoothness === 'string' ? data.smoothness : `${Math.round(data.smoothness * 100)}%`) : (data.acc !== undefined ? data.acc : '85%');
+                    const durVal = data.duration_ms ? `${(data.duration_ms / 1000).toFixed(1)}s` : (data.avg_rt ? `${Math.round(data.avg_rt)}ms` : 'N/A');
+                    detailsHTML += `<div style="background: rgba(255,255,255,0.06); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <span><strong>${title}</strong></span>
+                        <span style="color: #9c27b0; font-weight: 600;">Smoothness: ${smoothVal} • Duration: ${durVal}</span>
+                    </div>`;
+                }
+            }
+            
+            // Format notes and recommendations into structured sections
+            const rawNotes = details.warnings || [];
+            if (rawNotes.length > 0) {
+                const observations = [];
+                const strategies = [];
+                const homePractice = [];
+                const evaluation = [];
+
+                rawNotes.forEach(note => {
+                    const clean = note.replace(/^[⚠🔴✓•\s]+/, '').trim();
+                    if (!clean) return;
+                    if (/^(HOME|Home Practice)/i.test(clean) || clean.toLowerCase().includes('home')) {
+                        homePractice.push(clean.replace(/^HOME:\s*/i, ''));
+                    } else if (clean.toLowerCase().includes('evaluat') || clean.toLowerCase().includes('therapist') || clean.toLowerCase().includes('specialist') || clean.toLowerCase().includes('iep') || clean.toLowerCase().includes('refer')) {
+                        evaluation.push(clean);
+                    } else if (clean.toLowerCase().includes('grip') || clean.toLowerCase().includes('motor') || clean.toLowerCase().includes('pencil') || clean.toLowerCase().includes('writing') || clean.toLowerCase().includes('posture')) {
+                        strategies.push(clean);
+                    } else {
+                        observations.push(clean);
+                    }
+                });
+
+                detailsHTML += '<div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 15px;">';
+                if (observations.length > 0) {
+                    detailsHTML += '<div style="margin-bottom: 12px;"><strong style="color: #ffb74d;">🔍 Key Observations & Accommodations:</strong><ul style="margin: 6px 0 0 20px; color: #ddd;">' +
+                        observations.map(o => `<li>${o}</li>`).join('') + '</ul></div>';
+                }
+                if (strategies.length > 0) {
+                    detailsHTML += '<div style="margin-bottom: 12px;"><strong style="color: #ba68c8;">💡 Recommended Motor & Writing Strategies:</strong><ul style="margin: 6px 0 0 20px; color: #ddd;">' +
+                        strategies.map(s => `<li>${s}</li>`).join('') + '</ul></div>';
+                }
+                if (homePractice.length > 0) {
+                    detailsHTML += '<div style="margin-bottom: 12px;"><strong style="color: #81c784;">🏠 Home Practice & Activities:</strong><ul style="margin: 6px 0 0 20px; color: #ddd;">' +
+                        homePractice.map(h => `<li>${h}</li>`).join('') + '</ul></div>';
+                }
+                if (evaluation.length > 0) {
+                    detailsHTML += '<div style="margin-bottom: 12px;"><strong style="color: #ef5350;">📋 Next Steps & Evaluation Guidance:</strong><ul style="margin: 6px 0 0 20px; color: #ddd;">' +
+                        evaluation.map(e => `<li>${e}</li>`).join('') + '</ul></div>';
+                }
+                detailsHTML += '</div>';
+            }
+
+            document.getElementById('resultDetails').innerHTML = detailsHTML;
+        }
+
+        function submitResults() {
+            // Cache attempt in localStorage for immediate guest results display
+            try {
+                localStorage.setItem(`dochub_latest_attempt_${assessmentId}`, JSON.stringify({
+                    assessment_id: assessmentId,
+                    student_id: studentId || null,
+                    results: results,
+                    created_at: new Date().toISOString()
+                }));
+            } catch(e) {
+                console.warn('localStorage caching error:', e);
+            }
+
+            fetch('/api/submit-assessment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    assessment_id: assessmentId,
+                    student_id: studentId,
+                    results: results,
+                    status: 'completed'
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    savedAssessmentSessionId = data.student_assessment_id;
+                    document.getElementById('resultsControls').style.display = 'none';
+                    document.getElementById('afterSubmitControls').style.display = 'flex';
+
+                    const resultBox = document.querySelector('.result-box');
+                    const successMsg = document.createElement('div');
+                    successMsg.style.cssText = 'background: #c8e6c9; color: #2e7d32; padding: 15px; border-radius: 8px; margin-top: 10px; font-weight: 600;';
+                    successMsg.innerHTML = '✅ Results saved successfully! You can now view your detailed results.';
+                    resultBox.appendChild(successMsg);
+                } else {
+                    alert('Error saving results: ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error('Save error:', err);
+                alert('Error saving results');
+            });
+        }
+
+        function viewResults() {
+            window.location.href = `/dysgraphia-results/${assessmentId}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Dysgraphia Assessment loaded');
+        });
+    </script>
+</body>
+</html>
