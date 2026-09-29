@@ -85,19 +85,36 @@
         .intro-text {
             margin-bottom: 30px;
             line-height: 1.6;
-            color: #333;
+            color: #9A9DA3;
+            font-size: 15px;
         }
 
         .consent-group {
-            background: #f0f4ff;
-            padding: 15px;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px 20px;
+            border-radius: 12px;
             margin: 20px 0;
             font-size: 14px;
+            color: #E6E8EC;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+
+        .consent-group label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            width: 100%;
         }
 
         .consent-group input {
-            margin-right: 8px;
+            accent-color: #7C3AED;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
 
         .progress-row {
@@ -107,7 +124,7 @@
         .progress-bar {
             width: 100%;
             height: 8px;
-            background: #e0e0e0;
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 4px;
             overflow: hidden;
             margin-bottom: 10px;
@@ -115,7 +132,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #7C3AED 0%, #6366F1 100%);
             width: 0%;
             transition: width 0.3s ease;
         }
@@ -123,7 +140,8 @@
         .progress-label {
             text-align: center;
             font-size: 12px;
-            color: #666;
+            color: #9A9DA3;
+            font-weight: 500;
         }
 
         .game-area {
@@ -135,66 +153,82 @@
         }
 
         .game-header {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             text-align: center;
         }
 
         .game-header h2 {
             font-size: 24px;
-            color: #333;
-            margin-bottom: 10px;
+            color: #FFFFFF;
+            margin-bottom: 12px;
+            font-weight: 700;
         }
 
         .game-timer {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid rgba(124, 58, 237, 0.35);
+            color: #C4B5FD;
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 13px;
+            font-weight: 600;
         }
 
         .prompt {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-size: 16px;
-            line-height: 1.5;
-            color: #333;
-            border-left: 4px solid #667eea;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 4px solid #7C3AED;
+            padding: 18px 22px;
+            border-radius: 12px;
+            margin: 18px 0;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #E6E8EC;
+            text-align: left;
+        }
+
+        .prompt strong {
+            color: #FFFFFF;
         }
 
         .letter {
             font-size: 48px;
-            font-weight: bold;
-            color: #667eea;
+            font-weight: 800;
+            color: #A78BFA;
             margin: 15px 0;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Inter', sans-serif;
+            text-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
         }
 
         input[type="text"],
         input[type="number"] {
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            font-size: 15px;
+            color: #FFFFFF;
             width: 100%;
-            margin: 10px 0;
-            transition: border-color 0.2s;
+            margin: 12px 0;
+            transition: all 0.2s;
+            font-family: inherit;
         }
 
         input[type="text"]:focus,
         input[type="number"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #7C3AED;
+            background: rgba(124, 58, 237, 0.08);
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.25);
         }
 
         .buttons-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
             margin: 20px 0;
             justify-content: center;
         }
@@ -202,52 +236,546 @@
         button {
             padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            min-width: 80px;
+            min-width: 90px;
+            font-family: inherit;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
             color: white;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.5);
+            background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
         }
 
         .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #E6E8EC;
         }
 
         .btn-secondary:hover {
-            background: #e0e0e0;
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .btn-option {
-            background: white;
-            border: 2px solid #e0e0e0;
-            color: #333;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #FFFFFF;
             flex: 1;
-            min-width: 120px;
+            min-width: 110px;
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 15px;
+            transition: all 0.2s;
         }
 
         .btn-option:hover {
-            border-color: #667eea;
-            background: #f9f9f9;
+            border-color: #7C3AED;
+            background: rgba(124, 58, 237, 0.15);
+            transform: translateY(-2px);
         }
 
         .btn-option.selected {
-            background: #667eea;
+            background: #7C3AED;
             color: white;
-            border-color: #667eea;
+            border-color: #7C3AED;
+            box-shadow: 0 0 16px rgba(124, 58, 237, 0.5);
         }
 
+        /* ===== LETTER-SOUND MATCHING & MICROPHONE STYLES ===== */
+        .lsm-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            width: 100%;
+        }
+
+        .lsm-target-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(124, 58, 237, 0.06);
+            border: 1px solid rgba(124, 58, 237, 0.25);
+            border-radius: 20px;
+            padding: 22px 30px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.12);
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .lsm-target-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #9A9DA3;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .lsm-target-letter {
+            font-size: 72px;
+            font-weight: 800;
+            color: #FFFFFF;
+            text-shadow: 0 0 20px rgba(124, 58, 237, 0.8), 0 0 40px rgba(99, 102, 241, 0.4);
+            line-height: 1;
+            margin: 4px 0 14px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .lsm-audio-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 7px 16px;
+            font-size: 13px;
+            color: #E6E8EC;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lsm-audio-btn:hover {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: #7C3AED;
+            color: #FFFFFF;
+            transform: translateY(-1px);
+        }
+
+        /* Microphone Interactive Zone */
+        .lsm-mic-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .lsm-mic-btn-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 76px;
+            height: 76px;
+        }
+
+        .lsm-mic-pulse {
+            position: absolute;
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: rgba(124, 58, 237, 0.3);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .lsm-mic-pulse.active {
+            opacity: 1;
+            animation: micPulseRipple 1.8s infinite ease-out;
+        }
+
+        @keyframes micPulseRipple {
+            0% { transform: scale(0.9); opacity: 0.9; }
+            50% { transform: scale(1.4); opacity: 0.35; }
+            100% { transform: scale(1.9); opacity: 0; }
+        }
+
+        .lsm-mic-button {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            border: 2px solid rgba(124, 58, 237, 0.5);
+            background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+            min-width: unset;
+            padding: 0;
+        }
+
+        .lsm-mic-button:hover {
+            transform: scale(1.06);
+            box-shadow: 0 12px 30px rgba(124, 58, 237, 0.5);
+            border-color: #8B5CF6;
+        }
+
+        .lsm-mic-button.listening {
+            border-color: #10B981;
+            background: linear-gradient(135deg, #064E3B 0%, #047857 100%);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+        }
+
+        .lsm-mic-button.listening .lsm-mic-pulse {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .lsm-mic-button svg {
+            width: 28px;
+            height: 28px;
+            fill: currentColor;
+        }
+
+        .lsm-mic-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #9A9DA3;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 5px 14px;
+        }
+
+        .lsm-mic-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6B7280;
+            transition: all 0.3s;
+        }
+
+        .lsm-mic-dot.listening {
+            background: #10B981;
+            box-shadow: 0 0 10px #10B981;
+            animation: blinkDot 1.2s infinite;
+        }
+
+        @keyframes blinkDot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .lsm-equalizer {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            height: 14px;
+        }
+
+        .eq-bar {
+            width: 3px;
+            height: 4px;
+            background: #6B7280;
+            border-radius: 2px;
+            transition: height 0.2s;
+        }
+
+        .lsm-equalizer.active .eq-bar {
+            background: #10B981;
+            animation: eqBounce 0.8s ease-in-out infinite alternate;
+        }
+
+        .lsm-equalizer.active .eq-bar:nth-child(1) { animation-delay: 0.1s; }
+        .lsm-equalizer.active .eq-bar:nth-child(2) { animation-delay: 0.3s; }
+        .lsm-equalizer.active .eq-bar:nth-child(3) { animation-delay: 0.2s; }
+        .lsm-equalizer.active .eq-bar:nth-child(4) { animation-delay: 0.4s; }
+        .lsm-equalizer.active .eq-bar:nth-child(5) { animation-delay: 0.15s; }
+
+        @keyframes eqBounce {
+            0% { height: 3px; }
+            100% { height: 14px; }
+        }
+
+        /* LIVE SPEECH DISPLAY ("display the letter as person speak") */
+        .lsm-live-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 16px 20px;
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            transition: all 0.25s ease;
+        }
+
+        .lsm-live-card.matched {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.08);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
+        }
+
+        .lsm-live-card.missed {
+            border-color: #F59E0B;
+            background: rgba(245, 158, 11, 0.06);
+        }
+
+        .lsm-live-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9A9DA3;
+        }
+
+        .lsm-live-letter-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            min-height: 64px;
+        }
+
+        .lsm-spoken-letter {
+            font-size: 54px;
+            font-weight: 800;
+            color: #A78BFA;
+            text-shadow: 0 0 25px rgba(124, 58, 237, 0.6);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .lsm-live-card.matched .lsm-spoken-letter {
+            color: #10B981;
+            text-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
+            transform: scale(1.15);
+        }
+
+        .lsm-live-card.missed .lsm-spoken-letter {
+            color: #F59E0B;
+        }
+
+        .lsm-live-transcript {
+            font-size: 14px;
+            color: #E6E8EC;
+            font-style: italic;
+            min-height: 22px;
+            margin-top: 4px;
+            word-break: break-word;
+        }
+
+        .lsm-live-feedback {
+            font-size: 12px;
+            font-weight: 600;
+            min-height: 18px;
+            margin-top: 4px;
+            color: #9A9DA3;
+        }
+
+        .lsm-live-feedback .success {
+            color: #10B981;
+        }
+
+        .lsm-live-feedback .warning {
+            color: #F59E0B;
+        }
+
+        /* Sound Options Grid */
+        .lsm-options-header {
+            font-size: 12px;
+            color: #9A9DA3;
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        .lsm-options-grid {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .lsm-option-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #FFFFFF;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            min-width: 90px;
+        }
+
+        .lsm-option-btn:hover {
+            background: rgba(124, 58, 237, 0.15);
+            border-color: #7C3AED;
+            transform: translateY(-2px);
+        }
+
+        .lsm-option-btn.correct-choice {
+            background: rgba(16, 185, 129, 0.2) !important;
+            border-color: #10B981 !important;
+            color: #10B981 !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .lsm-unsupported-banner {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: #FCD34D;
+            text-align: center;
+            max-width: 440px;
+            line-height: 1.5;
+        }
+
+        /* ===== RAPID NAMING & SCORECARD STYLES ===== */
+        .ran-target-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(124, 58, 237, 0.08);
+            border: 2px solid rgba(124, 58, 237, 0.35);
+            border-radius: 24px;
+            padding: 26px 36px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.2);
+            width: 100%;
+            max-width: 440px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+        }
+
+        .ran-target-card:hover {
+            transform: scale(1.02);
+            border-color: #8B5CF6;
+            box-shadow: 0 0 40px rgba(124, 58, 237, 0.35);
+        }
+
+        .ran-target-card.matched {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.12);
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.3);
+        }
+
+        .ran-target-letter {
+            font-size: 84px;
+            font-weight: 800;
+            color: #FFFFFF;
+            text-shadow: 0 0 25px rgba(124, 58, 237, 0.8), 0 0 50px rgba(99, 102, 241, 0.5);
+            line-height: 1;
+            margin: 6px 0 12px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .ran-target-card.matched .ran-target-letter {
+            color: #10B981;
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
+            transform: scale(1.1);
+        }
+
+        .ran-card-cue {
+            font-size: 12px;
+            color: #9A9DA3;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .ran-summary-card {
+            background: rgba(18, 21, 26, 0.95);
+            border: 1px solid rgba(124, 58, 237, 0.35);
+            border-radius: 20px;
+            padding: 30px 24px;
+            text-align: center;
+            width: 100%;
+            max-width: 480px;
+            margin: 10px auto;
+            box-shadow: 0 0 40px rgba(124, 58, 237, 0.2);
+            animation: slideIn 0.4s ease;
+        }
+
+        .ran-summary-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin-bottom: 6px;
+        }
+
+        .ran-summary-subtitle {
+            font-size: 13px;
+            color: #9A9DA3;
+            margin-bottom: 22px;
+        }
+
+        .ran-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .ran-stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 16px 10px;
+        }
+
+        .ran-stat-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: #A78BFA;
+            margin-bottom: 4px;
+        }
+
+        .ran-stat-lbl {
+            font-size: 11px;
+            color: #9A9DA3;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+
+        .ran-speed-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid rgba(124, 58, 237, 0.35);
+            color: #C4B5FD;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* ===== RESULTS SECTION ===== */
         .results-section {
             text-align: center;
         }
@@ -255,60 +783,65 @@
         .results-section h2 {
             font-size: 24px;
             margin-bottom: 20px;
-            color: #333;
+            color: #FFFFFF;
         }
 
         .result-box {
-            background: #f9f9f9;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             padding: 25px;
-            border-radius: 8px;
+            border-radius: 14px;
             margin: 20px 0;
+            color: #FFFFFF;
         }
 
         .risk-high {
-            color: #d32f2f;
-            font-size: 20px;
+            color: #EF4444;
+            font-size: 22px;
             font-weight: bold;
+            text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
         }
 
         .risk-medium {
-            color: #f57c00;
-            font-size: 20px;
+            color: #F59E0B;
+            font-size: 22px;
             font-weight: bold;
+            text-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
         }
 
         .risk-low {
-            color: #388e3c;
-            font-size: 20px;
+            color: #10B981;
+            font-size: 22px;
             font-weight: bold;
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
         }
 
         .risk-none {
-            color: #1976d2;
-            font-size: 20px;
+            color: #6366F1;
+            font-size: 22px;
             font-weight: bold;
+            text-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
         }
 
         .details-box {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 18px;
+            border-radius: 12px;
             margin: 15px 0;
             text-align: left;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            color: #666;
-            max-height: 200px;
+            font-size: 13px;
+            color: #D1D5DB;
+            max-height: 280px;
             overflow-y: auto;
-            border: 1px solid #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .footer {
             text-align: center;
             font-size: 12px;
-            color: #999;
+            color: #6B7280;
             padding: 20px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             margin-top: 20px;
         }
 
@@ -345,7 +878,7 @@
 
         .controls {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: center;
             margin-top: 25px;
         }
@@ -467,29 +1000,127 @@
         let timerInterval = null;
 
         // ===== AUDIO & SPEECH SYNTHESIS =====
+        let isSpeakingAudio = false;
+
         function speak(text, opts = {}) {
             if (!('speechSynthesis' in window)) {
-                console.warn('TTS not supported');
                 return Promise.resolve();
             }
             return new Promise((resolve) => {
-                const synth = window.speechSynthesis;
-                synth.cancel();
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = opts.voiceLang || 'en-US';
-                u.rate = opts.rate || 0.98;
-                u.pitch = opts.pitch || 1.0;
-                u.volume = 1.0;
-                u.onend = () => resolve();
-                u.onerror = () => resolve();
-                const voices = synth.getVoices();
-                if (voices && voices.length) {
-                    const preferred = voices.find(v => v.lang.startsWith('en')) || voices[0];
-                    if (preferred) u.voice = preferred;
+                try {
+                    // Turn microphone strictly OFF while speaking
+                    isSpeakingAudio = true;
+                    stopSpeechRecognition();
+
+                    const synth = window.speechSynthesis;
+                    synth.cancel();
+                    const u = new SpeechSynthesisUtterance(text);
+                    u.lang = opts.voiceLang || 'en-US';
+                    u.rate = opts.rate || 0.98;
+                    u.pitch = opts.pitch || 1.0;
+                    u.volume = 1.0;
+                    let done = false;
+                    const finish = () => {
+                        if (!done) {
+                            done = true;
+                            isSpeakingAudio = false;
+                            resolve();
+                        }
+                    };
+                    u.onend = finish;
+                    u.onerror = finish;
+                    const voices = synth.getVoices();
+                    if (voices && voices.length) {
+                        const preferred = voices.find(v => v.lang.startsWith('en')) || voices[0];
+                        if (preferred) u.voice = preferred;
+                    }
+                    synth.speak(u);
+                    const estimatedMs = Math.max(1600, Math.min(6500, (text.split(' ').length * 360) + 700));
+                    setTimeout(finish, estimatedMs);
+                } catch(e) {
+                    isSpeakingAudio = false;
+                    resolve();
                 }
-                synth.speak(u);
-                setTimeout(() => resolve(), 2300);
             });
+        }
+
+        // ===== MICROPHONE & SPEECH RECOGNITION CONTROLLER =====
+        let activeRecognition = null;
+        let isRecognitionRequested = false;
+
+        function stopSpeechRecognition() {
+            isRecognitionRequested = false;
+            if (activeRecognition) {
+                try {
+                    activeRecognition.onend = null;
+                    activeRecognition.onerror = null;
+                    activeRecognition.onresult = null;
+                    activeRecognition.stop();
+                } catch(e) {}
+                activeRecognition = null;
+            }
+        }
+
+        const letterSoundMap = {
+            'a': ['a', 'ay', 'ah', 'apple'],
+            'b': ['b', 'bee', 'be', 'buh', 'bat', 'boy', 'ball', 'bed'],
+            'c': ['c', 'see', 'sea', 'kuh', 'cat', 'cup'],
+            'd': ['d', 'dee', 'duh', 'dog', 'day', 'door'],
+            'e': ['e', 'ee', 'eh', 'egg', 'elephant'],
+            'f': ['f', 'ef', 'eff', 'fuh', 'fish', 'fan', 'fox', 'fly'],
+            'g': ['g', 'gee', 'guh', 'girl', 'go', 'good'],
+            'h': ['h', 'aitch', 'huh', 'hat', 'hot', 'house'],
+            'i': ['i', 'eye', 'ih', 'ice', 'igloo'],
+            'j': ['j', 'jay', 'juh', 'jam', 'jump', 'juice'],
+            'k': ['k', 'kay', 'kuh', 'kite', 'king', 'key', 'cat'],
+            'l': ['l', 'el', 'ell', 'luh', 'lamp', 'lion', 'look'],
+            'm': ['m', 'em', 'emme', 'muh', 'mom', 'man', 'milk', 'moon', 'monkey'],
+            'n': ['n', 'en', 'nuh', 'no', 'net', 'nest'],
+            'o': ['o', 'oh', 'octopus', 'on', 'orange'],
+            'p': ['p', 'pee', 'puh', 'pie', 'pig', 'pen', 'pot'],
+            'q': ['q', 'cue', 'kwa', 'queen', 'quick'],
+            'r': ['r', 'ar', 'are', 'our', 'ruh', 'red', 'run', 'rain'],
+            's': ['s', 'es', 'ess', 'suh', 'sun', 'star', 'sit', 'see', 'snake'],
+            'sh': ['sh', 'esh', 'she', 'shoe', 'ship', 'shark', 'shine'],
+            't': ['t', 'tee', 'tea', 'tuh', 'to', 'top', 'ten', 'tree', 'tiger', 'table'],
+            'u': ['u', 'you', 'uh', 'umbrella', 'up'],
+            'v': ['v', 'vee', 'vuh', 'van', 'voice'],
+            'w': ['w', 'double-u', 'wuh', 'water', 'wind', 'win'],
+            'x': ['x', 'ex'],
+            'y': ['y', 'why', 'yuh', 'yellow', 'yes'],
+            'z': ['z', 'zee', 'zed', 'zuh', 'zebra', 'zoo']
+        };
+
+        function detectSpokenLetter(transcript) {
+            const clean = (transcript || '').toLowerCase().trim();
+            if (!clean) return '';
+            // 1. Direct single character
+            if (clean.length === 1 && clean >= 'a' && clean <= 'z') {
+                return clean;
+            }
+            // 2. Tokenize words
+            const words = clean.split(/[^a-z0-9]+/);
+            for (const w of words) {
+                if (!w) continue;
+                if (w === 'sh') return 'sh';
+                if (w.length === 1 && w >= 'a' && w <= 'z') return w;
+                for (const [letter, aliases] of Object.entries(letterSoundMap)) {
+                    if (aliases.includes(w)) return letter;
+                }
+            }
+            // 3. Substring check for phonetic aliases
+            for (const [letter, aliases] of Object.entries(letterSoundMap)) {
+                for (const alias of aliases) {
+                    if (clean.includes(alias)) return letter;
+                }
+            }
+            // 4. Fallback: first alphabet character in spoken words
+            for (const w of words) {
+                if (w.length > 0 && w[0] >= 'a' && w[0] <= 'z') {
+                    return w[0];
+                }
+            }
+            return '';
         }
 
         // ===== ANIMATIONS & CONFETTI =====
@@ -613,6 +1244,11 @@
         }
 
         function nextGame() {
+            stopSpeechRecognition();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            isSpeakingAudio = false;
             currentIdx++;
             stopTimer();
             if (currentIdx >= gamesOrder.length) {
@@ -624,10 +1260,20 @@
         }
 
         function goBack() {
+            stopSpeechRecognition();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            isSpeakingAudio = false;
             window.history.back();
         }
 
         function restartAssessment() {
+            stopSpeechRecognition();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            isSpeakingAudio = false;
             location.reload();
         }
 
@@ -644,7 +1290,14 @@
             return map[k] || k;
         }
 
+        let activeGameInstructionPromise = null;
+
         function loadGame(name) {
+            stopSpeechRecognition();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            isSpeakingAudio = false;
             document.getElementById('gameContainer').innerHTML = '';
             document.getElementById('gameTitle').innerText = prettify(name);
             document.getElementById('nextBtn').classList.add('hidden');
@@ -652,21 +1305,22 @@
 
             const texts = {
                 'phoneme_delete': "Phoneme detective. I will say a word. Say the word out loud. Now type what remains if we remove the first sound.",
-                'letter_sound': "Letter sound match. Look at the letter and pick the sound that goes with it.",
+                'letter_sound': "Letter sound match. Look at the letter. What sound does this letter make? Speak the letter into your microphone or choose the matching sound below.",
                 'rhyme_recog': "Rhyme finder. Choose the word that rhymes with the word shown.",
                 'word_scramble': "Unscramble the letters to make a real word. Type the answer.",
                 'lexical_decision': "Is this a real word or a made up word? Press yes or no.",
-                'rapid_naming': "Fast name. Tap each tile and say the letter or word out loud as fast as you can."
+                'rapid_naming': "Fast name. Say each letter out loud into your microphone as fast as you can, or tap the card."
             };
 
-            speak(texts[name]).then(() => {
-                if (name === 'phoneme_delete') phonemeDeleteGame();
-                else if (name === 'letter_sound') letterSoundGame();
-                else if (name === 'rhyme_recog') rhymeGame();
-                else if (name === 'word_scramble') scrambleGame();
-                else if (name === 'lexical_decision') lexicalGame();
-                else if (name === 'rapid_naming') rapidNamingGame();
-            });
+            // Speak instructions & keep promise reference so voice games can wait for speech to finish before turning mic on
+            activeGameInstructionPromise = speak(texts[name]).catch(() => {});
+
+            if (name === 'phoneme_delete') phonemeDeleteGame();
+            else if (name === 'letter_sound') letterSoundGame();
+            else if (name === 'rhyme_recog') rhymeGame();
+            else if (name === 'word_scramble') scrambleGame();
+            else if (name === 'lexical_decision') lexicalGame();
+            else if (name === 'rapid_naming') rapidNamingGame();
         }
 
         // ===== UTILITY FUNCTIONS =====
@@ -755,66 +1409,357 @@
         function letterSoundGame() {
             const container = document.getElementById('gameContainer');
             const items = [
-                { letter: 'm', choices: ['muh', 'puh', 'suh'], correct: 'muh' },
-                { letter: 't', choices: ['duh', 'tuh', 'buh'], correct: 'tuh' },
-                { letter: 'sh', choices: ['sh', 'suh', 'ch'], correct: 'sh' },
-                { letter: 'k', choices: ['kuh', 'guh', 'nuh'], correct: 'kuh' },
-                { letter: 'f', choices: ['fuh', 'vuh', 'luh'], correct: 'fuh' },
-                { letter: 'r', choices: ['ruh', 'luh', 'wuh'], correct: 'ruh' }
+                { letter: 'm', choices: ['muh', 'puh', 'suh'], correct: 'muh', name: 'M' },
+                { letter: 't', choices: ['duh', 'tuh', 'buh'], correct: 'tuh', name: 'T' },
+                { letter: 's', choices: ['suh', 'zuh', 'tuh'], correct: 'suh', name: 'S' },
+                { letter: 'b', choices: ['buh', 'duh', 'puh'], correct: 'buh', name: 'B' },
+                { letter: 'k', choices: ['kuh', 'guh', 'nuh'], correct: 'kuh', name: 'K' },
+                { letter: 'f', choices: ['fuh', 'vuh', 'luh'], correct: 'fuh', name: 'F' }
             ];
             let trials = 6, total = 0, correct = 0, rts = [];
+            let currentTrialIndex = -1;
+            let trialHandled = false;
+            let t0 = 0;
+
+            const SpeechRecClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const hasSpeechRec = !!SpeechRecClass;
 
             function trial() {
                 if (total >= trials) {
                     finish();
                     return;
                 }
+                trialHandled = false;
+                currentTrialIndex = total;
+                t0 = 0;
                 const it = items[total % items.length];
                 container.innerHTML = '';
 
-                const p = document.createElement('div');
-                p.className = 'prompt';
-                p.innerHTML = `Which sound goes with the letter <div class="letter">${it.letter}</div>`;
-                container.appendChild(p);
+                // Outer layout wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 'lsm-container';
 
-                const opts = document.createElement('div');
-                opts.className = 'buttons-row';
+                // Instruction prompt
+                const prompt = document.createElement('div');
+                prompt.className = 'prompt';
+                prompt.innerHTML = `Look at the letter below. <strong>Speak the letter into your microphone</strong>, or click the matching sound.`;
+                wrapper.appendChild(prompt);
+
+                // Target Letter Card with Listen button
+                const targetCard = document.createElement('div');
+                targetCard.className = 'lsm-target-card';
+                targetCard.innerHTML = `
+                    <span class="lsm-target-label">Target Letter</span>
+                    <div class="lsm-target-letter">${it.letter.toUpperCase()}</div>
+                    <button class="lsm-audio-btn" type="button" id="listenSoundBtn" title="Hear how this letter sounds">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        </svg>
+                        <span>Hear Sound ("${it.correct}")</span>
+                    </button>
+                `;
+                wrapper.appendChild(targetCard);
+
+                targetCard.querySelector('#listenSoundBtn').onclick = (e) => {
+                    e.stopPropagation();
+                    if (trialHandled) return;
+                    stopSpeechRecognition();
+                    updateMicUI(false, '🔊 Playing sound... (Mic off)');
+                    const liveBadge = document.getElementById('lsmLiveBadge');
+                    if (liveBadge) liveBadge.innerHTML = '<span style="color: #F59E0B;">⏸️ Audio Playing</span>';
+                    const transcriptEl = document.getElementById('lsmLiveTranscript');
+                    if (transcriptEl) transcriptEl.innerText = `Microphone paused while sound is playing...`;
+
+                    speak(`Letter ${it.name}. Sound is ${it.correct}.`).then(() => {
+                        activateMicrophoneForTrial();
+                    });
+                };
+
+                // Microphone Section - Starts OFF/WAITING while question is being asked
+                const micSection = document.createElement('div');
+                micSection.className = 'lsm-mic-section';
+
+                if (!hasSpeechRec) {
+                    micSection.innerHTML = `
+                        <div class="lsm-unsupported-banner">
+                            🎙️ Speech recognition not supported in this browser. Please use Google Chrome or Edge, or tap the sound options below.
+                        </div>
+                    `;
+                } else {
+                    micSection.innerHTML = `
+                        <div class="lsm-mic-btn-wrapper">
+                            <div class="lsm-mic-pulse" id="lsmMicPulse"></div>
+                            <button class="lsm-mic-button" id="lsmMicBtn" type="button" title="Microphone Status - Click to Toggle">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                                    <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="lsm-mic-status">
+                            <span class="lsm-mic-dot" id="lsmMicDot"></span>
+                            <span id="lsmMicStatusText">🔊 Reading question... (Mic off)</span>
+                            <div class="lsm-equalizer" id="lsmEqualizer">
+                                <span class="eq-bar"></span>
+                                <span class="eq-bar"></span>
+                                <span class="eq-bar"></span>
+                                <span class="eq-bar"></span>
+                                <span class="eq-bar"></span>
+                            </div>
+                        </div>
+                    `;
+                }
+                wrapper.appendChild(micSection);
+
+                // LIVE SPEECH DETECTION CARD ("display the letter as person speak")
+                const liveCard = document.createElement('div');
+                liveCard.className = 'lsm-live-card';
+                liveCard.id = 'lsmLiveCard';
+                liveCard.innerHTML = `
+                    <div class="lsm-live-header">
+                        <span>🎙️ Live Speech Detection</span>
+                        <span id="lsmLiveBadge" style="font-weight: 600; color: #F59E0B;">⏸️ Audio Playing</span>
+                    </div>
+                    <div class="lsm-live-letter-wrapper">
+                        <div style="font-size: 13px; color: #9A9DA3;">Spoken Letter:</div>
+                        <div class="lsm-spoken-letter" id="lsmSpokenLetter">—</div>
+                    </div>
+                    <div class="lsm-live-transcript" id="lsmLiveTranscript">Microphone is off while question is being asked...</div>
+                    <div class="lsm-live-feedback" id="lsmLiveFeedback"></div>
+                `;
+                wrapper.appendChild(liveCard);
+
+                // Sound Choice Buttons (Fallback / Alternative)
+                const optionsHeader = document.createElement('div');
+                optionsHeader.className = 'lsm-options-header';
+                optionsHeader.innerText = 'Or choose the matching sound below:';
+                wrapper.appendChild(optionsHeader);
+
+                const optsGrid = document.createElement('div');
+                optsGrid.className = 'lsm-options-grid';
 
                 const shuffled = shuffle(it.choices);
-                const t0 = performance.now();
 
                 shuffled.forEach(c => {
                     const b = document.createElement('button');
-                    b.className = 'btn-option';
+                    b.className = 'lsm-option-btn';
+                    b.type = 'button';
                     b.innerText = c;
-                    opts.appendChild(b);
-
-                    setTimeout(() => b.classList.add('pop'), 50);
+                    b.setAttribute('data-choice', c);
+                    optsGrid.appendChild(b);
 
                     b.onclick = () => {
-                        const rt = performance.now() - t0;
-                        rts.push(rt);
-                        total++;
-
-                        if (c === it.correct) {
-                            correct++;
-                            popOn(b);
-                            speak(`${c}. Correct!`);
-                        } else {
-                            shake(b);
-                            speak(`${c}. Not quite.`);
+                        if (trialHandled) return;
+                        trialHandled = true;
+                        if ('speechSynthesis' in window) {
+                            window.speechSynthesis.cancel();
                         }
-                        setTimeout(() => trial(), 480);
+                        isSpeakingAudio = false;
+                        handleCompletion(c === it.correct, c, b);
                     };
                 });
+                wrapper.appendChild(optsGrid);
+                container.appendChild(wrapper);
 
-                container.appendChild(opts);
-                speak(`Letter ${it.letter}. Which of these sounds goes with it?`);
+                function activateMicrophoneForTrial() {
+                    if (trialHandled || total !== currentTrialIndex) return;
+                    t0 = performance.now();
+                    updateMicUI(true, 'Microphone Active — Listening... Speak now!');
+                    const liveBadge = document.getElementById('lsmLiveBadge');
+                    if (liveBadge) liveBadge.innerHTML = '<span style="color: #10B981;">● Realtime</span>';
+                    const transcriptEl = document.getElementById('lsmLiveTranscript');
+                    if (transcriptEl) transcriptEl.innerText = `Say the letter "${it.letter.toUpperCase()}" into your mic...`;
+                    if (hasSpeechRec) {
+                        startRecognition();
+                    }
+                }
+
+                // Handle Audio Prompt & Microphone Activation
+                // The microphone is strictly OFF while the question or audio is being spoken
+                if (total === 0) {
+                    if (activeGameInstructionPromise && isSpeakingAudio) {
+                        activeGameInstructionPromise.then(() => {
+                            activateMicrophoneForTrial();
+                        });
+                    } else {
+                        activateMicrophoneForTrial();
+                    }
+                } else {
+                    speak(`What sound does letter ${it.name} make?`).then(() => {
+                        activateMicrophoneForTrial();
+                    });
+                }
+
+                function handleCompletion(isCorrect, answerSpoken, targetBtn) {
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                    }
+                    isSpeakingAudio = false;
+                    stopSpeechRecognition();
+                    updateMicUI(false, isCorrect ? '✓ Matched' : 'Missed');
+                    const rt = t0 > 0 ? (performance.now() - t0) : 1150;
+                    rts.push(rt);
+                    total++;
+
+                    const liveLetterEl = document.getElementById('lsmSpokenLetter');
+                    const feedbackEl = document.getElementById('lsmLiveFeedback');
+
+                    if (isCorrect) {
+                        correct++;
+                        liveCard.className = 'lsm-live-card matched';
+                        if (liveLetterEl) liveLetterEl.innerText = it.letter.toUpperCase();
+                        if (feedbackEl) feedbackEl.innerHTML = `<span class="success">✓ Correct! Matched letter ${it.letter.toUpperCase()} (${it.correct})</span>`;
+                        if (targetBtn) {
+                            targetBtn.classList.add('correct-choice');
+                            popOn(targetBtn);
+                        } else {
+                            const matchBtn = optsGrid.querySelector(`[data-choice="${it.correct}"]`);
+                            if (matchBtn) {
+                                matchBtn.classList.add('correct-choice');
+                                popOn(matchBtn);
+                            }
+                        }
+                        popOn(liveCard);
+                        speak(`${it.name}. Correct!`).catch(() => {});
+                    } else {
+                        liveCard.className = 'lsm-live-card missed';
+                        if (feedbackEl) feedbackEl.innerHTML = `<span class="warning">Not quite. Heard "${answerSpoken || 'different sound'}".</span>`;
+                        if (targetBtn) shake(targetBtn);
+                        else shake(liveCard);
+                        speak(`Not quite. Try the next one.`).catch(() => {});
+                    }
+
+                    setTimeout(() => {
+                        trial();
+                    }, 650);
+                }
+
+                function startRecognition() {
+                    if (isSpeakingAudio) return; // Strict guard: microphone must remain OFF while audio plays
+                    stopSpeechRecognition();
+                    if (trialHandled || total >= trials) return;
+
+                    try {
+                        const rec = new SpeechRecClass();
+                        rec.continuous = true;
+                        rec.interimResults = true;
+                        rec.lang = 'en-US';
+                        rec.maxAlternatives = 3;
+
+                        rec.onstart = () => {
+                            isRecognitionRequested = true;
+                            updateMicUI(true, 'Microphone Active — Listening... Speak now!');
+                        };
+
+                        rec.onresult = (event) => {
+                            if (trialHandled) return;
+                            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                                const transcript = event.results[i][0].transcript.trim();
+                                const isFinal = event.results[i].isFinal;
+                                processSpokenTranscript(transcript, isFinal);
+                            }
+                        };
+
+                        rec.onerror = (event) => {
+                            console.warn("SpeechRec error:", event.error);
+                            if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                                updateMicUI(false, 'Microphone Blocked (Please allow mic or click below)');
+                            } else if (event.error === 'no-speech') {
+                                // Silent idle retry
+                            } else {
+                                updateMicUI(false, `Mic: ${event.error} (Click buttons to answer)`);
+                            }
+                        };
+
+                        rec.onend = () => {
+                            // If still on the same trial, recognition was requested, and audio is not speaking, keep listening
+                            if (!trialHandled && isRecognitionRequested && !isSpeakingAudio && total === currentTrialIndex && total < trials) {
+                                try { rec.start(); } catch(e) {}
+                            }
+                        };
+
+                        rec.start();
+                        activeRecognition = rec;
+                        isRecognitionRequested = true;
+                    } catch(err) {
+                        console.warn("Could not start recognition:", err);
+                        updateMicUI(false, 'Click mic button to start');
+                    }
+                }
+
+                function processSpokenTranscript(transcript, isFinal) {
+                    if (trialHandled) return;
+                    const liveLetterEl = document.getElementById('lsmSpokenLetter');
+                    const transcriptEl = document.getElementById('lsmLiveTranscript');
+                    const feedbackEl = document.getElementById('lsmLiveFeedback');
+
+                    if (transcriptEl) transcriptEl.innerText = `"${transcript}"`;
+
+                    const detectedLetter = detectSpokenLetter(transcript);
+                    if (detectedLetter && liveLetterEl) {
+                        // DISPLAY THE LETTER AS PERSON SPEAKS!
+                        liveLetterEl.innerText = detectedLetter.toUpperCase();
+                        liveLetterEl.classList.add('pop');
+                        setTimeout(() => liveLetterEl.classList.remove('pop'), 200);
+                    }
+
+                    // Check if match
+                    const clean = transcript.toLowerCase();
+                    const isLetterMatch = (detectedLetter && detectedLetter.toLowerCase() === it.letter.toLowerCase());
+                    const isPhonemeMatch = clean.includes(it.correct.toLowerCase());
+
+                    if (isLetterMatch || isPhonemeMatch) {
+                        trialHandled = true;
+                        handleCompletion(true, it.letter, null);
+                    } else if (isFinal && detectedLetter) {
+                        liveCard.className = 'lsm-live-card missed';
+                        if (feedbackEl) feedbackEl.innerHTML = `<span class="warning">Heard "${detectedLetter.toUpperCase()}". Try saying "${it.letter.toUpperCase()}"!</span>`;
+                    }
+                }
+
+                function updateMicUI(active, text) {
+                    const btn = document.getElementById('lsmMicBtn');
+                    const pulse = document.getElementById('lsmMicPulse');
+                    const dot = document.getElementById('lsmMicDot');
+                    const statusText = document.getElementById('lsmMicStatusText');
+                    const eq = document.getElementById('lsmEqualizer');
+
+                    if (statusText) statusText.innerText = text;
+                    if (active) {
+                        if (btn) btn.classList.add('listening');
+                        if (pulse) pulse.classList.add('active');
+                        if (dot) dot.className = 'lsm-mic-dot listening';
+                        if (eq) eq.classList.add('active');
+                    } else {
+                        if (btn) btn.classList.remove('listening');
+                        if (pulse) pulse.classList.remove('active');
+                        if (dot) dot.className = 'lsm-mic-dot';
+                        if (eq) eq.classList.remove('active');
+                    }
+                }
+
+                // Mic toggle button handler
+                const micBtn = wrapper.querySelector('#lsmMicBtn');
+                if (micBtn) {
+                    micBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        if (isSpeakingAudio) {
+                            return; // Microphone locked while question/audio is being asked
+                        }
+                        if (isRecognitionRequested && activeRecognition) {
+                            stopSpeechRecognition();
+                            updateMicUI(false, 'Microphone Paused (Click to Resume)');
+                        } else {
+                            startRecognition();
+                        }
+                    };
+                }
             }
 
             trial();
 
             function finish() {
+                stopSpeechRecognition();
                 const avg = rts.length ? rts.reduce((a, b) => a + b, 0) / rts.length : 1200;
                 results['letter_sound'] = { correct, total, avg_rt: Math.round(avg) };
                 document.getElementById('nextBtn').classList.remove('hidden');
@@ -1021,57 +1966,365 @@
             const container = document.getElementById('gameContainer');
             const items = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
             let trials = 8, total = 0, correct = 0, rts = [];
+            let currentTrialIndex = -1;
+            let trialHandled = false;
+            let t0 = 0;
+
+            const SpeechRecClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const hasSpeechRec = !!SpeechRecClass;
 
             function trial() {
                 if (total >= trials) {
                     finish();
                     return;
                 }
+                trialHandled = false;
+                currentTrialIndex = total;
+                t0 = 0;
+                const letter = items[total % items.length];
                 container.innerHTML = '';
 
-                const p = document.createElement('div');
-                p.className = 'prompt';
-                p.innerText = 'Say each letter out loud as fast as you can. Tap to mark it done.';
-                container.appendChild(p);
+                // Outer layout wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 'lsm-container';
 
-                const opts = document.createElement('div');
-                opts.className = 'buttons-row';
+                // Instruction prompt
+                const prompt = document.createElement('div');
+                prompt.className = 'prompt';
+                prompt.innerHTML = `Fast Name: <strong>Say the letter out loud into your microphone</strong> as fast as you can, or tap the card.`;
+                wrapper.appendChild(prompt);
 
-                const letter = items[total];
-                const t0 = performance.now();
+                // Target Letter Card
+                const targetCard = document.createElement('div');
+                targetCard.className = 'ran-target-card';
+                targetCard.id = 'ranTargetCard';
+                targetCard.innerHTML = `
+                    <span class="lsm-target-label">Letter ${total + 1} of ${trials}</span>
+                    <div class="ran-target-letter" id="ranTargetLetter">${letter.toUpperCase()}</div>
+                    <div class="ran-card-cue">
+                        <span>🎙️ Say letter or tap card</span>
+                    </div>
+                `;
+                wrapper.appendChild(targetCard);
 
-                const b = document.createElement('button');
-                b.className = 'btn-option';
-                b.style.fontSize = '32px';
-                b.style.padding = '20px 40px';
-                b.innerText = letter;
-                opts.appendChild(b);
-
-                b.onclick = () => {
-                    const rt = performance.now() - t0;
-                    rts.push(rt);
-                    total++;
-                    correct++;
-                    popOn(b);
-                    setTimeout(() => trial(), 300);
+                // Clicking the target card acts as tap fallback
+                targetCard.onclick = () => {
+                    if (trialHandled) return;
+                    trialHandled = true;
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                    }
+                    isSpeakingAudio = false;
+                    handleCompletion(true, letter, true);
                 };
 
-                container.appendChild(opts);
-                speak(`Say the letter ${letter}`);
+                // Microphone Section - Starts OFF/WAITING while question is being asked
+                const micSection = document.createElement('div');
+                micSection.className = 'lsm-mic-section';
+
+                const isWaitingForQuestion = (total === 0 && isSpeakingAudio);
+
+                if (!hasSpeechRec) {
+                    micSection.innerHTML = `
+                        <div class="lsm-unsupported-banner">
+                            🎙️ Speech recognition not supported in this browser. Please use Chrome/Edge or tap the card as fast as you can.
+                        </div>
+                    `;
+                } else {
+                    micSection.innerHTML = `
+                        <div class="lsm-mic-btn-wrapper">
+                            <div class="lsm-mic-pulse ${isWaitingForQuestion ? '' : 'active'}" id="ranMicPulse"></div>
+                            <button class="lsm-mic-button ${isWaitingForQuestion ? '' : 'listening'}" id="ranMicBtn" type="button" title="Microphone Status - Click to Toggle">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                                    <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="lsm-mic-status">
+                            <span class="lsm-mic-dot ${isWaitingForQuestion ? '' : 'listening'}" id="ranMicDot"></span>
+                            <span id="ranMicStatusText">${isWaitingForQuestion ? '🔊 Reading question... (Mic off)' : 'Microphone Active — Listening...'}</span>
+                            <div class="lsm-equalizer ${isWaitingForQuestion ? '' : 'active'}" id="ranEqualizer">
+                                <span class="eq-bar"></span>
+                                <span class="eq-bar"></span>
+                                <span class="eq-bar"></span>
+                                <span class="eq-bar"></span>
+                                <span class="eq-bar"></span>
+                            </div>
+                        </div>
+                    `;
+                }
+                wrapper.appendChild(micSection);
+
+                // LIVE SPEECH DETECTION CARD ("showing letter as person speak")
+                const liveCard = document.createElement('div');
+                liveCard.className = 'lsm-live-card';
+                liveCard.id = 'ranLiveCard';
+                liveCard.innerHTML = `
+                    <div class="lsm-live-header">
+                        <span>🎙️ Live Speech Detection</span>
+                        <span id="ranLiveBadge" style="font-weight: 600; color: ${isWaitingForQuestion ? '#F59E0B' : '#10B981'};">${isWaitingForQuestion ? '⏸️ Audio Playing' : '● Realtime'}</span>
+                    </div>
+                    <div class="lsm-live-letter-wrapper">
+                        <div style="font-size: 13px; color: #9A9DA3;">Spoken Letter:</div>
+                        <div class="lsm-spoken-letter" id="ranSpokenLetter">—</div>
+                    </div>
+                    <div class="lsm-live-transcript" id="ranLiveTranscript">${isWaitingForQuestion ? 'Microphone is off while question is being asked...' : `Say "${letter.toUpperCase()}" aloud into your microphone...`}</div>
+                    <div class="lsm-live-feedback" id="ranLiveFeedback"></div>
+                `;
+                wrapper.appendChild(liveCard);
+
+                container.appendChild(wrapper);
+
+                function activateMicrophoneForRAN() {
+                    if (trialHandled || total !== currentTrialIndex) return;
+                    t0 = performance.now();
+                    updateMicUI(true, 'Microphone Active — Listening... Speak now!');
+                    const liveBadge = document.getElementById('ranLiveBadge');
+                    if (liveBadge) liveBadge.innerHTML = '<span style="color: #10B981;">● Realtime</span>';
+                    const transcriptEl = document.getElementById('ranLiveTranscript');
+                    if (transcriptEl) transcriptEl.innerText = `Say "${letter.toUpperCase()}" aloud into your microphone...`;
+                    if (hasSpeechRec) {
+                        startRecognition();
+                    }
+                }
+
+                // Handle Audio Prompt & Microphone Activation
+                // The microphone is strictly OFF while the initial question/instruction is being spoken
+                if (total === 0 && isSpeakingAudio && activeGameInstructionPromise) {
+                    activeGameInstructionPromise.then(() => {
+                        activateMicrophoneForRAN();
+                    });
+                } else {
+                    activateMicrophoneForRAN();
+                }
+
+                function handleCompletion(isCorrect, answerSpoken, isTap = false) {
+                    stopSpeechRecognition();
+                    updateMicUI(false, isCorrect ? '✓ Matched' : 'Missed');
+                    const rt = t0 > 0 ? (performance.now() - t0) : 800;
+                    rts.push(rt);
+                    total++;
+
+                    const liveLetterEl = document.getElementById('ranSpokenLetter');
+                    const feedbackEl = document.getElementById('ranLiveFeedback');
+                    const targetEl = document.getElementById('ranTargetCard');
+
+                    if (isCorrect) {
+                        correct++;
+                        liveCard.className = 'lsm-live-card matched';
+                        if (targetEl) targetEl.classList.add('matched');
+                        if (liveLetterEl) liveLetterEl.innerText = letter.toUpperCase();
+                        if (feedbackEl) feedbackEl.innerHTML = `<span class="success">✓ Named "${letter.toUpperCase()}" (${Math.round(rt)}ms)</span>`;
+                        popOn(targetEl || liveCard);
+                    } else {
+                        liveCard.className = 'lsm-live-card missed';
+                        if (feedbackEl) feedbackEl.innerHTML = `<span class="warning">Heard "${answerSpoken}".</span>`;
+                        shake(targetEl || liveCard);
+                    }
+
+                    setTimeout(() => {
+                        trial();
+                    }, isCorrect ? 350 : 500);
+                }
+
+                function startRecognition() {
+                    if (isSpeakingAudio) return; // Strict guard: microphone must remain OFF while audio plays
+                    stopSpeechRecognition();
+                    if (trialHandled || total >= trials) return;
+
+                    try {
+                        const rec = new SpeechRecClass();
+                        rec.continuous = true;
+                        rec.interimResults = true;
+                        rec.lang = 'en-US';
+                        rec.maxAlternatives = 3;
+
+                        rec.onstart = () => {
+                            isRecognitionRequested = true;
+                            updateMicUI(true, 'Microphone Active — Listening... Speak now!');
+                        };
+
+                        rec.onresult = (event) => {
+                            if (trialHandled) return;
+                            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                                const transcript = event.results[i][0].transcript.trim();
+                                const isFinal = event.results[i].isFinal;
+                                processSpokenTranscript(transcript, isFinal);
+                            }
+                        };
+
+                        rec.onerror = (event) => {
+                            console.warn("SpeechRec error in RAN:", event.error);
+                            if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                                updateMicUI(false, 'Microphone Blocked (Please tap card to advance)');
+                            } else if (event.error === 'no-speech') {
+                                // Silent idle retry
+                            } else {
+                                updateMicUI(false, `Mic: ${event.error} (Tap card to answer)`);
+                            }
+                        };
+
+                        rec.onend = () => {
+                            if (!trialHandled && isRecognitionRequested && !isSpeakingAudio && total === currentTrialIndex && total < trials) {
+                                try { rec.start(); } catch(e) {}
+                            }
+                        };
+
+                        rec.start();
+                        activeRecognition = rec;
+                        isRecognitionRequested = true;
+                    } catch(err) {
+                        console.warn("Could not start recognition in rapid naming:", err);
+                        updateMicUI(false, 'Tap card or click mic to start');
+                    }
+                }
+
+                function processSpokenTranscript(transcript, isFinal) {
+                    if (trialHandled) return;
+                    const liveLetterEl = document.getElementById('ranSpokenLetter');
+                    const transcriptEl = document.getElementById('ranLiveTranscript');
+                    const feedbackEl = document.getElementById('ranLiveFeedback');
+
+                    if (transcriptEl) transcriptEl.innerText = `"${transcript}"`;
+
+                    const detectedLetter = detectSpokenLetter(transcript);
+                    if (detectedLetter && liveLetterEl) {
+                        // DISPLAY THE LETTER AS PERSON SPEAKS!
+                        liveLetterEl.innerText = detectedLetter.toUpperCase();
+                        liveLetterEl.classList.add('pop');
+                        setTimeout(() => liveLetterEl.classList.remove('pop'), 200);
+                    }
+
+                    // Check if match
+                    const clean = transcript.toLowerCase();
+                    const isLetterMatch = (detectedLetter && detectedLetter.toLowerCase() === letter.toLowerCase());
+                    const aliases = letterSoundMap[letter] || [];
+                    const isAliasMatch = aliases.some(a => clean.includes(a));
+
+                    if (isLetterMatch || isAliasMatch) {
+                        trialHandled = true;
+                        handleCompletion(true, letter, false);
+                    } else if (isFinal && detectedLetter) {
+                        liveCard.className = 'lsm-live-card missed';
+                        if (feedbackEl) feedbackEl.innerHTML = `<span class="warning">Heard "${detectedLetter.toUpperCase()}". Say "${letter.toUpperCase()}"!</span>`;
+                    }
+                }
+
+                function updateMicUI(active, text) {
+                    const btn = document.getElementById('ranMicBtn');
+                    const pulse = document.getElementById('ranMicPulse');
+                    const dot = document.getElementById('ranMicDot');
+                    const statusText = document.getElementById('ranMicStatusText');
+                    const eq = document.getElementById('ranEqualizer');
+
+                    if (statusText) statusText.innerText = text;
+                    if (active) {
+                        if (btn) btn.classList.add('listening');
+                        if (pulse) pulse.classList.add('active');
+                        if (dot) dot.className = 'lsm-mic-dot listening';
+                        if (eq) eq.classList.add('active');
+                    } else {
+                        if (btn) btn.classList.remove('listening');
+                        if (pulse) pulse.classList.remove('active');
+                        if (dot) dot.className = 'lsm-mic-dot';
+                        if (eq) eq.classList.remove('active');
+                    }
+                }
+
+                // Mic toggle handler
+                const micBtn = wrapper.querySelector('#ranMicBtn');
+                if (micBtn) {
+                    micBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        if (isSpeakingAudio) {
+                            return; // Microphone locked while question is being asked
+                        }
+                        if (isRecognitionRequested && activeRecognition) {
+                            stopSpeechRecognition();
+                            updateMicUI(false, 'Microphone Paused (Click to Resume)');
+                        } else {
+                            startRecognition();
+                        }
+                    };
+                }
             }
 
             trial();
 
             function finish() {
+                stopSpeechRecognition();
                 const avg = rts.length ? rts.reduce((a, b) => a + b, 0) / rts.length : 1000;
                 results['rapid_naming'] = { correct, total, avg_rt: Math.round(avg) };
-                document.getElementById('nextBtn').classList.remove('hidden');
-                speak('Excellent rapid naming!');
+
+                // Calculate fluency speed rating
+                let speedRating = '🚀 Fast / High Fluency';
+                let speedBadgeClass = '#10B981';
+                if (avg > 1800) {
+                    speedRating = '⚠️ Slower Retrieval Pace (Dyslexia Indicator)';
+                    speedBadgeClass = '#EF4444';
+                } else if (avg > 1200) {
+                    speedRating = '● Moderate Response Pace';
+                    speedBadgeClass = '#F59E0B';
+                }
+
+                const accPercent = Math.round((correct / trials) * 100);
+
+                // DISPLAY THE RAPID NAMING RESULT IMMEDIATELY ON SCREEN!
+                container.innerHTML = `
+                    <div class="ran-summary-card">
+                        <div class="ran-summary-title">⚡ Rapid Naming Completed!</div>
+                        <div class="ran-summary-subtitle">Your rapid naming speed and speech recognition metrics have been recorded</div>
+                        
+                        <div class="ran-stats-grid">
+                            <div class="ran-stat-box">
+                                <div class="ran-stat-val">${correct} / ${trials}</div>
+                                <div class="ran-stat-lbl">Letters Named</div>
+                            </div>
+                            <div class="ran-stat-box">
+                                <div class="ran-stat-val">${Math.round(avg)}ms</div>
+                                <div class="ran-stat-lbl">Avg Response Time</div>
+                            </div>
+                            <div class="ran-stat-box">
+                                <div class="ran-stat-val" style="color: ${accPercent >= 70 ? '#10B981' : '#F59E0B'};">${accPercent}%</div>
+                                <div class="ran-stat-lbl">Accuracy</div>
+                            </div>
+                        </div>
+
+                        <div class="ran-speed-badge" style="border-color: ${speedBadgeClass}; color: ${speedBadgeClass};">
+                            ${speedRating}
+                        </div>
+
+                        <p style="font-size: 13px; color: #9A9DA3; margin: 16px 0 22px;">
+                            All 6 screening games are now complete. Click below to view your full clinical AI risk breakdown and personalized recommendations.
+                        </p>
+
+                        <button class="btn-primary" id="viewFullResultsBtn" type="button" style="padding: 14px 28px; font-size: 15px; width: 100%;">
+                            📊 View Complete Assessment Results
+                        </button>
+                    </div>
+                `;
+
+                confetti.spawn(60);
+                speak('Rapid naming completed! Here are your results.').catch(() => {});
+
+                document.getElementById('viewFullResultsBtn').onclick = () => {
+                    finishSession();
+                };
+
+                // Also update nextBtn at the bottom
+                const nextBtn = document.getElementById('nextBtn');
+                if (nextBtn) {
+                    nextBtn.innerText = 'View Assessment Report →';
+                    nextBtn.classList.remove('hidden');
+                    nextBtn.onclick = () => finishSession();
+                }
             }
         }
 
         // ===== RESULT HANDLING =====
         function finishSession() {
+            stopSpeechRecognition();
             stopTimer();
             confetti.spawn(80);
 
@@ -1230,6 +2483,10 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Dyslexia Assessment loaded');
+        });
+
+        window.addEventListener('beforeunload', () => {
+            stopSpeechRecognition();
         });
     </script>
 </body>
